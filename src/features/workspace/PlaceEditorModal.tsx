@@ -96,9 +96,9 @@ export function PlaceEditorModal({ open, place, layers, point, onClose, onSaved 
 
   return (
     <div className="modal-backdrop">
-      <section className="modal" data-testid="place-editor" role="dialog" aria-modal="true">
+      <section className="modal" data-testid="place-editor" role="dialog" aria-modal="true" aria-labelledby="place-editor-title">
         <div className="modal__header">
-          <h2>{place ? "编辑地点" : "新增地点"}</h2>
+          <h2 id="place-editor-title">{place ? "编辑地点" : "新增地点"}</h2>
           <button type="button" className="icon-button" onClick={closeWithDraftGuard} aria-label="关闭">
             <X size={18} />
           </button>

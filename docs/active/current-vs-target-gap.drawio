@@ -1,39 +1,19 @@
-<mxfile host="app.diagrams.net" modified="2026-06-03T00:00:00.000Z" agent="Codex" version="24.7.17" type="device">
+<mxfile host="app.diagrams.net" modified="2026-06-05T00:00:00.000Z" agent="Codex" version="24.7.17" type="device">
   <diagram id="current-target-architecture" name="Current vs Target Architecture">
     <mxGraphModel dx="1420" dy="980" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="980" math="0" shadow="0">
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
-        <mxCell id="title1" value="FoodMap V1.0 Scheme 4: Current vs Target Architecture" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1;align=center;" vertex="1" parent="1">
-          <mxGeometry x="280" y="20" width="840" height="40" as="geometry"/>
-        </mxCell>
-        <mxCell id="currentBox" value="Current State&#xa;&#xa;Scheme 4 PRD package exists&#xa;Design docs exist&#xa;No app source code&#xa;No package manifest&#xa;No IndexedDB implementation&#xa;No map provider&#xa;No test harness&#xa;No final acceptance evidence" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8f9fb;strokeColor=#86909c;fontSize=15;align=left;spacing=16;" vertex="1" parent="1">
-          <mxGeometry x="60" y="120" width="330" height="420" as="geometry"/>
-        </mxCell>
-        <mxCell id="gapBox" value="Architecture Gap&#xa;&#xa;Create Vite React TS shell&#xa;Define domain + filters&#xa;Add IndexedDB stores&#xa;Add map adapter abstraction&#xa;Build Scheme 4 workspace UI&#xa;Build local share view&#xa;Add .foodmap.json import/export&#xa;Add visual + e2e acceptance" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7e8;strokeColor=#ff9a2e;fontSize=15;align=left;spacing=16;" vertex="1" parent="1">
-          <mxGeometry x="535" y="120" width="330" height="420" as="geometry"/>
-        </mxCell>
-        <mxCell id="targetBox" value="Target V1.0 Scheme 4&#xa;&#xa;Vite + React + TypeScript SPA&#xa;Hash routes: #/map and #/share/:id&#xa;Travel journal visual system&#xa;MapProviderAdapter&#xa;AMap primary provider&#xa;Leaflet fallback provider&#xa;IndexedDB stores: places, layers, photos, snapshots, meta&#xa;Photo blob + thumbnail handling&#xa;Read-only share snapshots&#xa;Vitest + Playwright acceptance" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f7ff;strokeColor=#3491fa;fontSize=15;align=left;spacing=16;" vertex="1" parent="1">
-          <mxGeometry x="1010" y="120" width="330" height="420" as="geometry"/>
-        </mxCell>
-        <mxCell id="edge-current-gap" style="endArrow=block;html=1;rounded=0;strokeColor=#ff7d00;strokeWidth=2;" edge="1" parent="1" source="currentBox" target="gapBox">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="edge-gap-target" style="endArrow=block;html=1;rounded=0;strokeColor=#165dff;strokeWidth=2;" edge="1" parent="1" source="gapBox" target="targetBox">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="uiLayer" value="UI Feature Layer&#xa;Scheme 4 map workspace, layer panel, search, filters, editor modal, detail drawer, share snapshot dialog, import/export, share view" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c9cdd4;fontSize=14;" vertex="1" parent="1">
-          <mxGeometry x="120" y="650" width="1160" height="55" as="geometry"/>
-        </mxCell>
-        <mxCell id="domainLayer" value="Domain Layer&#xa;FoodPlace, FoodLayer, PhotoAsset, ShareSnapshot, FoodFilterState, default layers, filters, validation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c9cdd4;fontSize=14;" vertex="1" parent="1">
-          <mxGeometry x="120" y="725" width="1160" height="55" as="geometry"/>
-        </mxCell>
-        <mxCell id="adapterLayer" value="Map Adapter Layer&#xa;Provider-independent interface with AMap and Leaflet implementations" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c9cdd4;fontSize=14;" vertex="1" parent="1">
-          <mxGeometry x="120" y="800" width="560" height="55" as="geometry"/>
-        </mxCell>
-        <mxCell id="storageLayer" value="Persistence Layer&#xa;IndexedDB stores, photo blobs, thumbnails, snapshots, .foodmap.json import/export codecs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c9cdd4;fontSize=14;" vertex="1" parent="1">
-          <mxGeometry x="720" y="800" width="560" height="55" as="geometry"/>
-        </mxCell>
+        <mxCell id="title1" value="FoodMap Current Stage: Architecture Gap" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1;align=center;" vertex="1" parent="1"><mxGeometry x="270" y="20" width="860" height="40" as="geometry"/></mxCell>
+        <mxCell id="currentBox" value="Current Architecture&#xa;&#xa;Vite React TypeScript SPA&#xa;Hash routes: #/map, #/share/:id&#xa;IndexedDB: places, layers, photos, snapshots, meta&#xa;Leaflet Wuhan fallback + tile-failure schematic map&#xa;Personal CRUD, filters, photos, share, import/export&#xa;AMap Wuhan scanlist: 50 entries&#xa;Manual verified pin overlay&#xa;Recommendation image evidence&#xa;Adaptive recommendation markers&#xa;window.FoodMapAgentBridge&#xa;Vitest + Playwright baseline" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8ffea;strokeColor=#00b42a;fontSize=14;align=left;spacing=14;" vertex="1" parent="1"><mxGeometry x="45" y="110" width="360" height="430" as="geometry"/></mxCell>
+        <mxCell id="gapBox" value="Remaining Gap&#xa;&#xa;Current docs must stay aligned with implemented reality&#xa;POI refresh reports need stronger duplicate/source/coordinate fields for future items&#xa;Recommendation detail must stay selected-place-first&#xa;Input flow still needs required-first polish and better photo preview&#xa;Marker density needs visual evidence across zoom levels&#xa;Agent Bridge needs smoke acceptance and unsafe-save rejection evidence&#xa;Final report must combine PRD, POI, UX, agent, and visual gates" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7e8;strokeColor=#ff9a2e;fontSize=14;align=left;spacing=14;" vertex="1" parent="1"><mxGeometry x="510" y="110" width="360" height="430" as="geometry"/></mxCell>
+        <mxCell id="targetBox" value="Target Current-Stage Architecture&#xa;&#xa;V1.0 PRD personal food journal remains complete&#xa;Verified Wuhan recommendation overlay is first-class&#xa;Only verified/mappable recommendations become pins&#xa;Exact vs approximate coordinates are visible&#xa;Image/street-view evidence appears in detail&#xa;Adaptive ranked/green/dot marker modes preserve readability&#xa;Mobile and desktop UI expose one primary task surface at a time&#xa;Agent commands reuse UI validation and POI admission rules&#xa;Docs, drawio, tests, and evidence describe the same system" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f7ff;strokeColor=#3491fa;fontSize=14;align=left;spacing=14;" vertex="1" parent="1"><mxGeometry x="975" y="110" width="360" height="430" as="geometry"/></mxCell>
+        <mxCell id="edge-current-gap" style="endArrow=block;html=1;rounded=0;strokeColor=#ff7d00;strokeWidth=2;" edge="1" parent="1" source="currentBox" target="gapBox"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="edge-gap-target" style="endArrow=block;html=1;rounded=0;strokeColor=#165dff;strokeWidth=2;" edge="1" parent="1" source="gapBox" target="targetBox"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="uiLayer" value="UI Feature Layer&#xa;Workspace header, map canvas, display panel, place list/detail, recommendation detail, editor modal, filter/import/share dialogs, mobile sheets" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c9cdd4;fontSize=14;" vertex="1" parent="1"><mxGeometry x="90" y="620" width="1220" height="58" as="geometry"/></mxCell>
+        <mxCell id="domainLayer" value="Domain + Persistence Layer&#xa;FoodPlace, FoodLayer, PhotoAsset, ShareSnapshot, FoodFilterState, validators, filters, IndexedDB repositories, .foodmap.json codec" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c9cdd4;fontSize=14;" vertex="1" parent="1"><mxGeometry x="90" y="700" width="1220" height="58" as="geometry"/></mxCell>
+        <mxCell id="mapLayer" value="Map + Recommendation Layer&#xa;MapProviderAdapter, Leaflet/AMap path, Wuhan fallback, AMAP_WUHAN_SCANLIST, manualVerifiedPins, verification, adaptive markers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c9cdd4;fontSize=14;" vertex="1" parent="1"><mxGeometry x="90" y="780" width="600" height="58" as="geometry"/></mxCell>
+        <mxCell id="agentLayer" value="Agent + Verification Layer&#xa;FoodMapAgentBridge, command/result/state events, Vitest, Playwright, scanlist report, UX audit, final acceptance evidence" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c9cdd4;fontSize=14;" vertex="1" parent="1"><mxGeometry x="710" y="780" width="600" height="58" as="geometry"/></mxCell>
       </root>
     </mxGraphModel>
   </diagram>
@@ -42,39 +22,23 @@
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
-        <mxCell id="title2" value="V1.0 Scheme 4 Development And Acceptance Plan" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1;align=center;" vertex="1" parent="1">
-          <mxGeometry x="340" y="30" width="720" height="40" as="geometry"/>
-        </mxCell>
-        <mxCell id="p0" value="M0&#xa;Docs + Scheme 4 Baseline&#xa;&#xa;PRD&#xa;Dev plan&#xa;Figma prompts&#xa;Drawio gap" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f2f3f5;strokeColor=#86909c;fontSize=14;" vertex="1" parent="1">
-          <mxGeometry x="70" y="160" width="170" height="130" as="geometry"/>
-        </mxCell>
-        <mxCell id="p1" value="M1&#xa;Frontend Foundation&#xa;&#xa;Vite React TS&#xa;Hash routes&#xa;Test tooling&#xa;Scheme 4 tokens" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f7ff;strokeColor=#3491fa;fontSize=14;" vertex="1" parent="1">
-          <mxGeometry x="280" y="160" width="170" height="130" as="geometry"/>
-        </mxCell>
-        <mxCell id="p2" value="M2&#xa;Domain + IndexedDB&#xa;&#xa;Types&#xa;Stores&#xa;Default layers&#xa;Photo assets" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8ffea;strokeColor=#00b42a;fontSize=14;" vertex="1" parent="1">
-          <mxGeometry x="490" y="160" width="170" height="130" as="geometry"/>
-        </mxCell>
-        <mxCell id="p3" value="M3&#xa;Map Provider&#xa;&#xa;Adapter&#xa;AMap&#xa;Leaflet fallback&#xa;Marker events" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7e8;strokeColor=#ff7d00;fontSize=14;" vertex="1" parent="1">
-          <mxGeometry x="700" y="160" width="170" height="130" as="geometry"/>
-        </mxCell>
-        <mxCell id="p4" value="M4&#xa;Workspace UI&#xa;&#xa;Layers&#xa;Editor&#xa;Photos&#xa;Filters&#xa;Mobile sheets" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1f0;strokeColor=#f53f3f;fontSize=14;" vertex="1" parent="1">
-          <mxGeometry x="910" y="160" width="170" height="130" as="geometry"/>
-        </mxCell>
-        <mxCell id="p5" value="M5&#xa;Share View&#xa;&#xa;Snapshots&#xa;Read-only route&#xa;.foodmap.json import/export" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5e8ff;strokeColor=#722ed1;fontSize=14;" vertex="1" parent="1">
-          <mxGeometry x="1120" y="160" width="170" height="130" as="geometry"/>
-        </mxCell>
-        <mxCell id="p6" value="M6-M7&#xa;Visual + Final Acceptance&#xa;&#xa;Scheme 4 polish&#xa;Build&#xa;Tests&#xa;Screenshots&#xa;Report" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f2f3f5;strokeColor=#4e5969;fontSize=14;" vertex="1" parent="1">
-          <mxGeometry x="615" y="430" width="170" height="130" as="geometry"/>
-        </mxCell>
+        <mxCell id="title2" value="Current-Stage Development And Acceptance Plan" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1;align=center;" vertex="1" parent="1"><mxGeometry x="250" y="30" width="900" height="40" as="geometry"/></mxCell>
+        <mxCell id="p0" value="P0 Docs Alignment&#xa;&#xa;Update active docs&#xa;Update drawio&#xa;Keep audit set &lt; 20 files&#xa;Remove stale no-source-code statements" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f2f3f5;strokeColor=#86909c;fontSize=14;" vertex="1" parent="1"><mxGeometry x="50" y="130" width="180" height="145" as="geometry"/></mxCell>
+        <mxCell id="p1" value="P1 PRD Regression&#xa;&#xa;CRUD&#xa;Photos&#xa;Filters&#xa;Share&#xa;Import/export&#xa;Desktop/mobile sanity" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f7ff;strokeColor=#3491fa;fontSize=14;" vertex="1" parent="1"><mxGeometry x="250" y="130" width="180" height="145" as="geometry"/></mxCell>
+        <mxCell id="p2" value="P2 POI Quality&#xa;&#xa;50 scanlist entries&#xa;Semantic duplicate groups&#xa;Source groups&#xa;Coordinate trust&#xa;Verified-only pins" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8ffea;strokeColor=#00b42a;fontSize=14;" vertex="1" parent="1"><mxGeometry x="450" y="130" width="180" height="145" as="geometry"/></mxCell>
+        <mxCell id="p3" value="P3 Detail UX&#xa;&#xa;Selected-place-first&#xa;Collapsed ranking list&#xa;Image evidence&#xa;Confidence + accuracy&#xa;Mobile readability" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7e8;strokeColor=#ff7d00;fontSize=14;" vertex="1" parent="1"><mxGeometry x="650" y="130" width="180" height="145" as="geometry"/></mxCell>
+        <mxCell id="p4" value="P4 Input UX&#xa;&#xa;Required-first editor&#xa;Unsaved guard&#xa;Photo preview&#xa;Validation clarity&#xa;Map-click confirmation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1f0;strokeColor=#f53f3f;fontSize=14;" vertex="1" parent="1"><mxGeometry x="850" y="130" width="180" height="145" as="geometry"/></mxCell>
+        <mxCell id="p5" value="P5 Marker Density&#xa;&#xa;Ranked pins&#xa;Green adaptive pins&#xa;Compact dots&#xa;Zoom/pan/resize updates&#xa;Screenshot evidence" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5e8ff;strokeColor=#722ed1;fontSize=14;" vertex="1" parent="1"><mxGeometry x="1050" y="130" width="180" height="145" as="geometry"/></mxCell>
+        <mxCell id="p6" value="P6 Agent Bridge&#xa;&#xa;Context/list/focus/filter&#xa;Save valid place&#xa;Save verified rec&#xa;Reject unverified rec&#xa;Snapshot/export" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffce8;strokeColor=#d99a2b;fontSize=14;" vertex="1" parent="1"><mxGeometry x="1250" y="130" width="180" height="145" as="geometry"/></mxCell>
         <mxCell id="e01" style="endArrow=block;html=1;strokeColor=#4e5969;strokeWidth=2;" edge="1" parent="1" source="p0" target="p1"><mxGeometry relative="1" as="geometry"/></mxCell>
         <mxCell id="e12" style="endArrow=block;html=1;strokeColor=#4e5969;strokeWidth=2;" edge="1" parent="1" source="p1" target="p2"><mxGeometry relative="1" as="geometry"/></mxCell>
         <mxCell id="e23" style="endArrow=block;html=1;strokeColor=#4e5969;strokeWidth=2;" edge="1" parent="1" source="p2" target="p3"><mxGeometry relative="1" as="geometry"/></mxCell>
         <mxCell id="e34" style="endArrow=block;html=1;strokeColor=#4e5969;strokeWidth=2;" edge="1" parent="1" source="p3" target="p4"><mxGeometry relative="1" as="geometry"/></mxCell>
         <mxCell id="e45" style="endArrow=block;html=1;strokeColor=#4e5969;strokeWidth=2;" edge="1" parent="1" source="p4" target="p5"><mxGeometry relative="1" as="geometry"/></mxCell>
         <mxCell id="e56" style="endArrow=block;html=1;strokeColor=#4e5969;strokeWidth=2;" edge="1" parent="1" source="p5" target="p6"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="evidence" value="Evidence Required&#xa;&#xa;npm run build&#xa;npm test&#xa;npx playwright test&#xa;Desktop 1440x900 and mobile 390x844 screenshots&#xa;AMap and Leaflet fallback verification&#xa;.foodmap.json round-trip&#xa;Scheme 4 visual check&#xa;Final acceptance report" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c9cdd4;fontSize=15;align=left;spacing=16;" vertex="1" parent="1">
-          <mxGeometry x="315" y="690" width="770" height="180" as="geometry"/>
-        </mxCell>
+        <mxCell id="p7" value="P7 Final Acceptance&#xa;&#xa;npm run build&#xa;npm test&#xa;npx playwright test&#xa;Desktop/mobile screenshots&#xa;POI + scanlist evidence&#xa;Agent evidence&#xa;Final report" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f2f3f5;strokeColor=#4e5969;fontSize=14;" vertex="1" parent="1"><mxGeometry x="590" y="420" width="220" height="170" as="geometry"/></mxCell>
+        <mxCell id="e67" style="endArrow=block;html=1;strokeColor=#4e5969;strokeWidth=2;" edge="1" parent="1" source="p6" target="p7"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="evidence" value="Acceptance Evidence&#xa;&#xa;Build/unit/e2e command summaries&#xa;Desktop 1440x900 and mobile 390x844 screenshots&#xa;Scanlist refresh report and manual verified overlay&#xa;POI duplicate/source/coordinate admission evidence&#xa;Recommendation detail image evidence&#xa;Marker density screenshots&#xa;Agent Bridge smoke evidence&#xa;.foodmap.json round-trip&#xa;Final acceptance report" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c9cdd4;fontSize=15;align=left;spacing=16;" vertex="1" parent="1"><mxGeometry x="265" y="690" width="870" height="220" as="geometry"/></mxCell>
       </root>
     </mxGraphModel>
   </diagram>
@@ -83,78 +47,54 @@
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
-        <mxCell id="title3" value="FoodMap V1.0 Scheme 4 Milestone Roadmap" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1;align=center;" vertex="1" parent="1">
-          <mxGeometry x="350" y="30" width="700" height="40" as="geometry"/>
-        </mxCell>
-        <mxCell id="line" value="" style="endArrow=none;html=1;strokeColor=#86909c;strokeWidth=4;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="120" y="260" as="sourcePoint"/>
-            <mxPoint x="1280" y="260" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="m0" value="M0&#xa;Docs Freeze&#xa;&#xa;PRD&#xa;Dev plan&#xa;Figma prompts&#xa;Gates" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f2f3f5;strokeColor=#4e5969;fontSize=13;" vertex="1" parent="1"><mxGeometry x="80" y="190" width="140" height="140" as="geometry"/></mxCell>
-        <mxCell id="m1" value="M1&#xa;Foundation&#xa;&#xa;Vite React TS&#xa;Routes&#xa;Tests" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e8f7ff;strokeColor=#3491fa;fontSize=13;" vertex="1" parent="1"><mxGeometry x="310" y="190" width="140" height="140" as="geometry"/></mxCell>
-        <mxCell id="m2" value="M2&#xa;Data Core&#xa;&#xa;Models&#xa;IndexedDB stores&#xa;Photos&#xa;Defaults" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e8ffea;strokeColor=#00b42a;fontSize=13;" vertex="1" parent="1"><mxGeometry x="540" y="190" width="140" height="140" as="geometry"/></mxCell>
-        <mxCell id="m3" value="M3&#xa;Map Provider&#xa;&#xa;Adapter&#xa;AMap&#xa;Leaflet&#xa;Markers" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff7e8;strokeColor=#ff7d00;fontSize=13;" vertex="1" parent="1"><mxGeometry x="770" y="190" width="140" height="140" as="geometry"/></mxCell>
-        <mxCell id="m4" value="M4&#xa;Workspace UI&#xa;&#xa;CRUD&#xa;Layers&#xa;Filters&#xa;Photos" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5e8ff;strokeColor=#722ed1;fontSize=13;" vertex="1" parent="1"><mxGeometry x="1000" y="190" width="140" height="140" as="geometry"/></mxCell>
-        <mxCell id="m5" value="M5-M7&#xa;Share + Visual + Closure&#xa;&#xa;Read-only&#xa;Import/export&#xa;Scheme 4&#xa;Report" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff1f0;strokeColor=#f53f3f;fontSize=13;" vertex="1" parent="1"><mxGeometry x="1230" y="190" width="140" height="140" as="geometry"/></mxCell>
-        <mxCell id="milestoneCriteria" value="Milestone Exit Rule&#xa;&#xa;Each milestone exits only when its deliverables exist, acceptance checks pass, Scheme 4 constraints are preserved, and evidence is attached or referenced from the V1.0 final acceptance report." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c9cdd4;fontSize=16;" vertex="1" parent="1">
-          <mxGeometry x="250" y="520" width="900" height="150" as="geometry"/>
-        </mxCell>
+        <mxCell id="title3" value="Current-Stage Milestone Roadmap" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1;align=center;" vertex="1" parent="1"><mxGeometry x="300" y="30" width="800" height="40" as="geometry"/></mxCell>
+        <mxCell id="m0" value="M0 Documentation Alignment&#xa;Docs and drawio match current app" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f2f3f5;strokeColor=#86909c;fontSize=14;" vertex="1" parent="1"><mxGeometry x="90" y="135" width="260" height="90" as="geometry"/></mxCell>
+        <mxCell id="m1" value="M1 PRD Regression Closure&#xa;Personal CRUD, photos, filters, share, import/export" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f7ff;strokeColor=#3491fa;fontSize=14;" vertex="1" parent="1"><mxGeometry x="390" y="135" width="260" height="90" as="geometry"/></mxCell>
+        <mxCell id="m2" value="M2 Wuhan POI Quality&#xa;50 verified pins, duplicate handling, coordinate trust" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8ffea;strokeColor=#00b42a;fontSize=14;" vertex="1" parent="1"><mxGeometry x="690" y="135" width="260" height="90" as="geometry"/></mxCell>
+        <mxCell id="m3" value="M3 Recommendation Detail UX&#xa;Selected detail, evidence, image, collapsed list" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7e8;strokeColor=#ff7d00;fontSize=14;" vertex="1" parent="1"><mxGeometry x="990" y="135" width="260" height="90" as="geometry"/></mxCell>
+        <mxCell id="m4" value="M4 Input UX Upgrade&#xa;Required-first editor, photo preview, unsaved guard" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1f0;strokeColor=#f53f3f;fontSize=14;" vertex="1" parent="1"><mxGeometry x="240" y="360" width="260" height="90" as="geometry"/></mxCell>
+        <mxCell id="m5" value="M5 Marker Readability&#xa;Ranked pins, adaptive green pins, compact dots" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5e8ff;strokeColor=#722ed1;fontSize=14;" vertex="1" parent="1"><mxGeometry x="540" y="360" width="260" height="90" as="geometry"/></mxCell>
+        <mxCell id="m6" value="M6 Agent Bridge Acceptance&#xa;Safe commands, verified rec save, unsafe rejection" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffce8;strokeColor=#d99a2b;fontSize=14;" vertex="1" parent="1"><mxGeometry x="840" y="360" width="260" height="90" as="geometry"/></mxCell>
+        <mxCell id="m7" value="M7 Final Acceptance&#xa;Build, tests, screenshots, evidence, final report" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f2f3f5;strokeColor=#4e5969;fontSize=14;" vertex="1" parent="1"><mxGeometry x="540" y="610" width="260" height="90" as="geometry"/></mxCell>
+        <mxCell id="r1" value="Milestone Exit Rule&#xa;&#xa;Each milestone exits only when implementation exists, acceptance checks pass, evidence is attached or referenced, PRD local-first constraints are preserved, and no unverified POI candidate is promoted to a map pin." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c9cdd4;fontSize=15;align=left;spacing=16;" vertex="1" parent="1"><mxGeometry x="275" y="790" width="850" height="120" as="geometry"/></mxCell>
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram id="acceptance-gates" name="Acceptance Gates">
+  <diagram id="acceptance-gates" name="Acceptance Gates And Exit Conditions">
     <mxGraphModel dx="1420" dy="980" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="980" math="0" shadow="0">
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
-        <mxCell id="title4" value="FoodMap V1.0 Scheme 4 Acceptance Gates And Exit Conditions" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1;align=center;" vertex="1" parent="1">
-          <mxGeometry x="250" y="30" width="900" height="40" as="geometry"/>
-        </mxCell>
-        <mxCell id="gateDoc" value="Documentation&#xa;Docs, PRD, Figma prompts + drawio complete" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f2f3f5;strokeColor=#4e5969;fontSize=14;" vertex="1" parent="1"><mxGeometry x="70" y="130" width="240" height="90" as="geometry"/></mxCell>
-        <mxCell id="gateBuild" value="Build&#xa;npm run build passes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f7ff;strokeColor=#3491fa;fontSize=14;" vertex="1" parent="1"><mxGeometry x="370" y="130" width="240" height="90" as="geometry"/></mxCell>
-        <mxCell id="gateTest" value="Tests&#xa;Unit + browser smoke pass" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8ffea;strokeColor=#00b42a;fontSize=14;" vertex="1" parent="1"><mxGeometry x="670" y="130" width="240" height="90" as="geometry"/></mxCell>
-        <mxCell id="gatePersist" value="Persistence&#xa;Places, layers, photos, snapshots survive reload" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7e8;strokeColor=#ff7d00;fontSize=14;" vertex="1" parent="1"><mxGeometry x="970" y="130" width="300" height="90" as="geometry"/></mxCell>
-        <mxCell id="gateMap" value="Map Provider&#xa;AMap works with key&#xa;Leaflet works without key" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f7ff;strokeColor=#3491fa;fontSize=14;" vertex="1" parent="1"><mxGeometry x="70" y="280" width="300" height="100" as="geometry"/></mxCell>
-        <mxCell id="gateWorkspace" value="Workspace&#xa;Create from map/search, edit, delete, filter, view details" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1f0;strokeColor=#f53f3f;fontSize=14;" vertex="1" parent="1"><mxGeometry x="430" y="280" width="300" height="100" as="geometry"/></mxCell>
-        <mxCell id="gatePhotos" value="Photos&#xa;Upload, thumbnail, detail render" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5e8ff;strokeColor=#722ed1;fontSize=14;" vertex="1" parent="1"><mxGeometry x="790" y="280" width="240" height="100" as="geometry"/></mxCell>
-        <mxCell id="gateShare" value="Sharing&#xa;Read-only snapshot&#xa;.foodmap.json round-trip&#xa;No edit controls" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8fffb;strokeColor=#14c9c9;fontSize=14;" vertex="1" parent="1"><mxGeometry x="1090" y="280" width="240" height="100" as="geometry"/></mxCell>
-        <mxCell id="gateResponsive" value="Scheme 4 + Responsive UX&#xa;Warm paper style, map-first, no overlap at 1440x900 and 390x844" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c9cdd4;fontSize=14;" vertex="1" parent="1"><mxGeometry x="190" y="450" width="330" height="100" as="geometry"/></mxCell>
-        <mxCell id="gateSafety" value="Data Safety&#xa;Malformed import rejected without corrupting records" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c9cdd4;fontSize=14;" vertex="1" parent="1"><mxGeometry x="540" y="450" width="330" height="100" as="geometry"/></mxCell>
-        <mxCell id="gateExit" value="Exit Condition&#xa;&#xa;All blocker gates pass. Final acceptance report exists at docs/V1.0/final-acceptance-report.md with command summaries, screenshots, Scheme 4 visual review, and manual scenario results." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1d2129;fontColor=#ffffff;strokeColor=#1d2129;fontSize=16;align=left;spacing=18;" vertex="1" parent="1">
-          <mxGeometry x="290" y="680" width="820" height="150" as="geometry"/>
-        </mxCell>
+        <mxCell id="title4" value="Current-Stage Acceptance Gates And Exit Conditions" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1;align=center;" vertex="1" parent="1"><mxGeometry x="240" y="30" width="920" height="40" as="geometry"/></mxCell>
+        <mxCell id="g1" value="Documentation&#xa;Active docs + drawio align with current app and remaining plan" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f2f3f5;strokeColor=#86909c;fontSize=14;" vertex="1" parent="1"><mxGeometry x="90" y="120" width="290" height="80" as="geometry"/></mxCell>
+        <mxCell id="g2" value="PRD Core&#xa;Create, view, edit, delete, filter, photos, share, import/export" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f7ff;strokeColor=#3491fa;fontSize=14;" vertex="1" parent="1"><mxGeometry x="410" y="120" width="290" height="80" as="geometry"/></mxCell>
+        <mxCell id="g3" value="Commands&#xa;npm run build&#xa;npm test&#xa;npx playwright test" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8ffea;strokeColor=#00b42a;fontSize=14;" vertex="1" parent="1"><mxGeometry x="730" y="120" width="290" height="80" as="geometry"/></mxCell>
+        <mxCell id="g4" value="Map + Persistence&#xa;Wuhan fallback map, reload-safe records/photos/snapshots" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7e8;strokeColor=#ff7d00;fontSize=14;" vertex="1" parent="1"><mxGeometry x="1050" y="120" width="290" height="80" as="geometry"/></mxCell>
+        <mxCell id="g5" value="Recommendation Layer&#xa;50 scanlist entries; verified mappable count equals rendered pin count" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1f0;strokeColor=#f53f3f;fontSize=14;" vertex="1" parent="1"><mxGeometry x="90" y="280" width="290" height="80" as="geometry"/></mxCell>
+        <mxCell id="g6" value="POI Verification&#xa;Duplicate, branch, source group, coordinate trust, exact/approx labels" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5e8ff;strokeColor=#722ed1;fontSize=14;" vertex="1" parent="1"><mxGeometry x="410" y="280" width="290" height="80" as="geometry"/></mxCell>
+        <mxCell id="g7" value="UX&#xa;Selected recommendation detail, modal/panel exclusivity, mobile no overlap" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffce8;strokeColor=#d99a2b;fontSize=14;" vertex="1" parent="1"><mxGeometry x="730" y="280" width="290" height="80" as="geometry"/></mxCell>
+        <mxCell id="g8" value="Marker Readability&#xa;Ranked pins, green adaptive pins, compact dots across zoom" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8fffb;strokeColor=#14c9c9;fontSize=14;" vertex="1" parent="1"><mxGeometry x="1050" y="280" width="290" height="80" as="geometry"/></mxCell>
+        <mxCell id="g9" value="Agent Bridge&#xa;Context/list/focus/filter/save/snapshot/export; reject unverified rec save" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f2f3f5;strokeColor=#4e5969;fontSize=14;" vertex="1" parent="1"><mxGeometry x="250" y="440" width="350" height="90" as="geometry"/></mxCell>
+        <mxCell id="g10" value="Data Safety&#xa;Malformed import and unsafe agent writes cannot corrupt existing data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1f0;strokeColor=#b94a3a;fontSize=14;" vertex="1" parent="1"><mxGeometry x="670" y="440" width="350" height="90" as="geometry"/></mxCell>
+        <mxCell id="exit" value="Exit Condition&#xa;&#xa;All blocker gates pass. The V1.0 PRD experience remains intact. The current-stage recommendation overlay shows only verified pins. Agent Bridge actions preserve UI validation and POI gates. Final evidence includes commands, screenshots, scanlist/POI reports, import/export, agent checks, and drawio/doc alignment." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c9cdd4;fontSize=15;align=left;spacing=16;" vertex="1" parent="1"><mxGeometry x="230" y="680" width="940" height="160" as="geometry"/></mxCell>
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram id="feature-specification-map" name="Feature Specification Map">
+  <diagram id="feature-specification" name="Feature Specification Map">
     <mxGraphModel dx="1420" dy="980" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="980" math="0" shadow="0">
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
-        <mxCell id="title5" value="FoodMap V1.0 Scheme 4 Feature Specification Map" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1;align=center;" vertex="1" parent="1">
-          <mxGeometry x="300" y="30" width="800" height="40" as="geometry"/>
-        </mxCell>
-        <mxCell id="centerFeature" value="FoodMap V1.0&#xa;Local-first travel food journal map" style="ellipse;whiteSpace=wrap;html=1;fillColor=#165dff;fontColor=#ffffff;strokeColor=#165dff;fontSize=18;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="580" y="380" width="240" height="140" as="geometry"/>
-        </mxCell>
-        <mxCell id="placesFeature" value="Food Places&#xa;&#xa;Name&#xa;Coordinates&#xa;Address/city&#xa;Rating&#xa;Visit date&#xa;Tags&#xa;Notes&#xa;Map/search creation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1f0;strokeColor=#f53f3f;fontSize=14;" vertex="1" parent="1"><mxGeometry x="90" y="130" width="240" height="170" as="geometry"/></mxCell>
-        <mxCell id="layersFeature" value="Layers&#xa;&#xa;Default layers&#xa;Name&#xa;Color&#xa;Icon&#xa;Visibility&#xa;Counts&#xa;Sort order" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f7ff;strokeColor=#3491fa;fontSize=14;" vertex="1" parent="1"><mxGeometry x="420" y="130" width="240" height="170" as="geometry"/></mxCell>
-        <mxCell id="photosFeature" value="Photos&#xa;&#xa;Upload&#xa;Blob storage&#xa;Thumbnail generation&#xa;Detail gallery&#xa;Share thumbnail" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5e8ff;strokeColor=#722ed1;fontSize=14;" vertex="1" parent="1"><mxGeometry x="740" y="130" width="240" height="170" as="geometry"/></mxCell>
-        <mxCell id="mapFeature" value="Map Experience&#xa;&#xa;Full-screen map&#xa;Markers&#xa;Provider adapter&#xa;AMap primary&#xa;Leaflet fallback&#xa;Layer visibility" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7e8;strokeColor=#ff7d00;fontSize=14;" vertex="1" parent="1"><mxGeometry x="1070" y="130" width="240" height="170" as="geometry"/></mxCell>
-        <mxCell id="searchFeature" value="Search + Filters&#xa;&#xa;Keyword&#xa;City&#xa;Tags&#xa;Rating&#xa;Visit date&#xa;Map search result" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8ffea;strokeColor=#00b42a;fontSize=14;" vertex="1" parent="1"><mxGeometry x="90" y="610" width="240" height="170" as="geometry"/></mxCell>
-        <mxCell id="shareFeature" value="Share Snapshot&#xa;&#xa;Read-only route&#xa;Local snapshot&#xa;Layer toggles&#xa;Marker details&#xa;No edit controls" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8fffb;strokeColor=#14c9c9;fontSize=14;" vertex="1" parent="1"><mxGeometry x="420" y="610" width="240" height="170" as="geometry"/></mxCell>
-        <mxCell id="importFeature" value="Import / Export&#xa;&#xa;.foodmap.json&#xa;Validation&#xa;Snapshot import&#xa;Error safety&#xa;Clean-profile round-trip" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c9cdd4;fontSize=14;" vertex="1" parent="1"><mxGeometry x="740" y="610" width="240" height="170" as="geometry"/></mxCell>
-        <mxCell id="verifyFeature" value="Verification&#xa;&#xa;Build&#xa;Unit tests&#xa;Playwright smoke&#xa;Manual acceptance&#xa;Visual screenshots&#xa;Final report" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f2f3f5;strokeColor=#4e5969;fontSize=14;" vertex="1" parent="1"><mxGeometry x="1070" y="610" width="240" height="170" as="geometry"/></mxCell>
-        <mxCell id="f1" style="endArrow=block;html=1;strokeColor=#86909c;" edge="1" parent="1" source="centerFeature" target="placesFeature"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="f2" style="endArrow=block;html=1;strokeColor=#86909c;" edge="1" parent="1" source="centerFeature" target="layersFeature"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="f3" style="endArrow=block;html=1;strokeColor=#86909c;" edge="1" parent="1" source="centerFeature" target="photosFeature"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="f4" style="endArrow=block;html=1;strokeColor=#86909c;" edge="1" parent="1" source="centerFeature" target="mapFeature"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="f5" style="endArrow=block;html=1;strokeColor=#86909c;" edge="1" parent="1" source="centerFeature" target="searchFeature"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="f6" style="endArrow=block;html=1;strokeColor=#86909c;" edge="1" parent="1" source="centerFeature" target="shareFeature"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="f7" style="endArrow=block;html=1;strokeColor=#86909c;" edge="1" parent="1" source="centerFeature" target="importFeature"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="f8" style="endArrow=block;html=1;strokeColor=#86909c;" edge="1" parent="1" source="centerFeature" target="verifyFeature"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="title5" value="FoodMap Current-Stage Feature Specification Map" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1;align=center;" vertex="1" parent="1"><mxGeometry x="235" y="30" width="930" height="40" as="geometry"/></mxCell>
+        <mxCell id="center" value="FoodMap&#xa;Local-first personal food journal + verified Wuhan recommendation map" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff8ea;strokeColor=#c76a32;fontSize=16;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="560" y="390" width="280" height="120" as="geometry"/></mxCell>
+        <mxCell id="f1" value="Personal Places&#xa;&#xa;Name&#xa;Coordinates&#xa;Layer&#xa;Rating&#xa;Visit date&#xa;Tags/notes&#xa;Photos" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f7ff;strokeColor=#3491fa;fontSize=14;" vertex="1" parent="1"><mxGeometry x="90" y="120" width="230" height="160" as="geometry"/></mxCell>
+        <mxCell id="f2" value="Map Experience&#xa;&#xa;Wuhan-centered map&#xa;Map click create&#xa;Personal markers&#xa;Recommendation markers&#xa;Layer/display controls&#xa;Fallback map" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8ffea;strokeColor=#00b42a;fontSize=14;" vertex="1" parent="1"><mxGeometry x="370" y="120" width="230" height="160" as="geometry"/></mxCell>
+        <mxCell id="f3" value="Recommendation Overlay&#xa;&#xa;AMap scanlist 50&#xa;Rank/score&#xa;Review summary&#xa;Image evidence&#xa;Save verified item&#xa;District/list controls" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7e8;strokeColor=#ff7d00;fontSize=14;" vertex="1" parent="1"><mxGeometry x="650" y="120" width="230" height="160" as="geometry"/></mxCell>
+        <mxCell id="f4" value="POI Verification&#xa;&#xa;Semantic duplicates&#xa;Branch/address matching&#xa;Source groups&#xa;Coordinate trust&#xa;Exact/approx labels&#xa;Conflict hiding" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1f0;strokeColor=#f53f3f;fontSize=14;" vertex="1" parent="1"><mxGeometry x="930" y="120" width="230" height="160" as="geometry"/></mxCell>
+        <mxCell id="f5" value="Share + Import/Export&#xa;&#xa;Read-only snapshot&#xa;#/share/:id&#xa;.foodmap.json&#xa;Validation&#xa;Clean-profile round trip" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5e8ff;strokeColor=#722ed1;fontSize=14;" vertex="1" parent="1"><mxGeometry x="90" y="620" width="230" height="150" as="geometry"/></mxCell>
+        <mxCell id="f6" value="Responsive UX&#xa;&#xa;Collapsed side panels&#xa;Mobile bottom action bar&#xa;Mutually exclusive panels&#xa;Modal cleanup&#xa;No overlap screenshots" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffce8;strokeColor=#d99a2b;fontSize=14;" vertex="1" parent="1"><mxGeometry x="370" y="620" width="230" height="150" as="geometry"/></mxCell>
+        <mxCell id="f7" value="Agent Bridge&#xa;&#xa;Context/list/focus/filter&#xa;Save/update/delete&#xa;Load/list/focus recs&#xa;Save verified rec&#xa;Snapshot/export&#xa;Events" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8fffb;strokeColor=#14c9c9;fontSize=14;" vertex="1" parent="1"><mxGeometry x="650" y="620" width="230" height="150" as="geometry"/></mxCell>
+        <mxCell id="f8" value="Acceptance&#xa;&#xa;Build&#xa;Unit tests&#xa;Playwright&#xa;Screenshots&#xa;POI reports&#xa;Agent smoke&#xa;Final report" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f2f3f5;strokeColor=#4e5969;fontSize=14;" vertex="1" parent="1"><mxGeometry x="930" y="620" width="230" height="150" as="geometry"/></mxCell>
       </root>
     </mxGraphModel>
   </diagram>

@@ -1,4 +1,13 @@
-import { expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
+
+async function loadRecommendations(page: Page, projectName: string) {
+  if (projectName === "mobile") {
+    await page.getByRole("button", { name: "更多工具" }).click();
+    await page.getByRole("dialog", { name: "更多工具" }).getByRole("button", { name: "扫街榜", exact: true }).click();
+    return;
+  }
+  await page.getByTestId("load-recommendations").click();
+}
 
 test("workspace opens with core controls", async ({ page }, testInfo) => {
   await page.goto("/#/map");
@@ -14,7 +23,8 @@ test("workspace opens with core controls", async ({ page }, testInfo) => {
     await expect(page.getByTestId("layer-panel")).toContainText("地图显示");
     await expect(page.getByTestId("layer-panel")).toContainText("高德扫街榜");
     await page.getByRole("checkbox", { name: /高德扫街榜/ }).uncheck();
-    await expect(page.getByTestId("recommendation-summary")).toContainText("已核验图钉 0 个");
+    await expect(page.getByTestId("layer-panel")).toContainText("/ 50 扫街榜");
+    await expect(page.getByTestId("recommendation-summary")).toHaveCount(0);
     await page.getByTestId("desktop-open-detail").click();
     await expect(page.getByTestId("place-list")).toBeVisible();
   } else {
@@ -33,8 +43,10 @@ test("clicking Wuhan map opens place editor with real coordinates", async ({ pag
   await page.goto("/#/map");
   await page.getByTestId("workspace-map").click({ position: { x: 120, y: 160 } });
   await expect(page.getByTestId("map-create-popover")).toBeVisible();
+  await expect(page.getByTestId("recommendation-summary")).toHaveCount(0);
   await page.getByTestId("map-create-popover").getByRole("button", { name: "新增" }).click();
   await expect(page.getByTestId("place-editor")).toBeVisible();
+  await expect(page.getByTestId("recommendation-summary")).toHaveCount(0);
   await expect(page.getByText("已使用地图点击位置")).toBeVisible();
   await page.getByText("位置详情").click();
   await expect(page.getByLabel("城市")).toHaveValue("武汉");
@@ -72,10 +84,14 @@ test("agent bridge can save, list and focus a place", async ({ page }) => {
 
 test("loads scanlist recommendations and shows all 50 verified pins", async ({ page }, testInfo) => {
   await page.goto("/#/map");
-  await page.getByTestId("load-recommendations").click();
-  await expect(page.getByTestId("recommendation-summary")).toContainText("扫街榜 50 条");
-  await expect(page.getByTestId("recommendation-summary")).toContainText("已核验图钉 50 个");
-  await expect(page.getByTestId("recommendation-summary")).toContainText("待核验 0 个");
+  await loadRecommendations(page, testInfo.project.name);
+  if (testInfo.project.name === "desktop") {
+    await expect(page.getByTestId("recommendation-summary")).toContainText("扫街榜 50 条");
+    await expect(page.getByTestId("recommendation-summary")).toContainText("已核验图钉 50 个");
+    await expect(page.getByTestId("recommendation-summary")).toContainText("待核验 0 个");
+  } else {
+    await expect(page.getByTestId("recommendation-summary")).toHaveCount(0);
+  }
   const panel = page.getByTestId("recommendation-panel").last();
   await expect(panel).toBeVisible();
   await expect(panel.getByTestId("recommendation-list-toggle")).toBeVisible();

@@ -1,162 +1,156 @@
-# FoodMap V1.0 Milestone Roadmap
+# FoodMap Milestone Roadmap
 
-## M0: Documentation And Scheme 4 Freeze
+## M0: Current-Stage Documentation Alignment
 
 Goal:
 
-- Establish the V1.0 Scheme 4 design baseline before implementation.
+- Make active docs and drawio reflect the implemented app and remaining current-stage work.
 
 Deliverables:
 
-- Active docs and V1.0 snapshot docs.
-- Product requirements document.
-- Scheme 4 development plan.
-- Figma prompts.
-- Drawio gap diagram.
-- Acceptance gate document.
+- Updated target architecture.
+- Updated current-vs-target gap.
+- Updated development and acceptance plan.
+- Updated acceptance gates.
+- Updated drawio diagram.
+- Under-20 ChatGPT audit document list.
 
 Completion Conditions:
 
-- All V1.0 documents exist and consistently describe pure frontend scope and the Scheme 4 travel journal direction.
-- Drawio includes architecture, gap, plan, milestones, gates, and feature specification.
+- Docs no longer describe the project as having no source code, map, persistence, or tests.
+- Recommendation, POI verification, Agent Bridge, UX modes, and adaptive pins are in scope.
 
-## M1: Project Foundation
+## M1: V1.0 Personal Map Regression Closure
 
 Goal:
 
-- Create a runnable frontend app with test tooling.
+- Preserve the original PRD experience while current-stage changes continue.
 
 Deliverables:
 
-- Vite + React + TypeScript project.
-- Hash routes for workspace and share view.
-- Base layout and design tokens.
-- Vitest and Playwright setup.
+- Stable place CRUD.
+- Stable layers, filters, photos, share snapshots, and import/export.
+- Desktop and mobile layout regression checks.
 
 Completion Conditions:
 
-- App runs locally.
-- Build and initial tests pass.
-- `#/map` route renders the workspace shell.
+- User can complete create, view, edit, delete, filter, photo, share, export, and import loops.
+- No modal, side panel, status bar, or bottom bar blocks the active task.
 
-## M2: Domain And IndexedDB Data Core
+## M2: Wuhan Recommendation And POI Quality
 
 Goal:
 
-- Make user records durable in the browser.
+- Keep AMap scanlist pins factually defensible.
 
 Deliverables:
 
-- Domain types and validation.
-- IndexedDB repositories for `places`, `layers`, `photos`, `snapshots`, and `meta`.
-- Photo blob and thumbnail handling.
-- Import/export codecs.
-- First-run default layers.
+- 50-entry scanlist data.
+- Manual verified pin overlay.
+- Semantic duplicate and branch handling.
+- Refresh report with mappable/pending/conflict counts.
+- Visible exact/approximate coordinate labeling.
 
 Completion Conditions:
 
-- CRUD works for layers and food places.
-- Photos survive reload.
-- Invalid imports fail safely.
+- Map pin count equals verified mappable count.
+- Unverified or conflicting candidates are not rendered as pins.
+- Same-name branches and user-reported factual errors are covered by the verification mechanism.
 
-## M3: Map Provider Layer
+## M3: Recommendation Detail And Evidence UX
 
 Goal:
 
-- Deliver provider-independent map rendering and marker interaction.
+- Make scanlist exploration useful without overwhelming the right panel or mobile sheet.
 
 Deliverables:
 
-- Map provider adapter.
-- AMap provider and Leaflet fallback.
-- Marker rendering, layer visibility, selected place focus.
-- Map click and marker click event flow.
+- Selected-place-first recommendation detail.
+- Collapsible ranking list.
+- Score, rank, confidence, coordinate accuracy, source, review summary, and image evidence.
+- Image fallback state.
 
 Completion Conditions:
 
-- User can create and manage places on the map.
-- Marker interaction and layer toggles work.
-- No-key fallback map is usable.
+- Selecting a marker shows a focused detail rather than the entire ranking by default.
+- Evidence is inspectable and truthful.
+- Desktop and mobile screenshots show readable detail layouts.
 
-## M4: Personal Workspace UI
+## M4: Input Experience Upgrade
 
 Goal:
 
-- Deliver the full personal food journal map workspace.
+- Reduce friction when recording a personal place.
 
 Deliverables:
 
-- Desktop workspace with left layer panel, top controls, map tools, detail drawer, editor modal, filters, photos, and import/export.
-- Mobile workspace with top search, full-screen map, bottom action bar, bottom sheets, and full-screen editor.
-- Place CRUD, layer visibility, search, filtering, rating, visit date, tags, notes, and photos.
+- Required-first editor.
+- Clear map-click confirmation.
+- Unsaved-close protection.
+- Better pending photo preview and save feedback.
+- Field-level validation.
 
 Completion Conditions:
 
-- User can create, edit, delete, view, and filter food places.
-- User can upload at least two photos and see thumbnails.
-- Desktop and mobile layouts are usable without incoherent overlap.
+- A minimal record can be saved quickly.
+- Dirty forms cannot be lost silently.
+- Photos are understandable before and after save.
 
-## M5: Local Share Experience
+## M5: Map Pin Readability And Density
 
 Goal:
 
-- Provide a read-only local sharing workflow without a backend.
+- Make markers readable across zoom levels and viewport sizes.
 
 Deliverables:
 
-- Share snapshot generation.
-- `#/share/:snapshotId` read-only route.
-- `.foodmap.json` export/import.
+- Ranked recommendation pin style.
+- Green adaptive pin mode for zoomed/low-density secondary recommendations.
+- Compact dot mode for crowded map views.
+- Screenshot evidence across zoom levels.
 
 Completion Conditions:
 
-- A generated snapshot opens as a read-only map.
-- Export/import works across browser profiles.
-- Editing controls are absent from share view.
+- Zooming in upgrades eligible dots into green pin-style markers.
+- Crowded views remain readable.
+- Marker modes update after pan, zoom, and resize.
 
-## M6: Scheme 4 Visual Closure
+## M6: Agent Bridge Acceptance
 
 Goal:
 
-- Make the implemented UI match the travel journal design direction without harming usability.
+- Make FoodMap callable by companion agents without creating a second unsafe data path.
 
 Deliverables:
 
-- Scheme 4 theme CSS.
-- Desktop and mobile screenshots.
-- Visual polish for paper cards, muted map, star ratings, layer markers, and restrained decoration.
+- Bridge smoke coverage for context, list, focus, filter, save, recommendation load/list/focus/save, snapshot, and export.
+- Rejection path for unverified recommendation save.
+- Event evidence for command/result/state changes.
 
 Completion Conditions:
 
-- Interface reads as warm travel journal rather than generic admin UI.
-- Map remains the primary surface.
-- User can identify search, add, filter, and layer controls quickly.
+- Agent commands use the same validation as UI flows.
+- Verified recommendation save works.
+- Unverified recommendation save fails with a readable error.
 
-## M7: V1.0 Acceptance Closure
+## M7: Final Current-Stage Acceptance
 
 Goal:
 
-- Prove V1.0 is complete and ready to use.
+- Prove the current-stage product can support the PRD and target architecture.
 
 Deliverables:
 
-- Passing build and tests.
-- Desktop and mobile screenshots.
+- Passing `npm run build`.
+- Passing `npm test`.
+- Passing `npx playwright test`.
+- Desktop/mobile screenshots.
+- POI and scanlist evidence.
+- Agent Bridge evidence.
 - Final acceptance report.
 
 Completion Conditions:
 
-- Every acceptance gate passes or has an explicit non-blocking waiver.
-- No blocker remains in functionality, persistence, map rendering, share view, or responsive layout.
-
-## Evidence Sources
-
-Each milestone must reference the implementation-level documents below when development starts:
-
-- Data and import/export evidence: `data-schema-and-import-export-contract.md`
-- Domain and repository evidence: `repository-and-domain-api-contract.md`
-- Map provider evidence: `map-provider-contract.md`
-- Browser and final report evidence: `e2e-test-and-evidence-matrix.md`
-- Visual and responsive evidence: `visual-acceptance-checklist.md`
-
-Final milestone closure must produce `docs/V1.0/final-acceptance-report.md`.
+- All blocker gates pass.
+- Any remaining non-blocker is listed with severity, owner area, and follow-up.
+- Drawio and active docs still match implementation.

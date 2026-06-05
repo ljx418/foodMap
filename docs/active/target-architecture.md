@@ -1,216 +1,157 @@
-# FoodMap V1.0 Target Architecture
+# FoodMap Target Architecture
 
 ## Summary
 
-FoodMap V1.0 is a pure frontend single-page application. It should feel close to the reference map-marking experience, but the product direction is now fixed by the Scheme 4 PRD: a travel-journal-style personal food map with warm paper texture, map-first interaction, and low-interruption recording.
+FoodMap is a pure frontend, local-first food map. The V1.0 PRD defines the foundation: a travel-journal-style personal food map with photos, ratings, notes, visit dates, layers, filters, local sharing, and import/export. The current stage extends that foundation with a verified Wuhan recommendation overlay, AMap scanlist refresh data, POI verification, street-view/image evidence, adaptive pins, and a browser Agent Bridge.
 
-The current architecture has design documents and PRD assets, but no application source code, no package manifest, no persistence implementation, no map integration, and no test harness. The target architecture introduces a local-first frontend stack, an explicit module structure, and enough interface boundaries to support a map provider fallback.
+The target architecture is a modular frontend. UI modules may depend on domain, persistence, map adapter, recommendation, and agent contracts, but external data and agent commands must not bypass validation or POI admission rules.
 
-## Target Stack
+## Stack
 
 - Build system: Vite
 - UI runtime: React + TypeScript
-- Styling: CSS custom properties and component-scoped CSS files
+- Styling: CSS custom properties and app-level CSS
 - Routing: hash-based routing
-- Storage: IndexedDB for records and photo blobs
+- Storage: IndexedDB for user records, photos, snapshots, and metadata
 - Map providers:
-  - Primary: AMap Web JS API when `VITE_AMAP_KEY` is configured
-  - Fallback: Leaflet + OpenStreetMap when no AMap key is available
-- Tests: Vitest for unit tests and Playwright for browser smoke tests
+  - Primary target: AMap Web JS API when `VITE_AMAP_KEY` is configured
+  - Current fallback: Leaflet + public raster tiles
+  - Safety fallback: local schematic Wuhan map when remote tiles fail
+- Tests: Vitest for domain/unit tests and Playwright for browser acceptance
+- Agent surface: `window.FoodMapAgentBridge`
 
-## Target Source Layout
+## Source Layout
 
 ```text
 src/
+├── agent/
 ├── app/
 ├── domain/
 ├── persistence/
 ├── map/
 │   ├── amap/
 │   └── leaflet/
+├── recommendations/
 ├── features/
 │   ├── workspace/
 │   └── share/
 ├── components/
 ├── styles/
 └── tests/
-    ├── unit/
-    └── e2e/
 ```
 
-The detailed file list is defined in [development-plan-scheme4.md](./development-plan-scheme4.md). Implementation should follow that structure unless a later design revision explicitly changes it.
+## Runtime Layers
 
-Implementation contracts:
-
-- Data and import/export details: [data-schema-and-import-export-contract.md](./data-schema-and-import-export-contract.md)
-- Repository and domain APIs: [repository-and-domain-api-contract.md](./repository-and-domain-api-contract.md)
-- Map provider behavior: [map-provider-contract.md](./map-provider-contract.md)
-- E2E evidence requirements: [e2e-test-and-evidence-matrix.md](./e2e-test-and-evidence-matrix.md)
-- Visual acceptance: [visual-acceptance-checklist.md](./visual-acceptance-checklist.md)
-
-## Runtime Architecture
-
-The application is organized into six layers:
-
-- App shell: route setup, layout shell, and route-specific containers. It must not become a marketing navigation shell.
-- UI feature layer: map workspace, layer panel, search/filter bar, map tools, place detail drawer, place editor modal, share snapshot dialog, import/export dialog, share view.
-- Domain layer: food place, food layer, photo asset, share snapshot, food filter state, filters, validation, default sample data.
-- Map adapter layer: provider-independent map interface with AMap and Leaflet implementations.
-- Persistence layer: IndexedDB repositories, import/export codecs, local share snapshot storage, metadata store.
-- Verification layer: unit tests, browser smoke tests, and manual acceptance checklist.
+| Layer | Responsibility | Key Files |
+| --- | --- | --- |
+| App shell | Route setup and app entry | `src/app`, `src/main.tsx` |
+| Workspace UI | Header, map canvas, display panel, list/detail panels, editor, filters, share/import dialogs, mobile panels | `src/features/workspace` |
+| Share UI | Local read-only snapshot route | `src/features/share` |
+| Domain | Food place/layer/photo/snapshot types, filters, validation, defaults | `src/domain` |
+| Persistence | IndexedDB repositories and import/export codec | `src/persistence` |
+| Map adapter | Provider-independent map contract, AMap path, Leaflet fallback, marker rendering | `src/map` |
+| Recommendation | AMap scanlist data, manual verified pins, semantic verification, recommendation conversion | `src/recommendations` |
+| Agent Bridge | Browser API for companion agents and automation | `src/agent/FoodMapAgentBridge.ts` |
+| Verification | Unit tests, Playwright tests, evidence docs | `src/tests`, `e2e`, `docs/active` |
 
 ## Core Routes
 
-- `#/map`: personal editing workspace.
+- `#/map`: personal editing workspace and verified recommendation exploration.
 - `#/share/:snapshotId`: local read-only share view.
 
 The default route redirects to `#/map`.
 
-## Public Types
+## Domain Model
 
-```ts
-export type FoodRating = 1 | 2 | 3 | 4 | 5;
+The V1.0 personal record types remain canonical:
 
-export interface FoodPlace {
-  id: string;
-  name: string;
-  longitude: number;
-  latitude: number;
-  address?: string;
-  city?: string;
-  layerId: string;
-  tags: string[];
-  rating: FoodRating;
-  visitedAt: string;
-  notes: string;
-  photoIds: string[];
-  createdAt: string;
-  updatedAt: string;
-}
+- `FoodPlace`: user-owned map record with name, coordinates, layer, rating, visit date, tags, notes, address/city, photo IDs, and timestamps.
+- `FoodLayer`: user layer with color, icon, visibility, and sort order.
+- `PhotoAsset`: local photo blob and generated thumbnail.
+- `ShareSnapshot`: read-only exportable snapshot.
+- `FoodFilterState`: keyword, city, layers, tags, rating, and visit date filters.
 
-export interface FoodLayer {
-  id: string;
-  name: string;
-  color: string;
-  icon: "pin" | "star" | "bowl" | "coffee" | "heart";
-  visible: boolean;
-  sortOrder: number;
-}
+The current-stage recommendation types add:
 
-export interface PhotoAsset {
-  id: string;
-  placeId: string;
-  fileName: string;
-  mimeType: string;
-  blob: Blob;
-  thumbnailDataUrl: string;
-  createdAt: string;
-}
+- `AmapScanlistRecommendation`: source ranking item with rank, score, POI ID, address/district text, review summary, source URL, coordinate, accuracy, image evidence, and verification fields.
+- `AmapImageEvidence`: public image/street-view evidence with URL, alt text, and source metadata.
+- `RecommendationVerificationResult`: admission decision including status, confidence, mappable flag, duplicate group, coordinate trust, and warnings.
 
-export interface ShareSnapshot {
-  id: string;
-  title: string;
-  places: FoodPlace[];
-  layers: FoodLayer[];
-  photos: Pick<PhotoAsset, "id" | "placeId" | "fileName" | "mimeType" | "thumbnailDataUrl" | "createdAt">[];
-  exportedAt: string;
-}
-
-export interface FoodFilterState {
-  keyword: string;
-  city?: string;
-  layerIds: string[];
-  tags: string[];
-  minRating?: FoodRating;
-  visitedFrom?: string;
-  visitedTo?: string;
-}
-```
-
-## IndexedDB Contract
-
-Database name: `foodmap-db`.
-
-Stores:
-
-- `places`: `keyPath: id`
-- `layers`: `keyPath: id`
-- `photos`: `keyPath: id`, index `placeId`
-- `snapshots`: `keyPath: id`
-- `meta`: `keyPath: key`
-
-First-run default layers:
-
-- `必吃餐厅` / `star` / `#C76A32`
-- `咖啡馆` / `coffee` / `#8A5A3B`
-- `小吃快餐` / `bowl` / `#6F7F47`
-- `甜品饮品` / `heart` / `#D98A7A`
-- `想去清单` / `pin` / `#8C7AA9`
-
-The canonical IndexedDB and `.foodmap.json` contracts are defined in [data-schema-and-import-export-contract.md](./data-schema-and-import-export-contract.md).
-
-## Map Provider Interface
-
-```ts
-export interface MapProviderAdapter {
-  name: "amap" | "leaflet";
-  initialize(container: HTMLElement, options: MapInitializeOptions): Promise<void>;
-  destroy(): void;
-  setPlaces(places: FoodPlace[], layers: FoodLayer[]): void;
-  focusPlace(placeId: string): void;
-  setLayerVisibility(layerId: string, visible: boolean): void;
-  searchPlaces(query: string, city?: string): Promise<MapSearchResult[]>;
-  locateByCoordinates(longitude: number, latitude: number): void;
-  onPlaceClick(handler: (placeId: string) => void): void;
-  onMapClick(handler: (point: { longitude: number; latitude: number }) => void): void;
-}
-```
-
-The UI must depend on this interface, not directly on AMap or Leaflet APIs.
-
-The canonical map provider contract, including `MapInitializeOptions` and `MapSearchResult`, is defined in [map-provider-contract.md](./map-provider-contract.md).
-
-Provider requirements:
-
-- Map initialization failure must render a readable error state, not a blank screen.
-- Marker style uses `FoodLayer.color` and `FoodLayer.icon`.
-- Marker click returns `placeId`.
-- Map click returns longitude and latitude and starts the "add here" flow after confirmation.
-- Hidden layers immediately remove matching markers from the map.
-- If `VITE_AMAP_KEY` is unavailable or invalid, the app must still run in Leaflet fallback mode and surface "当前使用备用地图模式".
+Recommendation items are not user records. They become `FoodPlace` records only through an explicit save action after verification passes.
 
 ## Data Flow
 
-1. The workspace loads layers, places, photos, and share snapshots from IndexedDB.
-2. UI actions update domain state first, then persist through repositories.
-3. Map markers are derived from visible layers and filtered places.
-4. Clicking a marker selects a place and opens the detail drawer.
-5. Sharing creates a `ShareSnapshot` from all places or the currently filtered result, based on the user's choice.
-6. Export serializes snapshot metadata, places, layers, and photo thumbnails to `.foodmap.json`; import validates before writing and must not corrupt existing data on failure.
+1. The workspace loads user places, layers, photos, and snapshots from IndexedDB.
+2. Recommendation data loads from `AMAP_WUHAN_SCANLIST` only when the user or agent requests it.
+3. `evaluateRecommendation` determines whether each recommendation is allowed on the map.
+4. The map renders personal markers from visible user layers and recommendation markers from verified mappable recommendation items.
+5. Selecting a personal marker opens personal detail; selecting a recommendation marker opens recommendation detail.
+6. Saving a verified recommendation converts it through `recommendationToFoodPlace` and then uses the same persistence path as manual records.
+7. Share snapshots and `.foodmap.json` exports include user records, not unsaved recommendation candidates unless saved first.
+8. Agent commands call the same domain, persistence, recommendation, and validation functions as UI actions.
+
+## Map Architecture
+
+The UI depends on `MapProviderAdapter`, not directly on provider APIs. Provider requirements:
+
+- Initialize with a Wuhan-centered view.
+- Render personal markers and recommendation markers as distinct visual systems.
+- Support marker click, map click, focus, layer visibility, and provider failure state.
+- Keep Leaflet usable without `VITE_AMAP_KEY`.
+- Render a local Wuhan fallback when remote tiles fail.
+- For recommendation density, render top ranks as ranked pins and lower-density visible items as adaptive green pins; crowded secondary items may stay as small dots.
+
+## POI Verification Architecture
+
+Recommendation pins must pass the data admission gate:
+
+- Normalize names and branch names before matching.
+- Preserve branch, district, road, POI ID, and coordinate trust in the candidate.
+- Group semantic duplicates before deciding map admission.
+- Require multi-source agreement or documented manual overlay.
+- Mark exact and approximate coordinates separately.
+- Hide conflicts and unverified candidates from the map.
+- Show verification status and confidence in the detail panel.
+
+The canonical mechanism is [poi-verification-mechanism-v1.md](./poi-verification-mechanism-v1.md). The latest current-stage evidence is [amap-scanlist-refresh-report.md](./amap-scanlist-refresh-report.md).
+
+## UX State Architecture
+
+The workspace should maintain one primary task surface at a time:
+
+- `idle/display/list/detail/recommendation/tools/create/edit/filter/importExport/share` are the effective UI modes.
+- Side panels are collapsed by default on desktop and exposed through half-round floating buttons.
+- Mobile panels are mutually exclusive and use bottom-sheet behavior.
+- Modal flows hide noisy map status bars and bottom action bars.
+- Escape closes the current top layer before lower-priority UI.
+- Recommendation detail should not show the full list by default after a place is selected; list expansion is a deliberate action.
+
+## Agent Bridge Architecture
+
+`window.FoodMapAgentBridge` is the current integration surface for companion agents. Required behavior:
+
+- `getContext`, `listPlaces`, `getPlace`, `setFilter`, `focusPlace`.
+- `createPlaceDraft`, `savePlace`, `updatePlace`, `deletePlace` using the same validation as UI flows.
+- `createSnapshot` and `exportSnapshot` using the same snapshot/export path.
+- `loadRecommendations`, `listRecommendations`, `focusRecommendation`.
+- `saveRecommendationAsPlace` only for mappable verified recommendation items.
+- Browser events: `foodmap:agent-command`, `foodmap:agent-result`, `foodmap:state-changed`.
+
+Future agent panels may be added, but they must sit above this bridge instead of creating a second data path.
 
 ## Design Constraints
 
-- The map is the first screen, not a landing page.
-- Scheme 4 visual tokens are authoritative: paper background `#F6EBD6`, card `#FFF8EA`, ink `#3B2B1F`, muted text `#8B7B68`, line `#D8C5A5`, primary orange `#C76A32`, olive `#6F7F47`, gold `#D99A2B`, danger `#B94A3A`.
-- Cards use warm paper texture, 16-22px radius, thin warm borders, and light shadows.
-- Decoration is restrained: at most one decorative paper/tape/stamp element per main view.
-- Panels should be compact and operational, keeping the map as the primary surface.
-- Desktop layout: left layer panel, top search controls, right map tools, detail drawer.
-- Mobile layout: full map, top search, bottom detail drawer, collapsible layer/filter controls.
+- The map is the first screen.
+- The app keeps the Scheme 4 travel-journal tone, but controls remain compact and operational.
+- Decorative elements are secondary to map readability.
+- Recommendation marker styling must be legible: ranked pins for high-priority items, green adaptive pins when zoom/density allows, and unobtrusive dots only for crowded secondary items.
+- Text and buttons must not overlap in desktop 1440x900 or mobile 390x844.
 
-## UX State Requirements
+## Non-Goals
 
-- First-run empty state: "还没有美食图钉", with actions for search, map add, and `.foodmap.json` import.
-- Filter empty state: "没有找到符合条件的地点。试试放宽评分、标签或到访时间范围。"
-- Missing share snapshot state: explain that the local snapshot was not found and offer import plus return-to-map actions.
-- Loading states cover map loading, data loading, thumbnail generation, and import validation.
-- Error states cover provider failure, AMap key fallback, oversized photos, invalid import format, and storage quota failure.
-
-## Non-Goals For V1.0
-
-- Backend API
-- Account login
-- Public hosted share links
-- Multi-user collaboration
-- Server-side photo storage
-- Real-time sync
+- Backend account system.
+- Public permanent share links.
+- Multi-user real-time collaboration.
+- Server-side photo storage.
+- Fabricating private or app-only AMap ranking entries.
+- Rendering low-confidence POI candidates as map pins.

@@ -1,100 +1,68 @@
-# FoodMap V1.0 Current vs Target Gap
+# FoodMap Current vs Target Gap
+
+## Assessment
+
+The current documentation can support the original V1.0 personal food journal scope, but it cannot fully guide the current stage unless it also covers the implemented recommendation layer, POI verification pipeline, street-view image evidence, adaptive pin behavior, mobile UI state governance, and Agent Bridge. The active docs have now been updated to make those areas part of the formal architecture and acceptance baseline.
 
 ## Current State
 
-The project has a V1.0 documentation baseline and a Scheme 4 PRD package, but no source code, no package manifest, no frontend runtime, no persistence implementation, no map provider implementation, no test harness, and no final acceptance evidence.
+The project now has:
+
+- Vite + React + TypeScript app with hash routes.
+- Personal workspace at `#/map` and local read-only share route.
+- IndexedDB persistence for places, layers, photos, snapshots, and metadata.
+- `.foodmap.json` export/import.
+- Leaflet fallback map centered on Wuhan, with schematic offline fallback when map tiles fail.
+- Map click create confirmation, place editor modal, detail/list panels, filters, and responsive mobile panels.
+- AMap Wuhan scanlist recommendation layer with 50 loaded entries.
+- Manual verified pin overlay and verification rules under `src/recommendations`.
+- Recommendation details with score, review summary, verification status, and image evidence.
+- Adaptive recommendation markers that switch from dots to green pin style based on zoom and visible density.
+- `window.FoodMapAgentBridge` with commands for context, places, filters, snapshots, recommendations, and saving verified recommendations.
+- Vitest and Playwright coverage that currently exercises desktop/mobile workspace and scanlist behavior.
 
 ## Target State
 
-FoodMap V1.0 is a pure frontend, local-first, travel-journal-style food map application with:
+The target current-stage product is a pure frontend, local-first Wuhan food map that satisfies the V1.0 PRD and extends it with verified recommendation exploration:
 
-- Full-screen interactive map.
-- Personal editing workspace at `#/map`.
-- Local read-only share page at `#/share/:snapshotId`.
-- Food place records with ratings, visit dates, notes, tags, photos, and coordinates.
-- Layer controls and filtering.
-- AMap provider with Leaflet fallback.
-- IndexedDB persistence.
-- Local read-only share snapshots.
-- Export/import share packages.
-- Documented acceptance gates and final acceptance report.
-- Scheme 4 visual style: warm paper, muted map, paper cards, restrained decoration.
+- The personal food journal flow remains complete: create, edit, delete, filter, photo thumbnail, local share, export, and import.
+- The Wuhan scanlist overlay displays 50 verified map pins and never renders unverified or conflicting candidates as pins.
+- Each recommendation detail shows ranking, score, confidence, evidence, coordinate accuracy, and street-view/image evidence where available.
+- Mobile and desktop controls are mutually exclusive enough that panels, bars, and modals do not fight for the same screen area.
+- The Agent Bridge can be used by companion agents without bypassing domain validation, data safety, or POI verification rules.
+- Documentation, drawio, acceptance gates, and evidence reports describe the same architecture.
 
 ## Gap Matrix
 
-| Area | Current | Target | Required Work | Evidence |
+| Area | Current | Target | Remaining Work | Evidence |
 | --- | --- | --- | --- | --- |
-| Documentation | Baseline docs plus Scheme 4 PRD package | Canonical active docs and V1.0 snapshot | Normalize PRD, dev plan, Figma prompts and update indexes | Files under `docs/active` and `docs/V1.0` |
-| App Foundation | None | Vite React TypeScript SPA | Initialize frontend project | Build output and route smoke test |
-| Domain Model | None | Typed food map records | Add models and validation | Unit tests |
-| Persistence | None | IndexedDB local storage with `places`, `layers`, `photos`, `snapshots`, `meta` | Implement repositories and import/export codec | Reload persistence test |
-| Map | None | AMap plus Leaflet fallback | Implement adapter and providers | Browser smoke tests |
-| Workspace UI | None | Scheme 4 map-first editor | Build panels, drawers, forms, filters, and mobile bottom sheets | Manual scenario screenshots |
-| Photos | None | Blob storage and thumbnails | Implement upload and thumbnails | Photo round-trip test |
-| Sharing | None | Local read-only snapshots and `.foodmap.json` packages | Implement snapshot route and export/import | Import/export evidence |
-| Visual System | PRD tokens only | Scheme 4 CSS implementation | Apply warm paper tokens, marker icons, card styles, and restrained decoration | Desktop/mobile screenshots |
-| Responsive UX | None | Desktop 1440x900 and mobile 390x844 usable layouts | Add responsive CSS and verify | Playwright screenshots |
-| Acceptance | None | Gate-based V1.0 exit | Run and document checks | Final acceptance report |
-| Implementation Contracts | Newly added contract docs | Implementation-ready contract set | Use data, repository, map, E2E, and visual contract docs during development | Audit document set under `docs/active` |
-
-## Functional Specification Summary
-
-Food places:
-
-- Required fields: name, longitude, latitude, layer, rating, visit date.
-- Optional fields: address, city, tags, notes, photos.
-- Supported actions: create from map click, create from search result, edit, delete with confirmation, select, focus, filter.
-
-Layers:
-
-- Required fields: name, color, icon, visibility, sort order.
-- Default layers: `必吃餐厅`, `咖啡馆`, `小吃快餐`, `甜品饮品`, `想去清单`.
-- Supported actions: create default layer, create custom layer, toggle visibility, show counts, assign places.
-
-Photos:
-
-- Stored locally as blobs.
-- Thumbnail data URLs are generated for list/detail/share display.
-- Share export includes thumbnails, not original blobs by default.
-
-Share snapshots:
-
-- Generated from current local records.
-- Stored locally and opened by `#/share/:snapshotId`.
-- Exported as `.foodmap.json` for import elsewhere.
-- Share view must show local read-only copy and must not show create, edit, delete, upload, or save controls.
-
-Search and filters:
-
-- Keyword covers name, address, tags, and notes.
-- Provider search can create a place draft from a result.
-- Filters cover city, layer, tag, rating or minimum rating, and visit date range.
-- Clear action restores all visible places.
-
-State design:
-
-- First-run empty state offers search, map add, and `.foodmap.json` import.
-- Filter empty state suggests relaxing rating, tags, or visit date.
-- Missing share snapshot state offers import and return-to-map.
-- Loading and error states cover map, data, photos, import validation, provider failure, fallback map mode, and storage failure.
+| PRD Scope | V1.0 PRD is stable | PRD plus current-stage recommendation and agent scope | Keep PRD as baseline and document extensions in architecture/gates | Active docs |
+| App Foundation | Implemented | Stable pure frontend app | Keep build/test harness passing | `npm run build`, `npm test` |
+| Personal Records | Implemented | Full local-first CRUD with photos and filters | Continue regression coverage as UX changes | Unit and Playwright tests |
+| Share/Import/Export | Implemented | Read-only local share and safe file exchange | Verify clean-profile round trip after each change | E2E matrix |
+| Map Provider | Leaflet fallback implemented; AMap path documented | Wuhan map remains usable without key and with tile failure fallback | Add provider failure evidence to final report | Map provider contract |
+| Recommendation Layer | 50 scanlist entries visible and mappable | Verified-only map pins with clear approximate/exact labeling | Maintain refresh report and block low-confidence pins | Scanlist report |
+| POI Verification | Semantic normalization and manual overlay exist | Every future recommendation must pass multi-source or manual evidence gate | Add refresh-time conflict summary and duplicate groups to report | `poi-verification-mechanism-v1.md` |
+| Images | 50 image evidence entries reported | Detail page consistently shows verified image/street-view content | Keep image alt/name check in refresh pipeline | Refresh report |
+| Adaptive Pins | Implemented in Leaflet provider | Pin readability scales with zoom and screen density | Tune thresholds with screenshot evidence | Playwright screenshots |
+| UX State | Improved mobile/header/modal behavior | One primary task surface at a time | Add explicit modal/panel mutual-exclusion checks | UX audit and E2E |
+| Agent Bridge | Implemented as browser bridge | Companion agents can query, focus, filter, save verified recommendations, export snapshots | Add bridge contract and smoke tests to acceptance | V1.1 report and E2E |
+| Documentation | Previously stale for current stage | Active docs and drawio match implemented architecture | Keep under-20 audit set current | This document and drawio |
 
 ## Development Path
 
-1. Freeze Scheme 4 docs and indexes.
-2. Initialize app and test harness.
-3. Implement domain and IndexedDB repositories.
-4. Implement Leaflet fallback and map provider abstraction.
-5. Build workspace UI and place CRUD.
-6. Add search, filters, layers, and photos.
-7. Build share route and import/export.
-8. Add AMap provider.
-9. Apply Scheme 4 visual polish.
-10. Run acceptance gate and write final report.
+1. Lock current documentation and drawio to the current-stage baseline.
+2. Harden POI verification reporting so every future scanlist item records duplicate group, source groups, coordinate trust, and admission decision.
+3. Improve recommendation detail UX with clearer evidence blocks and image fallback states.
+4. Improve personal input UX with faster required-first create flow, clearer unsaved states, and better photo preview.
+5. Improve viewing UX with list/detail/map focus coordination on desktop and mobile.
+6. Add Agent Bridge acceptance tests for read, focus, filter, save verified recommendation, reject unverified recommendation, snapshot, and export.
+7. Run full build/unit/e2e/visual acceptance and update final evidence.
 
 ## Risks And Controls
 
-- AMap key unavailable: Leaflet fallback must run without configuration.
-- IndexedDB quota pressure from photos: generate thumbnails and keep export size bounded.
-- Share expectations: V1.0 explicitly supports local snapshots and file export/import, not public links.
-- Mobile panel overlap: responsive layout must be verified with browser screenshots.
-- Scheme 4 over-decoration: keep decoration minimal and preserve map readability.
+- POI factual error: no candidate becomes a pin without verification metadata and visible accuracy label.
+- Same-name branch confusion: semantic duplicate grouping must preserve branch, district, road, and POI ID.
+- Public page instability: refresh script must report source URLs, hidden conflicts, and pending items instead of fabricating entries.
+- Mobile clutter regression: modal and panel visibility must be governed by a single UI mode.
+- Agent misuse: Agent Bridge commands must use the same validators and recommendation admission rules as the UI.

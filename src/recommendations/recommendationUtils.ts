@@ -50,6 +50,9 @@ export function recommendationToMapPlace(recommendation: AmapScanlistRecommendat
 export function recommendationToFoodPlace(recommendation: AmapScanlistRecommendation, layerId: string): FoodPlace {
   const now = nowIso();
   const verification = evaluateRecommendation(recommendation);
+  if (!verification.mappable) {
+    throw new Error("推荐项未通过坐标核验，不能收藏为地图地点");
+  }
   const hasCoordinate = typeof recommendation.longitude === "number" && typeof recommendation.latitude === "number";
   return {
     id: createId("place"),

@@ -3,7 +3,14 @@ import { DEFAULT_LAYERS } from "../domain/sampleData";
 import { EMPTY_FILTER, filterPlaces } from "../domain/filters";
 import type { FoodPlace } from "../domain/types";
 import { decodeSnapshotFile, encodeSnapshot } from "../persistence/importExportCodec";
-import { evaluateRecommendation, findSemanticDuplicateGroups, normalizePlaceName } from "../recommendations/verification";
+import { AMAP_WUHAN_SCANLIST } from "../recommendations/amapWuhanScanlist";
+import { recommendationToFoodPlace } from "../recommendations/recommendationUtils";
+import {
+  evaluateRecommendation,
+  findSemanticDuplicateGroups,
+  getMappableRecommendations,
+  normalizePlaceName
+} from "../recommendations/verification";
 import type { AmapScanlistRecommendation } from "../recommendations/types";
 
 const place: FoodPlace = {
@@ -103,6 +110,10 @@ describe("recommendation verification", () => {
     expect(evaluateRecommendation(candidate).mappable).toBe(false);
   });
 
+  it("rejects converting unverified candidates into personal places", () => {
+    expect(() => recommendationToFoodPlace(candidate, DEFAULT_LAYERS[0].id)).toThrow("未通过坐标核验");
+  });
+
   it("groups semantic duplicates with the same duplicate id", () => {
     const duplicate = {
       ...candidate,
@@ -126,5 +137,23 @@ describe("recommendation verification", () => {
       }
     };
     expect(findSemanticDuplicateGroups([primary, duplicate]).get("wuhan-wansongxiaoyuan")).toHaveLength(2);
+  });
+
+  it("keeps the real Wuhan scanlist baseline fully verified and mappable", () => {
+    expect(AMAP_WUHAN_SCANLIST).toHaveLength(50);
+    expect(getMappableRecommendations(AMAP_WUHAN_SCANLIST)).toHaveLength(50);
+
+    for (const recommendation of AMAP_WUHAN_SCANLIST) {
+      const decision = evaluateRecommendation(recommendation);
+      const sourceGroups = new Set(recommendation.verification.evidence.map((item) => item.independentSourceGroup));
+
+      expect(decision.mappable, recommendation.name).toBe(true);
+      expect(sourceGroups.size, recommendation.name).toBeGreaterThanOrEqual(2);
+      expect(recommendation.verification.coordinateTrust, recommendation.name).not.toMatch(/^(none|low)$/);
+      expect(typeof recommendation.longitude, recommendation.name).toBe("number");
+      expect(typeof recommendation.latitude, recommendation.name).toBe("number");
+      expect(recommendation.coverImageUrl, recommendation.name).toBeTruthy();
+      expect(recommendation.imageEvidence?.matched, recommendation.name).toBe(true);
+    }
   });
 });

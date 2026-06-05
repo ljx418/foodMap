@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { PanelRightOpen, SlidersHorizontal, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Download, List, PanelRightOpen, Plus, Share2, SlidersHorizontal, Sparkles, Upload, X } from "lucide-react";
 import { useFoodMapAgentBridge } from "../../agent/FoodMapAgentBridge";
 import { EmptyState } from "../../components/EmptyState";
 import { EMPTY_FILTER } from "../../domain/filters";
@@ -18,7 +18,7 @@ import { ShareSnapshotDialog } from "./ShareSnapshotDialog";
 import { useFoodMapData } from "./useFoodMapData";
 import { WorkspaceHeader } from "./WorkspaceHeader";
 import { AMAP_WUHAN_SCANLIST } from "../../recommendations/amapWuhanScanlist";
-import { getMappableRecommendations, getPinCandidateRecommendations } from "../../recommendations/verification";
+import { evaluateRecommendation, getMappableRecommendations, getPinCandidateRecommendations } from "../../recommendations/verification";
 import {
   RECOMMENDATION_LAYER,
   recommendationMapId,
@@ -26,6 +26,9 @@ import {
   recommendationToMapPlace,
   sourceIdFromMapId
 } from "../../recommendations/recommendationUtils";
+
+type MobilePanelMode = "layers" | "places" | "detail" | "tools";
+type WorkspaceUiMode = "idle" | "display" | "list" | "detail" | "recommendation" | "tools" | "create" | "edit" | "filter" | "importExport" | "share";
 
 export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
   const { places, layers, photos, filter, loading, visiblePlaces, setFilter, reload } = useFoodMapData();
@@ -36,7 +39,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
   const [filterOpen, setFilterOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
-  const [mobilePanel, setMobilePanel] = useState<"layers" | "places" | "detail" | undefined>();
+  const [mobilePanel, setMobilePanel] = useState<MobilePanelMode | undefined>();
   const [leftPanelOpen, setLeftPanelOpen] = useState(false);
   const [rightPanelOpen, setRightPanelOpen] = useState(false);
   const [rightView, setRightView] = useState<"list" | "detail" | "recommendations">("list");
@@ -110,6 +113,16 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
     notify("已加载高德扫街榜推荐");
   }
 
+  function openMobileList() {
+    if (recommendationsLoaded && visibleRecommendations.length > 0) {
+      setRightView("recommendations");
+      setSelectedRecommendationId(undefined);
+    } else {
+      setRightView(selectedId ? "detail" : "list");
+    }
+    setMobilePanel((panel) => panel === "places" ? undefined : "places");
+  }
+
   function selectRecommendation(sourceId: string) {
     setSelectedRecommendationId(sourceId);
     setRightPanelOpen(true);
@@ -121,7 +134,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
   async function saveRecommendation(sourceId: string) {
     const recommendation = AMAP_WUHAN_SCANLIST.find((item) => item.sourceId === sourceId);
     if (!recommendation) return;
-    if (typeof recommendation.longitude !== "number" || typeof recommendation.latitude !== "number") {
+    if (!evaluateRecommendation(recommendation).mappable) {
       notify("该推荐未通过坐标核验，不能收藏为地图地点");
       throw new Error("推荐项未通过坐标核验，不能收藏为地图地点");
     }
@@ -151,19 +164,78 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
   );
   useFoodMapAgentBridge(bridgeOptions);
 
+  useEffect(() => {
+    function closeTopLayer(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      if (editorOpen) {
+        setEditingPlace(undefined);
+        setDraftPoint(undefined);
+        setPendingPoint(undefined);
+        return;
+      }
+      if (filterOpen) {
+        setFilterOpen(false);
+        return;
+      }
+      if (shareOpen) {
+        setShareOpen(false);
+        return;
+      }
+      if (importOpen) {
+        setImportOpen(false);
+        return;
+      }
+      if (mobilePanel) {
+        setMobilePanel(undefined);
+        return;
+      }
+      if (pendingPoint) setPendingPoint(undefined);
+    }
+    window.addEventListener("keydown", closeTopLayer);
+    return () => window.removeEventListener("keydown", closeTopLayer);
+  }, [editorOpen, filterOpen, importOpen, mobilePanel, pendingPoint, shareOpen]);
+
   const noFiltered = !loading && places.length > 0 && visiblePlaces.length === 0;
+  const uiMode: WorkspaceUiMode = editorOpen || pendingPoint
+    ? (editingPlace ? "edit" : "create")
+    : filterOpen
+      ? "filter"
+      : importOpen
+        ? "importExport"
+        : shareOpen
+          ? "share"
+          : mobilePanel === "layers" || leftPanelOpen
+            ? "display"
+            : mobilePanel === "places" || (rightPanelOpen && rightView === "list")
+              ? "list"
+              : mobilePanel === "tools"
+                ? "tools"
+              : mobilePanel === "detail" || (rightPanelOpen && rightView === "detail")
+                ? "detail"
+                : rightPanelOpen && rightView === "recommendations"
+                  ? "recommendation"
+                  : "idle";
+  const mapStatusVisible = uiMode === "idle" || (!isMobileViewport() && uiMode === "recommendation");
+  const mobileActionBarVisible = ["idle", "display", "list"].includes(uiMode);
 
   return (
     <main className="workspace">
       <WorkspaceHeader
         keyword={filter.keyword}
         onKeywordChange={(keyword) => setFilter({ ...filter, keyword })}
-        onAdd={() => setDraftPoint(DEFAULT_CENTER)}
-        onFilter={() => setFilterOpen(true)}
+        onAdd={() => {
+          setMobilePanel(undefined);
+          setDraftPoint(DEFAULT_CENTER);
+        }}
+        onFilter={() => {
+          setMobilePanel(undefined);
+          setFilterOpen(true);
+        }}
         onShare={() => setShareOpen(true)}
         onExport={() => setImportOpen(true)}
         onImport={() => setImportOpen(true)}
         onLoadRecommendations={loadRecommendations}
+        onMore={() => setMobilePanel((panel) => panel === "tools" ? undefined : "tools")}
       />
       <div className={`workspace-body${leftPanelOpen ? " has-left-panel" : ""}${rightPanelOpen ? " has-right-panel" : ""}`}>
         <div className="desktop-panel-slot">
@@ -225,7 +297,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
             }}
             notify={notify}
           />
-          {activeFilterCount > 0 || hiddenLayerCount > 0 ? (
+          {mapStatusVisible && (activeFilterCount > 0 || hiddenLayerCount > 0) ? (
             <div className="map-filter-summary" data-testid="map-filter-summary">
               <span>
                 当前显示 {visiblePlaces.length} / {places.length} 个地点
@@ -241,9 +313,10 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
               ) : null}
             </div>
           ) : null}
-          {recommendationsLoaded && activeFilterCount === 0 && hiddenLayerCount === 0 ? (
+          {mapStatusVisible && recommendationsLoaded && activeFilterCount === 0 && hiddenLayerCount === 0 ? (
             <div className="map-filter-summary" data-testid="recommendation-summary">
-              <span>扫街榜 {visibleRecommendations.length} 条，已核验图钉 {mappableRecommendations.length} 个，待核验 {visibleRecommendations.length - mappableRecommendations.length} 个</span>
+              <span className="summary-full">扫街榜 {visibleRecommendations.length} 条，已核验图钉 {mappableRecommendations.length} 个，待核验 {visibleRecommendations.length - mappableRecommendations.length} 个</span>
+              <span className="summary-compact">扫街榜 {mappableRecommendations.length} 个图钉</span>
               <button type="button" onClick={() => setRecommendationLayerVisible((visible) => !visible)}>
                 {recommendationLayerVisible ? "隐藏扫街榜" : "显示扫街榜"}
               </button>
@@ -319,18 +392,62 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
           ) : null}
         </div>
       </div>
-      <div className="mobile-action-bar">
-        <button type="button" onClick={() => setMobilePanel("layers")}>显示</button>
-        <button type="button" onClick={() => setMobilePanel("places")}>清单</button>
-        <button type="button" onClick={() => setDraftPoint(DEFAULT_CENTER)}>新增</button>
-      </div>
+      {mobileActionBarVisible ? (
+        <div className="mobile-action-bar">
+          <button
+            type="button"
+            className={mobilePanel === "layers" ? "mobile-nav-button is-active" : "mobile-nav-button"}
+            onClick={() => setMobilePanel((panel) => panel === "layers" ? undefined : "layers")}
+            aria-pressed={mobilePanel === "layers"}
+          >
+            <SlidersHorizontal size={19} />
+            <span>显示</span>
+          </button>
+          <button
+            type="button"
+            className="mobile-nav-button mobile-nav-button--primary"
+            onClick={() => {
+              setDraftPoint(DEFAULT_CENTER);
+              setMobilePanel(undefined);
+            }}
+          >
+            <Plus size={22} />
+            <span>新增</span>
+          </button>
+          <button
+            type="button"
+            className={mobilePanel === "places" ? "mobile-nav-button is-active" : "mobile-nav-button"}
+            onClick={openMobileList}
+            aria-pressed={mobilePanel === "places"}
+          >
+            <List size={19} />
+            <span>清单</span>
+          </button>
+        </div>
+      ) : null}
       {mobilePanel ? (
         <div className="mobile-panel-backdrop" onClick={() => setMobilePanel(undefined)}>
-          <section className="mobile-panel" onClick={(event) => event.stopPropagation()}>
+          <section className="mobile-panel" role="dialog" aria-modal="true" aria-labelledby="mobile-panel-title" onClick={(event) => event.stopPropagation()}>
             <div className="mobile-panel__header">
-              <h2>{mobilePanel === "layers" ? "地图显示" : mobilePanel === "places" ? "地点清单" : "地点详情"}</h2>
+              <h2 id="mobile-panel-title">{mobilePanel === "layers" ? "地图显示" : mobilePanel === "places" ? (rightView === "recommendations" ? "扫街榜清单" : "地点清单") : mobilePanel === "tools" ? "更多工具" : "地点详情"}</h2>
               <button type="button" className="ghost-button" onClick={() => setMobilePanel(undefined)}>关闭</button>
             </div>
+            {mobilePanel === "tools" ? (
+              <div className="mobile-tools-grid">
+                <button type="button" className="tool-button" onClick={() => { setMobilePanel(undefined); setImportOpen(true); }}>
+                  <Upload size={18} /> 导入
+                </button>
+                <button type="button" className="tool-button" onClick={() => { setMobilePanel(undefined); setImportOpen(true); }}>
+                  <Download size={18} /> 导出
+                </button>
+                <button type="button" className="tool-button" onClick={() => { setMobilePanel(undefined); setShareOpen(true); }}>
+                  <Share2 size={18} /> 分享
+                </button>
+                <button type="button" className="tool-button" onClick={() => { setMobilePanel(undefined); loadRecommendations(); }}>
+                  <Sparkles size={18} /> 扫街榜
+                </button>
+              </div>
+            ) : null}
             {mobilePanel === "layers" ? (
               <LayerPanel
                 layers={layers}

@@ -16,9 +16,9 @@ export function FilterPanel({ open, filter, places, layers, onChange, onClose }:
   const cities = collectCities(places);
 
   return (
-    <div className="sheet" data-testid="filter-panel">
+    <div className="sheet" data-testid="filter-panel" role="dialog" aria-modal="true" aria-labelledby="filter-panel-title">
       <div className="sheet__header">
-        <h2>筛选</h2>
+        <h2 id="filter-panel-title">筛选</h2>
         <button type="button" onClick={onClose}>完成</button>
       </div>
       <div className="form-grid">

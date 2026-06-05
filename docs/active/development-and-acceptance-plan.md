@@ -1,181 +1,163 @@
-# FoodMap V1.0 Development And Acceptance Plan
+# FoodMap Development And Acceptance Plan
 
 ## Summary
 
-V1.0 development is organized around Scheme 4: travel journal style. A phase is complete only when its implementation, tests, and evidence are present. The canonical detailed implementation plan is [development-plan-scheme4.md](./development-plan-scheme4.md); this document is the acceptance-oriented summary.
+The original V1.0 work delivered a local-first personal food journal map. The current stage must preserve that PRD experience while finishing the verified Wuhan scanlist, POI quality, recommendation detail, adaptive map pins, mobile/desktop interaction cleanup, and Agent Bridge readiness.
 
-Implementation-level contracts are part of the development baseline:
+This plan is the current implementation and acceptance baseline. A phase exits only when implementation, tests, and evidence are present.
 
-- [data-schema-and-import-export-contract.md](./data-schema-and-import-export-contract.md)
-- [repository-and-domain-api-contract.md](./repository-and-domain-api-contract.md)
-- [map-provider-contract.md](./map-provider-contract.md)
-- [e2e-test-and-evidence-matrix.md](./e2e-test-and-evidence-matrix.md)
-- [visual-acceptance-checklist.md](./visual-acceptance-checklist.md)
+## Development And Acceptance Outline
 
-## Complete Development And Acceptance Outline
-
-| Milestone | Development Scope | Acceptance Evidence | Exit Condition |
+| Phase | Development Scope | Acceptance Evidence | Exit Condition |
 | --- | --- | --- | --- |
-| M0 | Freeze PRD, architecture, contracts, drawio, and audit list | Document checklist and drawio parse result | Active and V1.0 docs are aligned and audit list stays under 20 files |
-| M1 | Initialize Vite React TS app, routes, tokens, Vitest, Playwright | Build/test command output and route smoke screenshots | `#/map` and `#/share/demo` render stable shells |
-| M2 | Implement domain types, validators, filters, IndexedDB repositories, photo thumbnails, import/export codec | Unit tests and reload persistence evidence | Records, photos, layers, and invalid imports behave according to contracts |
-| M3 | Implement MapProviderAdapter, Leaflet fallback, AMap provider, marker rendering, map click, marker click | Provider smoke tests and manual provider notes | Map is usable without AMap key and provider failures never blank the page |
-| M4 | Build desktop/mobile workspace, CRUD, layer panel, filters, photo upload, detail drawer, editor modal | Playwright flows and desktop/mobile screenshots | User can complete the core record loop from creation through filtering |
-| M5 | Build share snapshots, read-only share route, `.foodmap.json` export/import | Clean-profile import/export round-trip evidence | Share page is usable and contains no editing controls |
-| M6 | Apply Scheme 4 visual system and responsive polish | Visual checklist and screenshots | Map remains primary and UI matches travel journal style without clutter |
-| M7 | Run final acceptance and write report | `final-acceptance-report.md` with command summaries and evidence paths | All blocker gates pass or have documented non-blocking waiver |
+| P0 | Align active docs, drawio, target architecture, gap, roadmap, and gates to current-stage reality | Updated docs and drawio parse/open result | Docs no longer claim missing implemented features and audit set stays under 20 files |
+| P1 | Stabilize personal workspace regression baseline | Build/unit/e2e pass; manual create/edit/filter/photo/share checks | V1.0 PRD core loops still work after recommendation/UX changes |
+| P2 | Harden POI verification and scanlist refresh | Refresh report with 50 entries, duplicate groups, source groups, coordinate trust, hidden conflicts | Only verified/mappable items render as pins; all future items require verification |
+| P3 | Improve recommendation viewing experience | Desktop/mobile screenshots showing selected detail, image evidence, collapsed list, clear status | User can inspect one place without seeing a noisy full ranking list |
+| P4 | Improve input experience | Required-first editor, photo preview, unsaved-close handling, map-click confirmation evidence | User can create or save a place quickly without accidental data loss |
+| P5 | Improve map pin readability | Screenshot and Playwright evidence for zoom/density marker thresholds | Crowded views stay readable and zoomed views show green pin-style markers |
+| P6 | Agent Bridge readiness | Browser smoke tests for bridge commands and rejection of unverified recommendation save | Companion agents can call the app without bypassing validation or POI gates |
+| P7 | Final acceptance closure | `npm run build`, `npm test`, `npx playwright test`, screenshots, final report | All blocker gates pass or have documented non-blocking waiver |
 
-## M0: Documentation And Design Baseline
-
-Implementation:
-
-- Preserve the Scheme 4 PRD, development plan, and Figma prompts under `docs/active` and `docs/V1.0`.
-- Include target architecture, milestone roadmap, acceptance gate, gap analysis, and drawio diagram.
-- Update document indexes to point at the standard PRD and Scheme 4 files.
-
-Acceptance:
-
-- `docs/active` and `docs/V1.0` both exist.
-- Drawio file opens in diagrams.net and includes architecture, plan, milestone, gate, and feature pages.
-- Documentation states V1.0 scope, non-goals, Scheme 4 visual direction, and local-first constraints.
-
-## M1: Frontend Foundation
+## P0: Documentation Baseline
 
 Implementation:
 
-- Initialize Vite + React + TypeScript.
-- Add hash router, app shell, CSS tokens, and base responsive layout.
-- Configure Vitest and Playwright.
-- Create empty `MapWorkspace` and `ShareView` shells.
-- Add Scheme 4 CSS tokens and base layout styles.
+- Update `target-architecture.md` to include recommendations, POI verification, images, adaptive pins, UX modes, and Agent Bridge.
+- Update `current-vs-target-gap.md` to reflect the implemented app, not the pre-code baseline.
+- Update `development-and-acceptance-plan.md`, `milestone-roadmap.md`, `acceptance-gate.md`, and `README.md`.
+- Update `current-vs-target-gap.drawio` so the diagram includes current architecture, target architecture, remaining plan, milestones, gates, and exit conditions.
 
 Acceptance:
 
-- `npm run dev` starts the app.
-- `npm run build` completes.
-- `npm test` runs unit tests.
-- Browser smoke test reaches `#/map` and `#/share/demo`.
+- Drawio opens in diagrams.net.
+- Active docs describe the same current state and target state.
+- Audit document list remains below 20 files.
 
-## M2: Domain And IndexedDB Data Core
+## P1: Personal Workspace Regression Baseline
 
 Implementation:
 
-- Define `FoodPlace`, `FoodLayer`, `PhotoAsset`, `ShareSnapshot`, `FoodFilterState`, filters, and validation helpers.
-- Implement IndexedDB stores: `places`, `layers`, `photos`, `snapshots`, `meta`.
-- Implement repositories for place, layer, photo, snapshot, and import/export.
-- Create first-run default layers defined in the Scheme 4 PRD.
+- Keep personal place CRUD, layers, filters, photos, local share, and import/export stable.
+- Ensure modal flows hide persistent bars that do not belong above modal content.
+- Keep desktop side panels collapsed by default and mobile panels mutually exclusive.
 
 Acceptance:
 
-- Create, read, update, and delete work for places and layers.
-- Photos persist as blobs and thumbnails.
-- Data survives page reload.
-- Invalid import payloads are rejected with visible user feedback and do not mutate existing data.
+- User can create from map click and save required fields.
+- User can edit, delete, filter, and clear filters.
+- User can upload photos and see thumbnails after reload.
+- User can generate a read-only share snapshot and import/export `.foodmap.json`.
+- Desktop 1440x900 and mobile 390x844 show no incoherent overlap.
 
-## M3: Map Provider Layer
+## P2: POI Verification And Scanlist Refresh
 
 Implementation:
 
-- Implement `MapProviderAdapter`.
-- Add AMap provider selected when `VITE_AMAP_KEY` exists.
-- Add Leaflet provider fallback when no key exists.
-- Render markers from visible layers and filtered places.
-- Implement readable provider error states.
-- Marker color and icon must derive from layer config.
+- Keep `scripts/refresh_amap_scanlist.mjs` as the refresh entrypoint.
+- Persist generated recommendation data in `src/recommendations/amapWuhanScanlist.generated.ts`.
+- Maintain manual overlay in `src/recommendations/manualVerifiedPins.ts`.
+- Extend refresh reporting with duplicate group, source group, coordinate trust, and admission decision when new data is added.
+- Treat public page ranking, POI page, open web, and manual overlay as separate evidence groups.
 
 Acceptance:
 
-- App runs without AMap key using Leaflet fallback.
-- App runs with AMap key using AMap provider.
-- Marker click opens the correct place.
-- Layer visibility updates marker visibility.
-- Map click can prefill a new place location.
-- Hidden layers immediately remove matching markers.
+- At least 50 scanlist entries are present.
+- Mappable count equals the number of pins rendered on the map.
+- Unverified, single-source, low-confidence, or conflicting candidates do not render as pins.
+- Every recommendation detail shows verification status and coordinate accuracy.
+- Fact-risk examples such as same-name branch confusion are covered by semantic duplicate logic.
 
-## M4: Personal Workspace UI
+## P3: Recommendation Viewing Experience
 
 Implementation:
 
-- Build full-screen map layout.
-- Add left layer panel, top city/search/filter controls, right floating map tools.
-- Add place detail drawer and place editor modal.
-- Support rating, visit date, tags, notes, address, coordinates, and photos.
-- Implement desktop layout: 280px left panel, adaptive map, 380px detail drawer.
-- Implement mobile layout: top search, full-screen map, bottom action bar, bottom sheets, full-screen editor.
-- Add the full place creation flows: map click and search result.
+- Default right/mobile recommendation detail to the selected item, not the full list.
+- Keep the list collapsed behind an explicit toggle after selection.
+- Show ranking, score, district/address, confidence, exact/approximate status, review summary, source, and image/street-view evidence.
+- Provide graceful image fallback when evidence is absent or fails to load.
 
 Acceptance:
 
-- User can create a food place from map click or search result.
-- User can upload photos and see thumbnails in detail view.
-- User can edit and delete a place.
-- User can filter by keyword, city, tags, rating, and visit date.
-- Desktop and mobile layouts have no incoherent overlap.
-- Required fields validate correctly: name, coordinates, layer, rating, visit date.
+- Selecting a recommendation marker opens a single-place detail.
+- The user can expand/collapse the ranking list deliberately.
+- Detail image/evidence appears for the 50 verified entries or shows a truthful fallback.
+- Mobile bottom sheet remains readable and does not cover navigation controls.
 
-## M5: Share View And Import/Export
+## P4: Input Experience
 
 Implementation:
 
-- Generate local share snapshots.
-- Add read-only route `#/share/:snapshotId`.
-- Add export and import for `.foodmap.json` share packages.
-- Allow snapshot generation from all places or current filtered result.
-- Show missing snapshot state with import action.
+- Keep editor required-first: name, layer, city/address, rating, visit date before secondary metadata.
+- Keep coordinates in a lower-priority section unless the user clicked a map point.
+- Preserve unsaved-close confirmation.
+- Improve pending photo preview and save feedback.
+- Ensure search wording reflects local search unless provider search is actually available.
 
 Acceptance:
 
-- Share snapshot opens in read-only view.
-- Share view supports layer toggles, marker clicks, and detail viewing.
-- Exported package can be imported into a clean browser profile.
-- Share view does not expose editing controls.
-- Import failure does not corrupt existing data.
+- New users can complete a minimal place save with only required fields.
+- Closing a dirty editor asks for confirmation.
+- Uploaded photo names/previews are visible before save and thumbnails after save.
+- Validation messages identify the missing field.
 
-## M6: Scheme 4 Visual Implementation
+## P5: Map Pin Readability
 
 Implementation:
 
-- Apply the travel journal visual system from the PRD and Figma prompts.
-- Implement warm paper background, paper cards, muted map treatment, layer marker icons, star ratings, and restrained decoration.
-- Verify that visual decoration does not reduce map readability or task efficiency.
+- Keep personal pins and recommendation pins visually distinct.
+- Top-ranked recommendations use ranked pin styling.
+- Lower-ranked recommendations become green pin-style markers when zoom and visible-density thresholds allow.
+- Crowded views can use compact dots to protect map readability.
 
 Acceptance:
 
-- Visual style reads as travel journal, while controls remain clear and tool-like.
-- User can find search, add, filter, and layer controls within 3 seconds.
-- Share page is visually quieter than the editing workspace and clearly read-only.
-- Desktop 1440x900 and mobile 390x844 screenshots show no overlap.
+- Screenshot evidence at low and high zoom shows the marker mode transition.
+- Marker labels or rank indicators remain legible.
+- Map panning/zooming does not leave stale marker modes.
 
-## M7: Final Acceptance
+## P6: Agent Bridge Readiness
 
 Implementation:
 
-- Run full test suite and manual acceptance checklist.
-- Capture final evidence in `docs/V1.0/final-acceptance-report.md`.
-- Fix all acceptance-gate blockers.
+- Add or maintain bridge commands for context, list, get, draft, save, update, delete, filter, focus, snapshot, export, load recommendations, list recommendations, focus recommendation, and save recommendation as place.
+- Route all save/update actions through domain validation.
+- Route recommendation saves through `evaluateRecommendation`.
+- Emit command/result/state events for companion agents.
 
 Acceptance:
 
-- Build, unit tests, and browser smoke tests pass.
-- Manual checklist is completed.
-- Final acceptance report references evidence for every gate.
+- Agent can list places and recommendations.
+- Agent can focus a place and a recommendation.
+- Agent can save a valid manual place.
+- Agent can save a verified recommendation as a personal place.
+- Agent cannot save an unverified recommendation as a personal place.
+- Agent can create/export a snapshot.
 
-## Required Evidence
+## P7: Final Acceptance
 
-- Command output for build and tests.
-- Browser screenshots for desktop and mobile.
-- Manual verification notes for AMap and Leaflet provider behavior.
+Required commands:
+
+```bash
+npm run build
+npm test
+npx playwright test
+```
+
+Required evidence:
+
+- Command summaries.
+- Desktop and mobile screenshots.
+- Recommendation marker density screenshots.
+- Scanlist refresh report.
+- POI verification report.
+- Agent Bridge smoke evidence.
 - Import/export round-trip evidence.
-- Final acceptance report with pass/fail status.
-- Visual evidence for Scheme 4 desktop and mobile states.
+- Final acceptance report.
 
-## Final Exit Conditions
+Final exit condition:
 
-FoodMap V1.0 can exit only when:
-
-- `npm run build`, `npm test`, and `npx playwright test` pass.
-- Leaflet fallback works without `VITE_AMAP_KEY`.
-- AMap provider is verified when `VITE_AMAP_KEY` is available, or the final report records why AMap verification was unavailable.
-- Core PRD loops pass: create, edit, delete, filter, photo thumbnail, share snapshot, export, clean-profile import.
-- Desktop `1440x900` and mobile `390x844` screenshots show no incoherent overlap.
-- `docs/V1.0/final-acceptance-report.md` references all required evidence.
+- The V1.0 PRD experience remains intact.
+- Current-stage recommendation and agent requirements pass.
+- No known POI candidate with unresolved conflict appears as a map pin.
+- Drawio and active docs still match implementation.

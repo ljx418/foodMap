@@ -118,6 +118,11 @@ button {
   color: var(--color-muted);
 }
 
+.mobile-more-button,
+.summary-compact {
+  display: none;
+}
+
 .icon-button.danger {
   color: var(--color-danger);
 }
@@ -863,6 +868,19 @@ button {
   background: #fffdf7;
 }
 
+.mobile-tools-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mobile-tools-grid .tool-button {
+  min-height: 48px;
+  justify-content: flex-start;
+  border-radius: 14px;
+  color: var(--color-ink);
+}
+
 .map-create-popover {
   position: absolute;
   z-index: 502;
@@ -1253,14 +1271,36 @@ label,
 
 @media (max-width: 900px) {
   .workspace-header {
-    grid-template-columns: 1fr;
-    gap: 10px;
-    padding: 12px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 10px;
+    padding: 10px 12px;
+  }
+
+  .brand {
+    grid-column: 1;
+    grid-row: 1;
+    gap: 0;
+  }
+
+  .brand span {
+    font-size: 20px;
+    line-height: 1.05;
+  }
+
+  .brand small {
+    font-size: 12px;
+  }
+
+  .search-box {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    height: 40px;
   }
 
   .header-actions {
-    display: grid;
-    grid-template-columns: repeat(5, 38px) minmax(82px, 1fr);
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
     gap: 8px;
     justify-content: end;
   }
@@ -1271,7 +1311,7 @@ label,
     padding: 0 8px;
   }
 
-  .tool-button span {
+  .header-actions .tool-button span {
     display: none;
   }
 
@@ -1280,8 +1320,17 @@ label,
     padding: 0;
   }
 
+  .header-actions .header-secondary-tool {
+    display: none;
+  }
+
+  .header-actions .mobile-more-button {
+    display: inline-flex;
+  }
+
   .header-actions .primary-button {
-    width: 100%;
+    width: auto;
+    min-width: 82px;
     white-space: nowrap;
   }
 
@@ -1364,18 +1413,19 @@ label,
 
   .mobile-action-bar {
     position: fixed;
-    left: 12px;
-    right: 12px;
-    bottom: 12px;
+    left: 14px;
+    right: 14px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
     z-index: 4;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    grid-template-columns: 1fr 1.16fr 1fr;
+    gap: 10px;
     padding: 8px;
-    border: 1px solid var(--color-line);
-    border-radius: 18px;
-    background: rgba(255, 248, 234, 0.94);
-    box-shadow: var(--shadow-paper);
+    border: 1px solid rgba(76, 52, 31, 0.14);
+    border-radius: 22px;
+    background: rgba(255, 248, 234, 0.9);
+    box-shadow: 0 18px 42px rgba(76, 52, 31, 0.22);
+    backdrop-filter: blur(12px);
   }
 
   .toast-stack {
@@ -1388,6 +1438,24 @@ label,
     right: 12px;
     top: 12px;
     max-width: none;
+    width: auto;
+    justify-content: space-between;
+    padding: 8px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+  }
+
+  .map-filter-summary .summary-full {
+    display: none;
+  }
+
+  .map-filter-summary .summary-compact {
+    display: inline;
+  }
+
+  .map-filter-summary button {
+    min-height: 28px;
+    padding: 0 9px;
   }
 
   .map-create-popover {
@@ -1404,11 +1472,45 @@ label,
     justify-content: flex-end;
   }
 
-  .mobile-action-bar button {
-    min-height: 42px;
-    border-radius: 14px;
-    color: var(--color-ink);
-    background: #fffdf7;
+  .mobile-nav-button {
+    min-width: 0;
+    min-height: 54px;
+    display: grid;
+    place-items: center;
+    gap: 3px;
+    padding: 6px 8px;
+    border: 1px solid transparent;
+    border-radius: 16px;
+    color: var(--color-muted);
+    background: transparent;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.1;
+  }
+
+  .mobile-nav-button svg {
+    display: block;
+  }
+
+  .mobile-nav-button.is-active {
+    border-color: rgba(47, 125, 140, 0.24);
+    color: #2F7D8C;
+    background: rgba(47, 125, 140, 0.1);
+  }
+
+  .mobile-nav-button--primary {
+    min-height: 58px;
+    margin-top: -10px;
+    border-color: rgba(255, 255, 255, 0.62);
+    border-radius: 20px;
+    color: #fff;
+    background: var(--color-primary);
+    box-shadow: 0 14px 30px rgba(199, 106, 50, 0.34);
+    font-size: 13px;
+  }
+
+  .mobile-nav-button--primary:active {
+    transform: translateY(1px);
   }
 
   .form-grid {

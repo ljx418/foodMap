@@ -1,65 +1,74 @@
-# FoodMap V1.0 Active Design Docs
+# FoodMap Active Design Docs
 
-This directory contains the active design baseline for FoodMap V1.0. V1.0 is a pure frontend, local-first personal food journal map using Scheme 4: travel journal style, warm paper texture, map-first interaction, and low-friction record keeping.
+This directory is the active documentation baseline for the current FoodMap stage. It keeps the V1.0 PRD as the product foundation, and adds the implemented V1.1/V1.2 scope: Agent Bridge, Wuhan real-map experience, AMap scanlist recommendation layer, POI verification, street-view image evidence, adaptive pins, and mobile interaction cleanup.
 
 ## Current Version
 
-- Active version: V1.0
-- Current project state: documentation-first workspace with no application source code yet
-- Implementation priority: documentation first, then frontend implementation
-- Primary constraint: pure frontend first, no backend dependency in V1.0
-- Product direction: Scheme 4 travel journal style, not a generic admin/map-marking tool
+- Active baseline: V1.0 PRD plus current-stage implementation scope.
+- Current project state: runnable Vite React TypeScript frontend with IndexedDB persistence, Leaflet fallback map, share/import/export, Agent Bridge, and AMap Wuhan scanlist pins.
+- Current-stage focus: improve input/viewing UX, maintain verified Wuhan POI quality, and prepare the app to be called by companion agents.
+- Primary constraint: pure frontend first, no backend dependency for user records or share snapshots.
+- Product direction: map-first personal food journal with a verified recommendation overlay, not a generic admin panel or public social product.
 
 ## Document Index
 
-- [Target Architecture](./target-architecture.md)
 - [Product Requirements Document](./product-requirements-document.md)
+- [Target Architecture](./target-architecture.md)
 - [Development And Acceptance Plan](./development-and-acceptance-plan.md)
-- [Scheme 4 Development Plan](./development-plan-scheme4.md)
 - [Milestone Roadmap](./milestone-roadmap.md)
 - [Acceptance Gate](./acceptance-gate.md)
 - [Current vs Target Gap](./current-vs-target-gap.md)
 - [Drawio Gap Diagram](./current-vs-target-gap.drawio)
-- [Figma Prompts For Scheme 4](./figma-prompts-scheme4.md)
+- [POI Verification Mechanism](./poi-verification-mechanism-v1.md)
+- [AMap Scanlist Refresh Report](./amap-scanlist-refresh-report.md)
+- [UX Audit](./ux-audit-2026-06-04.md)
+- [V1.1 Implementation Report](./v1.1-implementation-report.md)
+- [V1.2 Implementation Report](./v1.2-implementation-report.md)
 - [Data Schema And Import/Export Contract](./data-schema-and-import-export-contract.md)
 - [Repository And Domain API Contract](./repository-and-domain-api-contract.md)
 - [Map Provider Contract](./map-provider-contract.md)
 - [E2E Test And Evidence Matrix](./e2e-test-and-evidence-matrix.md)
 - [Visual Acceptance Checklist](./visual-acceptance-checklist.md)
 
-## V1.0 Definition
+## Product Definition
 
-V1.0 delivers a browser-local food journal map with two first-class experiences:
+FoodMap delivers two first-class experiences:
 
 - Personal workspace: create, edit, filter, and manage food places, layers, photos, ratings, visit dates, tags, and notes.
-- Local share view: generate a read-only snapshot in the same app and export/import `.foodmap.json` packages for cross-device viewing.
+- Verified Wuhan recommendation overlay: show AMap scanlist restaurants as independently styled pins only after POI verification, with ranking, score, evidence, image, and confidence metadata.
 
-V1.0 does not include backend sync, accounts, team collaboration, or public permanent share links.
+The app also supports a local read-only share view and `.foodmap.json` import/export. Current-stage work must preserve local-first behavior while making the app more useful to users and callable by companion agents.
 
-## Scheme 4 Product Rules
+## Current-Stage Rules
 
 - The map is always the primary surface.
-- The visual language is warm paper, muted map, paper cards, thin borders, light shadows, restrained decoration.
-- Desktop uses a left layer panel, top search controls, central map, and right detail drawer.
-- Mobile uses top search, full-screen map, bottom action bar, and bottom sheets.
-- Share pages are strictly read-only and must not expose create, edit, delete, upload, or save controls.
+- Recommendation pins are not personal records until the user saves them.
+- A scanlist item may become a map pin only when `evaluateRecommendation` marks it mappable and the refresh/manual verification report has evidence.
+- Approximate coordinates must stay visibly labeled as approximate; the UI must not imply exactness.
+- Mobile uses a compact header, bottom action bar, and mutually exclusive panels.
+- Dialogs, status bars, side panels, and bottom bars must not persist over create/edit/share/import modal flows.
+- Agent commands must preserve the same validation and POI admission rules as manual UI actions.
 
-## Audit Document Set
+## ChatGPT Audit Document Set
 
-For implementation-readiness audit, review these 15 documents:
+Use these 19 documents for external PRD/architecture/acceptance audit:
 
 1. `docs/active/product-requirements-document.md`
 2. `docs/active/target-architecture.md`
-3. `docs/active/development-plan-scheme4.md`
-4. `docs/active/development-and-acceptance-plan.md`
-5. `docs/active/acceptance-gate.md`
-6. `docs/active/current-vs-target-gap.md`
-7. `docs/active/current-vs-target-gap.drawio`
-8. `docs/active/figma-prompts-scheme4.md`
-9. `docs/active/milestone-roadmap.md`
-10. `docs/active/data-schema-and-import-export-contract.md`
-11. `docs/active/repository-and-domain-api-contract.md`
-12. `docs/active/map-provider-contract.md`
-13. `docs/active/e2e-test-and-evidence-matrix.md`
-14. `docs/active/visual-acceptance-checklist.md`
-15. `docs/active/README.md`
+3. `docs/active/development-and-acceptance-plan.md`
+4. `docs/active/acceptance-gate.md`
+5. `docs/active/current-vs-target-gap.md`
+6. `docs/active/current-vs-target-gap.drawio`
+7. `docs/active/poi-verification-mechanism-v1.md`
+8. `docs/active/amap-scanlist-refresh-report.md`
+9. `docs/active/stage-p1-development-and-acceptance.md`
+10. `docs/active/stage-p1-acceptance-report.md`
+11. `docs/active/stage-p2-development-and-acceptance.md`
+12. `docs/active/stage-p2-acceptance-report.md`
+13. `docs/active/stage-p3-development-and-acceptance.md`
+14. `docs/active/stage-p4-development-and-acceptance.md`
+15. `docs/active/stage-p5-development-and-acceptance.md`
+16. `docs/active/stage-p6-development-and-acceptance.md`
+17. `docs/active/stage-p6-acceptance-report.md`
+18. `docs/active/stage-p7-acceptance-report.md`
+19. `docs/active/final-acceptance-report.md`
