@@ -1,0 +1,304 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36" version="29.6.6" pages="7">
+  <diagram id="p1" name="01 项目总览">
+    <mxGraphModel dx="1400" dy="980" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="980" math="0" shadow="0">
+      <root>
+        <mxCell id="p1_0" />
+        <mxCell id="p1_1" parent="p1_0" />
+        <mxCell id="p1_title" value="FoodMap 当前项目总览：已验收基线到本阶段目标" style="text;html=1;strokeColor=none;fillColor=none;fontSize=26;fontStyle=1;align=center;" vertex="1" parent="p1_1">
+          <mxGeometry x="190" y="30" width="1020" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_now" value="当前已经完成&#xa;&#xa;1. 个人美食地图可用&#xa;2. 武汉真实地图可用&#xa;3. 高德扫街榜 50 个已核验图钉&#xa;4. 图钉详情含评分、图片、核验状态&#xa;5. 可新增、编辑、筛选、分享、导入导出&#xa;6. Agent Bridge 可被智能体调用&#xa;7. 构建、单测、E2E 已通过" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8ffea;strokeColor=#00b42a;fontSize=17;align=left;spacing=18;" vertex="1" parent="p1_1">
+          <mxGeometry x="80" y="150" width="350" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_gap" value="当前主要缺口&#xa;&#xa;1. 榜单刷新后不能直接覆盖旧图钉&#xa;2. 地点迁移、改名、冲突需要审计&#xa;3. 图片/街景证据需要更可信&#xa;4. 录入个人地点还可以更快&#xa;5. 图钉多时筛选和查看还可增强&#xa;6. Agent 调用需要更稳定的契约&#xa;7. 首屏性能和包体需要治理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7e8;strokeColor=#ff9a2e;fontSize=17;align=left;spacing=18;" vertex="1" parent="p1_1">
+          <mxGeometry x="525" y="150" width="350" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_target" value="本阶段目标 P8-P14&#xa;&#xa;1. 真实数据刷新可审计&#xa;2. 冲突地点不上图、不自动覆盖&#xa;3. 图片证据显示来源和匹配状态&#xa;4. 新增地点更快，能提示重复&#xa;5. 支持来源、商圈、评分、距离、核验筛选&#xa;6. Agent 返回结构化错误和审计事件&#xa;7. 形成最终产品化验收证据" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f7ff;strokeColor=#3491fa;fontSize=17;align=left;spacing=18;" vertex="1" parent="p1_1">
+          <mxGeometry x="970" y="150" width="350" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_e1" value="进入本阶段" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#ff7d00;strokeWidth=3;fontSize=13;" edge="1" parent="p1_1" source="p1_now" target="p1_gap">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_e2" value="收束为目标" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#165dff;strokeWidth=3;fontSize=13;" edge="1" parent="p1_1" source="p1_gap" target="p1_target">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_bottom" value="一句话：本阶段不是重做产品，而是把已可用的美食地图做成真实数据可刷新、证据可信、输入查看更顺、Agent 可安全调用、验收可追溯的版本。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff8ea;strokeColor=#c76a32;fontSize=18;fontStyle=1;align=center;spacing=16;" vertex="1" parent="p1_1">
+          <mxGeometry x="155" y="680" width="1090" height="95" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p2" name="02 架构关系总图">
+    <mxGraphModel dx="1665" dy="946" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="980" math="0" shadow="0">
+      <root>
+        <mxCell id="p2_0" />
+        <mxCell id="p2_1" parent="p2_0" />
+        <mxCell id="p2_title" parent="p2_1" style="text;html=1;strokeColor=none;fillColor=none;fontSize=26;fontStyle=1;align=center;" value="FoodMap 架构关系总图：模块边界和数据流向" vertex="1">
+          <mxGeometry height="48" width="1000" x="200" y="28" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_ui" parent="p2_1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f7ff;strokeColor=#3491fa;fontSize=16;align=center;" value="前端界面层&#xa;&#xa;Workspace&#xa;Share View&#xa;Editor / Detail / Filter" vertex="1">
+          <mxGeometry height="140" width="230" x="80" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_domain" parent="p2_1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff8ea;strokeColor=#c76a32;fontSize=16;align=center;" value="领域规则层&#xa;&#xa;FoodPlace / Layer / Photo&#xa;校验&#xa;筛选&#xa;重复判断" vertex="1">
+          <mxGeometry height="140" width="230" x="405" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_store" parent="p2_1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8ffea;strokeColor=#00b42a;fontSize=16;align=center;" value="本地存储层&#xa;&#xa;IndexedDB&#xa;places / layers / photos&#xa;snapshots / meta" vertex="1">
+          <mxGeometry height="140" width="230" x="730" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_map" parent="p2_1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8fffb;strokeColor=#14c9c9;fontSize=16;align=center;" value="地图适配层&#xa;&#xa;MapProviderAdapter&#xa;Leaflet / AMap&#xa;个人图钉 / 推荐图钉" vertex="1">
+          <mxGeometry height="140" width="230" x="80" y="325" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_rec" parent="p2_1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7e8;strokeColor=#ff7d00;fontSize=16;align=center;" value="推荐与核验层&#xa;&#xa;扫街榜数据&#xa;POI 核验&#xa;证据状态&#xa;推荐转个人记录" vertex="1">
+          <mxGeometry height="150" width="260" x="250" y="465" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_agent" parent="p2_1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffce8;strokeColor=#d99a2b;fontSize=16;align=center;" value="Agent 调用层&#xa;&#xa;FoodMapAgentBridge&#xa;命令 / 结果&#xa;结构化错误&#xa;审计事件" vertex="1">
+          <mxGeometry height="150" width="260" x="570" y="465" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_refresh" parent="p2_1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1f0;strokeColor=#f53f3f;fontSize=16;align=center;" value="真实数据刷新层&#xa;&#xa;refresh 脚本&#xa;差异报告&#xa;冲突拦截&#xa;不自动覆盖" vertex="1">
+          <mxGeometry height="150" width="260" x="250" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_accept" parent="p2_1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f2f3f5;strokeColor=#4e5969;fontSize=16;align=center;" value="验收证据层&#xa;&#xa;Unit / E2E&#xa;真实数据报告&#xa;截图证据&#xa;最终验收报告" vertex="1">
+          <mxGeometry height="130" width="260" x="570" y="735" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_e1" edge="1" parent="p2_1" source="p2_ui" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#165dff;strokeWidth=2;fontSize=13;" target="p2_domain" value="调用校验/筛选">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_e2" edge="1" parent="p2_1" source="p2_domain" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#00b42a;strokeWidth=2;fontSize=13;" target="p2_store" value="读写本地数据">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_e3" edge="1" parent="p2_1" source="p2_ui" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#14c9c9;strokeWidth=2;fontSize=13;" target="p2_map" value="渲染可见图钉">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_e4" edge="1" parent="p2_1" source="p2_rec" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#ff7d00;strokeWidth=2;fontSize=13;" target="p2_domain" value="通过核验后转个人记录">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_e5" edge="1" parent="p2_1" source="p2_refresh" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#f53f3f;strokeWidth=2;fontSize=13;" target="p2_rec" value="只更新通过准入的数据">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_e6" edge="1" parent="p2_1" source="p2_agent" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#d99a2b;strokeWidth=2;fontSize=13;" target="p2_domain" value="写入必须走同一校验">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_e7" edge="1" parent="p2_1" source="p2_agent" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#d99a2b;strokeWidth=2;fontSize=13;" target="p2_rec" value="保存推荐前查核验">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_e8" edge="1" parent="p2_1" source="p2_agent" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#4e5969;strokeWidth=2;fontSize=13;" target="p2_accept" value="所有链路都要有证据">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_rule" parent="p2_1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c9cdd4;fontSize=16;fontStyle=1;align=center;spacing=12;" value="关键架构规则：UI 和 Agent 都不能绕过领域校验；推荐数据不能绕过 POI 核验；刷新脚本不能直接覆盖冲突图钉；验收证据必须覆盖真实数据、界面和 Agent 链路。" vertex="1">
+          <mxGeometry height="60" width="1210" x="95" y="880" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p3" name="03 真实数据准入链路">
+    <mxGraphModel dx="1400" dy="980" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="980" math="0" shadow="0">
+      <root>
+        <mxCell id="p3_0" />
+        <mxCell id="p3_1" parent="p3_0" />
+        <mxCell id="p3_title" value="真实数据刷新与 POI 准入链路：先审计，再上图" style="text;html=1;strokeColor=none;fillColor=none;fontSize=26;fontStyle=1;align=center;" vertex="1" parent="p3_1">
+          <mxGeometry x="210" y="30" width="980" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_source" value="公开来源&#xa;&#xa;高德榜单页&#xa;POI 公开页&#xa;公开图片/街景&#xa;人工复核证据" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f7ff;strokeColor=#3491fa;fontSize=16;align=center;" vertex="1" parent="p3_1">
+          <mxGeometry x="70" y="165" width="210" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_normalize" value="标准化候选&#xa;&#xa;POI ID&#xa;规范名称&#xa;分店/商圈&#xa;地址/坐标&#xa;来源组" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff8ea;strokeColor=#c76a32;fontSize=16;align=center;" vertex="1" parent="p3_1">
+          <mxGeometry x="335" y="165" width="210" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_compare" value="对比已核验基线&#xa;&#xa;50 个已核验图钉&#xa;同名/分店去重&#xa;坐标距离&#xa;证据可信度" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7e8;strokeColor=#ff7d00;fontSize=16;align=center;" vertex="1" parent="p3_1">
+          <mxGeometry x="600" y="165" width="210" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_diff" value="差异分类&#xa;&#xa;新增&#xa;下架&#xa;改名&#xa;迁移&#xa;冲突&#xa;待核验&#xa;无变化" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8fffb;strokeColor=#14c9c9;fontSize=16;align=center;" vertex="1" parent="p3_1">
+          <mxGeometry x="865" y="165" width="210" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_decision" value="准入决策&#xa;&#xa;通过：可更新生成数据&#xa;冲突：不上图&#xa;迁移：人工确认&#xa;待核验：只进报告" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1f0;strokeColor=#f53f3f;fontSize=16;align=center;" vertex="1" parent="p3_1">
+          <mxGeometry x="1130" y="165" width="210" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_report" value="输出结果&#xa;&#xa;刷新审计报告&#xa;冲突清单&#xa;可上图清单&#xa;风险说明" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f2f3f5;strokeColor=#4e5969;fontSize=16;align=center;" vertex="1" parent="p3_1">
+          <mxGeometry x="335" y="520" width="230" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_generated" value="生成数据&#xa;&#xa;只接受通过准入的项&#xa;不接受冲突项&#xa;不自动覆盖高风险项" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8ffea;strokeColor=#00b42a;fontSize=16;align=center;" vertex="1" parent="p3_1">
+          <mxGeometry x="720" y="520" width="260" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_map" value="地图展示&#xa;&#xa;只显示 verified/mappable 图钉&#xa;近似坐标必须标注&#xa;冲突候选不上图" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f7ff;strokeColor=#3491fa;fontSize=16;align=center;" vertex="1" parent="p3_1">
+          <mxGeometry x="1100" y="520" width="260" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#4e5969;strokeWidth=2;" edge="1" parent="p3_1" source="p3_source" target="p3_normalize">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#4e5969;strokeWidth=2;" edge="1" parent="p3_1" source="p3_normalize" target="p3_compare">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#4e5969;strokeWidth=2;" edge="1" parent="p3_1" source="p3_compare" target="p3_diff">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#4e5969;strokeWidth=2;" edge="1" parent="p3_1" source="p3_diff" target="p3_decision">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_e5" value="所有结果都进报告" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#4e5969;strokeWidth=2;fontSize=13;" edge="1" parent="p3_1" source="p3_decision" target="p3_report">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_e6" value="只有通过项" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#00b42a;strokeWidth=2;fontSize=13;" edge="1" parent="p3_1" source="p3_decision" target="p3_generated">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_e7" value="生成可见图钉" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#165dff;strokeWidth=2;fontSize=13;" edge="1" parent="p3_1" source="p3_generated" target="p3_map">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_rule" value="核心规则：刷新是审计入口，不是直接改库入口。宁可保留旧的已核验图钉，也不能把冲突坐标或证据不足的地点放上地图。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff8ea;strokeColor=#c76a32;fontSize=18;fontStyle=1;align=center;spacing=16;" vertex="1" parent="p3_1">
+          <mxGeometry x="170" y="790" width="1060" height="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p4" name="04 用户与 Agent 链路">
+    <mxGraphModel dx="1400" dy="980" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="980" math="0" shadow="0">
+      <root>
+        <mxCell id="p4_0" />
+        <mxCell id="p4_1" parent="p4_0" />
+        <mxCell id="p4_title" value="用户操作与 Agent 调用：共用同一套校验和存储链路" style="text;html=1;strokeColor=none;fillColor=none;fontSize=26;fontStyle=1;align=center;" vertex="1" parent="p4_1">
+          <mxGeometry x="180" y="30" width="1040" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_user" value="用户操作&#xa;&#xa;地图点击新增&#xa;编辑地点&#xa;上传照片&#xa;筛选查看&#xa;保存推荐" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f7ff;strokeColor=#3491fa;fontSize=16;align=center;" vertex="1" parent="p4_1">
+          <mxGeometry x="130" y="160" width="230" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_agent" value="Agent 调用&#xa;&#xa;查询上下文&#xa;筛选/聚焦&#xa;导出快照&#xa;建议保存地点&#xa;返回结构化错误" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffce8;strokeColor=#d99a2b;fontSize=16;align=center;" vertex="1" parent="p4_1">
+          <mxGeometry x="130" y="475" width="230" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_workspace" value="Workspace 状态层&#xa;&#xa;当前筛选&#xa;当前选中&#xa;面板状态&#xa;地图/列表联动" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff8ea;strokeColor=#c76a32;fontSize=16;align=center;" vertex="1" parent="p4_1">
+          <mxGeometry x="485" y="300" width="245" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_domain" value="统一规则层&#xa;&#xa;必填校验&#xa;重复判断&#xa;POI 准入&#xa;导入导出校验" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8ffea;strokeColor=#00b42a;fontSize=16;align=center;" vertex="1" parent="p4_1">
+          <mxGeometry x="830" y="300" width="245" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_result" value="结果与证据&#xa;&#xa;写入 IndexedDB&#xa;地图/列表刷新&#xa;Agent result 事件&#xa;验收截图/测试" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f2f3f5;strokeColor=#4e5969;fontSize=16;align=center;" vertex="1" parent="p4_1">
+          <mxGeometry x="1120" y="300" width="245" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_e1" value="UI 事件" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#165dff;strokeWidth=2;fontSize=13;" edge="1" parent="p4_1" source="p4_user" target="p4_workspace">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_e2" value="Bridge 命令" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#d99a2b;strokeWidth=2;fontSize=13;" edge="1" parent="p4_1" source="p4_agent" target="p4_workspace">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_e3" value="统一校验" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#00b42a;strokeWidth=2;fontSize=13;" edge="1" parent="p4_1" source="p4_workspace" target="p4_domain">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_e4" value="成功或结构化错误" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#4e5969;strokeWidth=2;fontSize=13;" edge="1" parent="p4_1" source="p4_domain" target="p4_result">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_rule" value="关键点：Agent 不是第二套后门。用户和 Agent 的写入都必须走同一个领域校验、同一个 POI 准入、同一个 IndexedDB 存储路径。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff8ea;strokeColor=#c76a32;fontSize=18;fontStyle=1;align=center;spacing=16;" vertex="1" parent="p4_1">
+          <mxGeometry x="190" y="720" width="1020" height="90" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p5" name="05 开发计划">
+    <mxGraphModel dx="1400" dy="980" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="980" math="0" shadow="0">
+      <root>
+        <mxCell id="p5_0" />
+        <mxCell id="p5_1" parent="p5_0" />
+        <mxCell id="p5_title" value="P8-P14 开发及验收计划" style="text;html=1;strokeColor=none;fillColor=none;fontSize=26;fontStyle=1;align=center;" vertex="1" parent="p5_1">
+          <mxGeometry x="340" y="30" width="720" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_p8" value="P8 真实数据刷新&#xa;&#xa;刷新榜单&#xa;生成差异报告&#xa;冲突不上图" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8ffea;strokeColor=#00b42a;fontSize=16;align=center;" vertex="1" parent="p5_1">
+          <mxGeometry x="60" y="145" width="170" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_p9" value="P9 图片/街景证据&#xa;&#xa;显示来源&#xa;显示匹配状态&#xa;失败有兜底" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7e8;strokeColor=#ff7d00;fontSize=16;align=center;" vertex="1" parent="p5_1">
+          <mxGeometry x="250" y="145" width="170" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_p10" value="P10 输入体验&#xa;&#xa;必填优先&#xa;照片预览&#xa;重复提醒" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f7ff;strokeColor=#3491fa;fontSize=16;align=center;" vertex="1" parent="p5_1">
+          <mxGeometry x="440" y="145" width="170" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_p11" value="P11 查看筛选&#xa;&#xa;来源筛选&#xa;商圈/评分/距离&#xa;地图列表联动" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5e8ff;strokeColor=#722ed1;fontSize=16;align=center;" vertex="1" parent="p5_1">
+          <mxGeometry x="630" y="145" width="170" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_p12" value="P12 Agent 契约&#xa;&#xa;接口说明&#xa;结构化错误&#xa;审计事件" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffce8;strokeColor=#d99a2b;fontSize=16;align=center;" vertex="1" parent="p5_1">
+          <mxGeometry x="820" y="145" width="170" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_p13" value="P13 性能优化&#xa;&#xa;包体分析&#xa;懒加载&#xa;首屏验证" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8fffb;strokeColor=#14c9c9;fontSize=16;align=center;" vertex="1" parent="p5_1">
+          <mxGeometry x="1010" y="145" width="170" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_p14" value="P14 产品化验收&#xa;&#xa;PRD 复检&#xa;真实数据复检&#xa;最终报告" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f2f3f5;strokeColor=#4e5969;fontSize=16;align=center;" vertex="1" parent="p5_1">
+          <mxGeometry x="1200" y="145" width="170" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#4e5969;strokeWidth=2;" edge="1" parent="p5_1" source="p5_p8" target="p5_p9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#4e5969;strokeWidth=2;" edge="1" parent="p5_1" source="p5_p9" target="p5_p10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#4e5969;strokeWidth=2;" edge="1" parent="p5_1" source="p5_p10" target="p5_p11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#4e5969;strokeWidth=2;" edge="1" parent="p5_1" source="p5_p11" target="p5_p12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#4e5969;strokeWidth=2;" edge="1" parent="p5_1" source="p5_p12" target="p5_p13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#4e5969;strokeWidth=2;" edge="1" parent="p5_1" source="p5_p13" target="p5_p14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_acceptance" value="每个阶段都要完成&#xa;&#xa;开发计划、规格审计、实际开发、自动化测试、真实数据/截图证据、验收报告。&#xa;&#xa;如果发现地点事实错误、虚假验收、Agent 绕过校验、冲突地点上图，立即停止并回到计划审计。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c9cdd4;fontSize=18;align=center;spacing=18;" vertex="1" parent="p5_1">
+          <mxGeometry x="180" y="500" width="1040" height="190" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p6" name="06 验收门槛">
+    <mxGraphModel dx="1400" dy="980" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="980" math="0" shadow="0">
+      <root>
+        <mxCell id="p6_0" />
+        <mxCell id="p6_1" parent="p6_0" />
+        <mxCell id="p6_title" value="P8-P14 验收门槛与出门条件" style="text;html=1;strokeColor=none;fillColor=none;fontSize=26;fontStyle=1;align=center;" vertex="1" parent="p6_1">
+          <mxGeometry x="360" y="30" width="680" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_auto" value="必须通过的自动化验收&#xa;&#xa;1. npm run build&#xa;2. npm test&#xa;3. npx playwright test&#xa;4. 真实数据基线检查&#xa;5. Agent 安全路径检查&#xa;6. 桌面/移动端截图检查" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f7ff;strokeColor=#3491fa;fontSize=18;align=left;spacing=18;" vertex="1" parent="p6_1">
+          <mxGeometry x="115" y="150" width="360" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_block" value="必须阻断的风险&#xa;&#xa;1. 冲突地点自动上图&#xa;2. 未核验地点保存为图钉&#xa;3. 图片证据不匹配却显示为可信&#xa;4. Agent 绕过校验写数据&#xa;5. 筛选后列表和地图不一致&#xa;6. 移动端界面遮挡严重" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1f0;strokeColor=#f53f3f;fontSize=18;align=left;spacing=18;" vertex="1" parent="p6_1">
+          <mxGeometry x="520" y="150" width="360" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_exit" value="最终出门条件&#xa;&#xa;1. V1.0 个人地图体验不退化&#xa;2. 50 个已核验图钉仍可信&#xa;3. 刷新冲突被拦截&#xa;4. 证据、筛选、Agent、性能均有验收材料&#xa;5. PRD、架构、drawio、验收报告一致&#xa;6. 无致命或重大风险未关闭" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8ffea;strokeColor=#00b42a;fontSize=18;align=left;spacing=18;" vertex="1" parent="p6_1">
+          <mxGeometry x="925" y="150" width="360" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_e1" value="验证发现风险" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#f53f3f;strokeWidth=2;fontSize=13;" edge="1" parent="p6_1" source="p6_auto" target="p6_block">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_e2" value="风险关闭后出门" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#00b42a;strokeWidth=2;fontSize=13;" edge="1" parent="p6_1" source="p6_block" target="p6_exit">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_bottom" value="验收原则：宁可不更新数据，也不能把错误地点、冲突坐标或虚假证据放到地图上。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff8ea;strokeColor=#c76a32;fontSize=20;fontStyle=1;align=center;spacing=18;" vertex="1" parent="p6_1">
+          <mxGeometry x="205" y="670" width="990" height="95" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p7" name="07 审计清单">
+    <mxGraphModel dx="1400" dy="980" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="980" math="0" shadow="0">
+      <root>
+        <mxCell id="p7_0" />
+        <mxCell id="p7_1" parent="p7_0" />
+        <mxCell id="p7_title" value="给 ChatGPT 或外部审计看的最小文档集" style="text;html=1;strokeColor=none;fillColor=none;fontSize=26;fontStyle=1;align=center;" vertex="1" parent="p7_1">
+          <mxGeometry x="300" y="30" width="800" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="p7_docs1" value="产品与目标&#xa;&#xa;1. PRD 文档&#xa;2. 目标架构&#xa;3. 当前差距文档&#xa;4. 本 drawio 图" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f7ff;strokeColor=#3491fa;fontSize=18;align=left;spacing=18;" vertex="1" parent="p7_1">
+          <mxGeometry x="120" y="150" width="300" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="p7_docs2" value="计划与验收&#xa;&#xa;5. 开发及验收计划&#xa;6. 项目里程碑&#xa;7. 验收门槛&#xa;8. P8-P14 实现契约" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8ffea;strokeColor=#00b42a;fontSize=18;align=left;spacing=18;" vertex="1" parent="p7_1">
+          <mxGeometry x="550" y="150" width="300" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="p7_docs3" value="证据与安全&#xa;&#xa;9. POI 核验机制&#xa;10. 扫街榜刷新报告&#xa;11. E2E 证据矩阵&#xa;12. 视觉验收清单&#xa;13. 最终验收报告" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7e8;strokeColor=#ff7d00;fontSize=18;align=left;spacing=18;" vertex="1" parent="p7_1">
+          <mxGeometry x="980" y="150" width="300" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="p7_e1" value="支撑计划" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#4e5969;strokeWidth=2;fontSize=13;" edge="1" parent="p7_1" source="p7_docs1" target="p7_docs2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p7_e2" value="支撑验收" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#4e5969;strokeWidth=2;fontSize=13;" edge="1" parent="p7_1" source="p7_docs2" target="p7_docs3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p7_question" value="审核时重点看三件事：&#xa;&#xa;1. 是否过度承诺：有没有偷偷承诺后端、实时榜单、自动修正所有地点？&#xa;2. 是否有事实风险：冲突地点是否会被自动上图？&#xa;3. 是否能验收：每个目标是否都有明确证据和出门条件？" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c9cdd4;fontSize=19;align=left;spacing=18;" vertex="1" parent="p7_1">
+          <mxGeometry x="180" y="560" width="1040" height="190" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

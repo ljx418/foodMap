@@ -1,0 +1,152 @@
+[
+  {
+    "viewport": "mobile-390x844",
+    "markerCount": 50,
+    "averageShiftPx": {
+      "dx": 15.7,
+      "dy": 8.1
+    },
+    "samples": [
+      {
+        "rank": "1",
+        "dx": 15,
+        "dy": 8
+      },
+      {
+        "rank": "2",
+        "dx": 16,
+        "dy": 9
+      },
+      {
+        "rank": "3",
+        "dx": 16,
+        "dy": 9
+      },
+      {
+        "rank": "4",
+        "dx": 15,
+        "dy": 9
+      },
+      {
+        "rank": "5",
+        "dx": 15,
+        "dy": 8
+      },
+      {
+        "rank": "6",
+        "dx": 16,
+        "dy": 8
+      },
+      {
+        "rank": "7",
+        "dx": 16,
+        "dy": 8
+      },
+      {
+        "rank": "8",
+        "dx": 15,
+        "dy": 8
+      }
+    ]
+  },
+  {
+    "viewport": "tablet-768x1024",
+    "markerCount": 50,
+    "averageShiftPx": {
+      "dx": 15.7,
+      "dy": 8.1
+    },
+    "samples": [
+      {
+        "rank": "1",
+        "dx": 15,
+        "dy": 8
+      },
+      {
+        "rank": "2",
+        "dx": 16,
+        "dy": 9
+      },
+      {
+        "rank": "3",
+        "dx": 16,
+        "dy": 9
+      },
+      {
+        "rank": "4",
+        "dx": 15,
+        "dy": 9
+      },
+      {
+        "rank": "5",
+        "dx": 15,
+        "dy": 8
+      },
+      {
+        "rank": "6",
+        "dx": 16,
+        "dy": 8
+      },
+      {
+        "rank": "7",
+        "dx": 16,
+        "dy": 8
+      },
+      {
+        "rank": "8",
+        "dx": 15,
+        "dy": 8
+      }
+    ]
+  },
+  {
+    "viewport": "desktop-1440x900",
+    "markerCount": 50,
+    "averageShiftPx": {
+      "dx": 15.7,
+      "dy": 8.1
+    },
+    "samples": [
+      {
+        "rank": "1",
+        "dx": 15,
+        "dy": 8
+      },
+      {
+        "rank": "2",
+        "dx": 16,
+        "dy": 9
+      },
+      {
+        "rank": "3",
+        "dx": 16,
+        "dy": 9
+      },
+      {
+        "rank": "4",
+        "dx": 15,
+        "dy": 9
+      },
+      {
+        "rank": "5",
+        "dx": 15,
+        "dy": 8
+      },
+      {
+        "rank": "6",
+        "dx": 16,
+        "dy": 8
+      },
+      {
+        "rank": "7",
+        "dx": 16,
+        "dy": 8
+      },
+      {
+        "rank": "8",
+        "dx": 15,
+        "dy": 8
+      }
+    ]
+  }
+]

@@ -1,0 +1,105 @@
+[
+  {
+    "viewport": {
+      "name": "mobile-390x844",
+      "width": 390,
+      "height": 844
+    },
+    "info": {
+      "title": "FoodMap 美食地图",
+      "url": "http://127.0.0.1:5173/#/map",
+      "bodyText": " Leaflet | 高德地图\n榜单\n50\n标签\n更多\n分享图\n图层\n筛选\n新增\n清单",
+      "markerCount": 0,
+      "buttons": [
+        "筛选",
+        "导入",
+        "导出",
+        "分享",
+        "新增",
+        "榜单\n50",
+        "标签",
+        "更多",
+        "分享图",
+        "图层",
+        "筛选",
+        "新增",
+        "清单"
+      ],
+      "mapInfo": {
+        "left": 0,
+        "top": 0,
+        "width": 390,
+        "height": 844
+      }
+    }
+  },
+  {
+    "viewport": {
+      "name": "tablet-768x1024",
+      "width": 768,
+      "height": 1024
+    },
+    "info": {
+      "title": "FoodMap 美食地图",
+      "url": "http://127.0.0.1:5173/#/map",
+      "bodyText": " Leaflet | 高德地图\n榜单\n50\n标签\n更多\n分享图\n图层\n筛选\n新增\n清单",
+      "markerCount": 0,
+      "buttons": [
+        "筛选",
+        "导入",
+        "导出",
+        "分享",
+        "新增",
+        "榜单\n50",
+        "标签",
+        "更多",
+        "分享图",
+        "图层",
+        "筛选",
+        "新增",
+        "清单"
+      ],
+      "mapInfo": {
+        "left": 0,
+        "top": 0,
+        "width": 768,
+        "height": 1024
+      }
+    }
+  },
+  {
+    "viewport": {
+      "name": "desktop-1440x900",
+      "width": 1440,
+      "height": 900
+    },
+    "info": {
+      "title": "FoodMap 美食地图",
+      "url": "http://127.0.0.1:5173/#/map",
+      "bodyText": "FoodMap\n美食地图\n筛选\n导入\n导出\n分享\n新增\n+\n−\n Leaflet | 高德地图\n首页筛选\n0/0 个人图钉\n榜单\n50\n按标签收窄地图\n展开\n更多\n分享图\n已核验\n待确认\n榜单",
+      "markerCount": 0,
+      "buttons": [
+        "筛选",
+        "导入",
+        "导出",
+        "分享",
+        "更多",
+        "新增",
+        "榜单\n50",
+        "展开",
+        "更多",
+        "分享图",
+        "图层",
+        "筛选",
+        "新增",
+        "清单"
+      ],
+      "mapInfo": {
+        "left": 0,
+        "top": 64,
+        "width": 1440,
+        "height": 836
+      }
+    }
+  }
+]
