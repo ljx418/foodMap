@@ -1,0 +1,37 @@
+{
+  "viewport": "1440x900",
+  "thresholdsMs": {
+    "reloadMs": 10000,
+    "markerRenderMs": 30000,
+    "filterMs": 5000,
+    "detailOpenMs": 5000,
+    "posterOpenMs": 5000
+  },
+  "results": [
+    {
+      "size": 500,
+      "reloadMs": 215,
+      "markerRenderMs": 165,
+      "filterMs": 121,
+      "detailOpenMs": 101,
+      "posterOpenMs": 74
+    },
+    {
+      "size": 1000,
+      "reloadMs": 260,
+      "markerRenderMs": 141,
+      "filterMs": 126,
+      "detailOpenMs": 86,
+      "posterOpenMs": 58
+    },
+    {
+      "size": 3000,
+      "reloadMs": 206,
+      "markerRenderMs": 520,
+      "filterMs": 295,
+      "detailOpenMs": 113,
+      "posterOpenMs": 97
+    }
+  ],
+  "capturedAt": "2026-06-17T08:00:40.784Z"
+}

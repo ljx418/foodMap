@@ -160,6 +160,13 @@ function amapPoiToMapProviderResult(poi: AmapPoi, index: number, sourceUrl: stri
     tags: ["高德搜索候选", poi.adname, poi.type].filter(Boolean) as string[],
     confidence: index === 0 ? 0.9 : Math.max(0.72, 0.88 - index * 0.025),
     coordinateAccuracy: "exact",
+    riskReasons: address ? [] : ["高德候选缺少地址，确认前需复核"],
+    matchSignals: [
+      `高德搜索排序 #${index + 1}`,
+      poi.adname ? `行政区 ${poi.adname}` : "城市限定武汉",
+      poi.type ? `类型 ${poi.type}` : undefined
+    ].filter(Boolean) as string[],
+    lastCheckedAt: new Date().toISOString(),
     reasons: [
       `高德搜索第 ${index + 1} 个候选`,
       poi.adname ? `行政区：${poi.adname}` : "城市限定：武汉",

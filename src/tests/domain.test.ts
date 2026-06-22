@@ -4,8 +4,8 @@ import { collectTags, EMPTY_FILTER, filterPlaces } from "../domain/filters";
 import { gcj02ToWgs84, toMapDisplayPoint, wgs84ToGcj02 } from "../domain/coordinates";
 import { assessCoordinateRisk, isLikelyWaterCoordinate } from "../domain/coordinateRisk";
 import { getExternalMapCandidatesForPlace } from "../domain/externalMapCandidates";
-import { buildExternalMapLink } from "../domain/externalMapLinks";
-import { getLocationStatusBadges, getUserFacingTags } from "../domain/locationStatus";
+import { buildExternalMapLink, buildExternalMapSearchFallback } from "../domain/externalMapLinks";
+import { deriveLocationStatus, getLocationStatusBadges, getUserFacingTags } from "../domain/locationStatus";
 import { searchAmapPlaceCandidates } from "../domain/liveMapSearch";
 import { applyManualPinMove, canManuallyMovePlace } from "../domain/manualPinMove";
 import { createMapPosterSvg } from "../domain/mapPoster";
@@ -137,6 +137,9 @@ describe("FoodMap domain", () => {
     expect(candidates[0].source).toBe("map-provider");
     expect(candidates[0].evidenceUrl).toContain("amap.com");
     expect(candidates[0].screenshotPath).toContain("web-map-candidates");
+    expect(candidates[0].requiresUserConfirmation).toBe(true);
+    expect(candidates[0].matchSignals).toEqual(expect.arrayContaining(["用户补充武汉国广附近"]));
+    expect(candidates[0].lastCheckedAt).toBe("2026-06-16");
     expect(candidateSolidifiesPrecisePlace(candidates[0])).toBe(true);
   });
 
@@ -180,9 +183,24 @@ describe("FoodMap domain", () => {
       name: "西提牛排(武汉国广店)",
       address: "解放大道690号武汉国际广场C座",
       coordinateSystem: "gcj02",
-      coordinateAccuracy: "exact"
+      coordinateAccuracy: "exact",
+      requiresUserConfirmation: true,
+      matchSignals: expect.arrayContaining(["高德搜索排序 #1", "行政区 江汉区", "类型 餐饮服务"])
     });
     expect(candidateSolidifiesPrecisePlace(candidates[0])).toBe(true);
+  });
+
+  it("builds no-key external map search fallback links for pending places", () => {
+    const fallback = buildExternalMapSearchFallback({
+      name: "西提牛排(武汉国广候选)",
+      address: "江汉区武汉国际广场",
+      city: "武汉"
+    });
+    expect(fallback.copyText).toContain("西提牛排");
+    expect(fallback.copyText).toContain("江汉区武汉国际广场");
+    expect(fallback.links.map((link) => link.label)).toEqual(["高德网页地图", "百度地图", "Apple Maps"]);
+    expect(fallback.links[0].href).toContain("amap.com/search");
+    expect(fallback.links[1].href).toContain("map.baidu.com/search");
   });
 
   it("manually moves personal favorite pins and records an audit trail", () => {
@@ -255,9 +273,15 @@ describe("FoodMap domain", () => {
   it("filters personal places by verification status", () => {
     const verified = { ...place, id: "verified-place", tags: ["已核验", "精确坐标"], mapAccuracy: "exact" as const };
     const pending = { ...place, id: "pending-place", tags: ["待校准", "近似坐标"], mapAccuracy: "approximate" as const };
+    const skipped = { ...place, id: "skipped-place", tags: ["暂时跳过", "位置待确认"], mapAccuracy: "approximate" as const };
+    const blocked = { ...place, id: "blocked-place", tags: ["位置高风险"], mapAccuracy: "approximate" as const };
     expect(filterPlaces([verified, pending], DEFAULT_LAYERS, { ...EMPTY_FILTER, verificationStatus: "verified" })).toEqual([verified]);
-    expect(filterPlaces([verified, pending], DEFAULT_LAYERS, { ...EMPTY_FILTER, verificationStatus: "pending" })).toEqual([pending]);
-    expect(filterPlaces([verified, pending], DEFAULT_LAYERS, { ...EMPTY_FILTER, verificationStatus: "approximate" })).toEqual([pending]);
+    expect(filterPlaces([verified, pending, skipped, blocked], DEFAULT_LAYERS, { ...EMPTY_FILTER, verificationStatus: "pending" })).toEqual([pending, skipped, blocked]);
+    expect(filterPlaces([verified, pending, skipped, blocked], DEFAULT_LAYERS, { ...EMPTY_FILTER, verificationStatus: "approximate" })).toEqual([pending, skipped, blocked]);
+    expect(deriveLocationStatus(verified)).toBe("verified");
+    expect(deriveLocationStatus(pending)).toBe("pending");
+    expect(deriveLocationStatus(skipped)).toBe("skipped");
+    expect(deriveLocationStatus(blocked)).toBe("blocked");
   });
 
   it("extracts and ranks place candidates from intro text", () => {

@@ -1,6 +1,6 @@
 import type { FoodFilterState, FoodLayer, FoodPlace } from "./types";
 import { distanceMeters } from "./geo";
-import { getUserFacingTags } from "./locationStatus";
+import { deriveLocationStatus, getUserFacingTags, isPendingLocationStatus } from "./locationStatus";
 import { VISIT_STATUS_LABELS } from "./tagGroups";
 
 export const EMPTY_FILTER: FoodFilterState = {
@@ -39,7 +39,7 @@ export function filterPlaces(places: FoodPlace[], layers: FoodLayer[], filter: F
 }
 
 export function isPendingCalibrationPlace(place: FoodPlace): boolean {
-  return place.mapAccuracy === "approximate" || place.tags.includes("待校准") || place.tags.includes("近似坐标");
+  return isPendingLocationStatus(deriveLocationStatus(place));
 }
 
 export function placeMatchesVerificationStatus(place: FoodPlace, status: NonNullable<FoodFilterState["verificationStatus"]>): boolean {
@@ -48,7 +48,7 @@ export function placeMatchesVerificationStatus(place: FoodPlace, status: NonNull
   if (status === "pending") return needsCalibration;
   if (status === "approximate") return needsCalibration || place.tags.includes("近似坐标");
   if (status === "verified") return !needsCalibration && (place.mapAccuracy === "exact" || place.tags.includes("已核验") || place.tags.includes("精确坐标"));
-  if (status === "conflict") return /冲突|不一致|错位|无法核验|待确认/.test(text) && !needsCalibration;
+  if (status === "conflict") return /冲突|不一致|错位|无法核验|待确认|位置高风险/.test(text) || deriveLocationStatus(place) === "blocked";
   return true;
 }
 

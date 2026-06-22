@@ -1,8 +1,8 @@
-# FoodMap P17 Visual Acceptance Checklist
+# FoodMap P18 Visual Acceptance Checklist
 
-Updated: 2026-06-15
+Updated: 2026-06-17
 
-Historical H2/P8-P14 screenshots are archived under `docs/history/p8-p14/evidence/p8-p14/`. P17 visual acceptance focuses on pending-place confirmation, detail-page information architecture, mobile main path, stable pin visuals, compact filters, and share-poster polish.
+Historical H2/P8-P14 screenshots are archived under `docs/history/p8-p14/evidence/p8-p14/`. P17 remains the accepted visual baseline for pending-place confirmation, detail-page information architecture, mobile main path, stable pin visuals, compact filters, and share-poster polish. P18 visual acceptance extends that baseline across six workstreams: coordinate/candidate calibration, detail and mobile path, filter/layer explanation, share-poster communication, data health/performance, and Agent/acceptance governance.
 
 ## Summary
 
@@ -76,6 +76,21 @@ Viewports: `390x844`, `430x932`.
 - Share-poster preview uses the current filtered places and shows title, count, tag summary and generated time.
 - Real-data visual review includes scanlist, reference layer, personal favorites and pending places together.
 
+## P18 Flow Checklist
+
+- W18-A candidate search entry is visible in pending detail and workbench without crowding the map; fallback actions are readable when no provider key exists.
+- W18-A candidate cards expose source, address, confidence, coordinate accuracy, evidence, and risk reasons without collapsing into unreadable text blocks.
+- W18-A manual pin move audit preview clearly separates old coordinate, new coordinate, cancel, and confirm.
+- W18-B detail first screen prioritizes status, name, editable tags, core actions, coordinate trust, and map fallback before long photos or notes.
+- W18-B mobile detail uses progressive disclosure; advanced candidate history, long notes, and photos are reachable but not forced into the first screen.
+- W18-C homepage filter summary explains visible count, active tags/status/source/layers, pending count, and clear-filter action without clipped chips.
+- W18-C layer/filter controls do not look like unrelated floating bubbles and do not obscure selected pin popups.
+- W18-D share-poster composer shows editable title, export mode, point count, tag summary, and preview before download.
+- W18-D current viewport and current filtered-result modes are visually distinct before export.
+- W18-E data health report makes verified, pending, high-risk, and manually adjusted places visible; it must not visually hide uncertainty.
+- W18-E 500/1000/3000 point smoke screenshots must still show usable map, filters, list/detail entry, and share preview entry.
+- W18-F Agent-submitted candidates must look like suggestions requiring confirmation, not system-approved facts.
+
 ## Share View Checklist
 
 - Share page includes local read-only copy.
@@ -120,6 +135,21 @@ docs/active/evidence/p17/mobile-390x844-main-path.png
 docs/active/evidence/p17/mobile-430x932-pin-move.png
 docs/active/evidence/p17/tablet-768x900-filter-and-detail.png
 docs/active/evidence/p17/desktop-1440x900-share-poster-preview.png
+```
+
+Save P18 visual evidence to:
+
+```text
+docs/active/evidence/p18/desktop-1440x900-candidate-search-fallback.png
+docs/active/evidence/p18/desktop-1440x900-candidate-evidence-card.png
+docs/active/evidence/p18/desktop-1280x900-pin-move-audit-preview.png
+docs/active/evidence/p18/mobile-390x844-detail-progressive-disclosure.png
+docs/active/evidence/p18/mobile-430x932-candidate-search.png
+docs/active/evidence/p18/tablet-768x900-filter-summary.png
+docs/active/evidence/p18/desktop-2048x768-filter-layer-summary.png
+docs/active/evidence/p18/desktop-1440x900-share-poster-composer.png
+docs/active/evidence/p18/desktop-1440x900-data-health-report.png
+docs/active/evidence/p18/desktop-1440x900-large-dataset-smoke.png
 ```
 
 Historical P8-P14 visual evidence is archived under `docs/history/p8-p14/evidence/p8-p14/`.

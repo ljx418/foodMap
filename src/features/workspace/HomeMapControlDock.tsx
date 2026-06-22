@@ -55,6 +55,17 @@ export function HomeMapControlDock({
     scanlistVisible ? `榜单 ${scanlistCount}` : undefined,
     dingtuyiVisible ? `钉图易 ${dingtuyiCount}` : undefined
   ].filter(Boolean).join(" · ");
+  const visibleScopeText = `${visiblePlacesCount}/${totalPlacesCount} 个人地点`;
+  const activeFilterSummary = activeLabels.length > 0 ? activeLabels.slice(0, 4).join("、") : "未启用标签筛选";
+  const hiddenReferenceLayers = [
+    scanlistVisible ? undefined : "榜单已隐藏",
+    dingtuyiVisible ? undefined : "参考已隐藏"
+  ].filter(Boolean);
+  const filterSummary = [
+    visibleScopeText,
+    activeFilterSummary,
+    referenceLayerSummary ? `参考层：${referenceLayerSummary}` : hiddenReferenceLayers.join("、")
+  ].filter(Boolean).join(" · ");
 
   function toggleVisitStatus(status: VisitStatusTag) {
     onFilterChange({ ...filter, visitStatuses: toggleArrayValue(filter.visitStatuses ?? [], status) });
@@ -246,6 +257,9 @@ export function HomeMapControlDock({
             <span className="quick-switch__text">分享图</span>
           </button>
         </div>
+      </div>
+      <div className="home-filter-dock__summary" data-testid="home-filter-summary" title={filterSummary}>
+        {filterSummary}
       </div>
       <div className="home-filter-dock__legend" data-testid="map-pin-legend" aria-label="图钉颜色说明">
         <span><i className="legend-dot legend-dot--verified" aria-hidden="true" />已核验</span>

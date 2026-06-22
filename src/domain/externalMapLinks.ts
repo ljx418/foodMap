@@ -20,6 +20,31 @@ export interface ExternalMapTarget {
   coordinateSystem?: CoordinateSystem;
 }
 
+export interface ExternalMapSearchLink {
+  label: string;
+  href: string;
+}
+
+export interface ExternalMapSearchFallback {
+  query: string;
+  copyText: string;
+  links: ExternalMapSearchLink[];
+}
+
+export function buildExternalMapSearchFallback(target: ExternalMapTarget): ExternalMapSearchFallback {
+  const query = [target.name, target.address, target.city ?? "武汉"].filter(Boolean).join(" ").trim();
+  const encodedQuery = encodeURIComponent(query || target.name);
+  return {
+    query,
+    copyText: query,
+    links: [
+      { label: "高德网页地图", href: `https://www.amap.com/search?query=${encodedQuery}` },
+      { label: "百度地图", href: `https://map.baidu.com/search/${encodedQuery}` },
+      { label: "Apple Maps", href: `https://maps.apple.com/?q=${encodedQuery}` }
+    ]
+  };
+}
+
 export function buildExternalMapLink(target: ExternalMapTarget): ExternalMapLink {
   const hasCoordinate = typeof target.longitude === "number" && typeof target.latitude === "number";
   const coordinateSystem = target.coordinateSystem ?? "wgs84";

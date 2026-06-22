@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { DEFAULT_LAYERS } from "../domain/sampleData";
+import { isPendingCalibrationPlace } from "../domain/filters";
 import type { FoodFilterState, FoodLayer, FoodPlace, PhotoAsset, ShareSnapshot } from "../domain/types";
 import { DEFAULT_CENTER } from "../domain/types";
 import { searchPlaceCandidates } from "../domain/placeSearch";
@@ -30,7 +31,9 @@ export type FoodMapAgentAction =
   | "saveRecommendationAsPlace"
   | "recognizePlaceCandidates"
   | "submitPlaceCandidates"
-  | "getPlaceCandidateContext";
+  | "getPlaceCandidateContext"
+  | "listPendingPlaces"
+  | "getPendingPlaceContext";
 
 export interface FoodMapAgentCommand {
   action: FoodMapAgentAction;
@@ -53,6 +56,7 @@ export type AgentErrorCode =
   | "IMPORT_VALIDATION_FAILED"
   | "EXPORT_FAILED"
   | "RECOGNITION_FAILED"
+  | "PENDING_CONFIRMATION_REQUIRED"
   | "UNSUPPORTED_ACTION";
 
 export interface FoodMapAgentEvent {
@@ -221,6 +225,9 @@ async function runCommand(
       const existing = await placeRepository.get(payload.id);
       if (!payload.id) throw new AgentCommandError("INVALID_PAYLOAD", "缺少 id");
       if (!existing) throw new AgentCommandError("PLACE_NOT_FOUND", "地点不存在");
+      if (isPendingCalibrationPlace(existing) && payloadAttemptsPendingFinalization(payload, existing)) {
+        throw new AgentCommandError("PENDING_CONFIRMATION_REQUIRED", "待确认地点必须通过 UI 候选确认或手动挪动路径固化坐标");
+      }
       const next = { ...existing, ...payload, updatedAt: nowIso() };
       const errors = validatePlaceDraft(next);
       if (errors.length > 0) throw new AgentCommandError("INVALID_PAYLOAD", errors.join("，"));
@@ -231,6 +238,11 @@ async function runCommand(
     case "deletePlace": {
       const { placeId } = asPayload<{ placeId: string }>(command.payload);
       if (!placeId) throw new AgentCommandError("INVALID_PAYLOAD", "缺少 placeId");
+      const existing = await placeRepository.get(placeId);
+      if (!existing) throw new AgentCommandError("PLACE_NOT_FOUND", "地点不存在");
+      if (isPendingCalibrationPlace(existing)) {
+        throw new AgentCommandError("PENDING_CONFIRMATION_REQUIRED", "Agent 不能直接删除待确认地点");
+      }
       await placeRepository.remove(placeId);
       await options.reload();
       return { placeId };
@@ -343,9 +355,57 @@ async function runCommand(
           tags: place.tags.slice(0, 6)
         }))
       };
+    case "listPendingPlaces": {
+      const places = await placeRepository.list();
+      return places.filter(isPendingCalibrationPlace).map((place) => pendingPlaceSummary(place));
+    }
+    case "getPendingPlaceContext": {
+      const { placeId } = asPayload<{ placeId?: string }>(command.payload);
+      const pendingPlaces = (await placeRepository.list()).filter(isPendingCalibrationPlace);
+      const place = placeId ? pendingPlaces.find((item) => item.id === placeId) : pendingPlaces[0];
+      if (!place) throw new AgentCommandError("PLACE_NOT_FOUND", "待确认地点不存在");
+      return {
+        place: pendingPlaceSummary(place),
+        candidateRequest: {
+          allowed: true,
+          submitAction: "submitPlaceCandidates",
+          note: "Agent 只能提交结构化候选，不能直接固化坐标。用户必须在 UI 中确认候选或手动挪动。"
+        }
+      };
+    }
     default:
       throw new AgentCommandError("UNSUPPORTED_ACTION", "不支持的 Agent action");
   }
+}
+
+function pendingPlaceSummary(place: FoodPlace) {
+  return {
+    id: place.id,
+    name: place.name,
+    city: place.city,
+    address: place.address,
+    longitude: place.longitude,
+    latitude: place.latitude,
+    mapAccuracy: place.mapAccuracy,
+    tags: place.tags,
+    updatedAt: place.updatedAt,
+    reasons: [
+      place.mapAccuracy === "approximate" ? "坐标为近似值" : undefined,
+      place.tags.includes("位置高风险") ? "位置高风险" : undefined,
+      place.tags.includes("暂时跳过") ? "用户暂时跳过确认" : undefined,
+      place.tags.includes("待校准") || place.tags.includes("位置待确认") ? "待校准" : undefined
+    ].filter(Boolean)
+  };
+}
+
+function payloadAttemptsPendingFinalization(payload: Partial<FoodPlace>, existing: FoodPlace): boolean {
+  const coordinateChanged =
+    (typeof payload.longitude === "number" && payload.longitude !== existing.longitude) ||
+    (typeof payload.latitude === "number" && payload.latitude !== existing.latitude);
+  const accuracyFinalized = payload.mapAccuracy === "exact" && existing.mapAccuracy !== "exact";
+  const tagsProvided = Array.isArray(payload.tags);
+  const pendingTagsRemoved = tagsProvided && ["待校准", "近似坐标", "位置待确认", "位置高风险", "暂时跳过"].some((tag) => existing.tags.includes(tag) && !payload.tags?.includes(tag));
+  return coordinateChanged || accuracyFinalized || Boolean(pendingTagsRemoved);
 }
 
 function buildPlace(payload: Partial<FoodPlace>, layers: FoodLayer[]): FoodPlace {
@@ -367,7 +427,8 @@ function buildPlace(payload: Partial<FoodPlace>, layers: FoodLayer[]): FoodPlace
     photoIds: payload.photoIds ?? [],
     tagGroups: payload.tagGroups,
     createdAt: payload.createdAt ?? now,
-    updatedAt: now
+    updatedAt: now,
+    mapAccuracy: payload.mapAccuracy
   };
 }
 

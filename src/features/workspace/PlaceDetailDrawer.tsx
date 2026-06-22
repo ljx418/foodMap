@@ -1,4 +1,4 @@
-import { ArrowLeft, CalendarDays, CheckCircle2, Copy, Edit, ExternalLink, MapPin, Search, Trash2 } from "lucide-react";
+import { ArrowLeft, CalendarDays, CheckCircle2, Copy, Download, Edit, ExternalLink, MapPin, Search, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { EmptyState } from "../../components/EmptyState";
@@ -21,6 +21,7 @@ interface Props {
   onDelete?: () => void;
   onAdd?: () => void;
   onBack?: () => void;
+  onOpenPoster?: () => void;
   onTagsChange?: (tags: string[]) => void | Promise<void>;
   calibrationCandidates?: PlaceCandidate[];
   onConfirmCalibrationCandidate?: (candidate: PlaceCandidate) => void | Promise<void>;
@@ -41,6 +42,7 @@ export function PlaceDetailDrawer({
   onDelete,
   onAdd,
   onBack,
+  onOpenPoster,
   onTagsChange,
   calibrationCandidates = [],
   onConfirmCalibrationCandidate,
@@ -168,12 +170,8 @@ export function PlaceDetailDrawer({
           </div>
         ) : null}
       </div>
-      <div className="detail-drawer__identity">
+      <div className="detail-status-source" data-testid="detail-status-source">
         <div className="eyebrow" style={{ color: layer?.color }}>{layer?.name ?? "未分组"}</div>
-        <h2>{place.name}</h2>
-      </div>
-      {readonlyActions ? <div className="detail-readonly-actions">{readonlyActions}</div> : null}
-      <div className="detail-tags-editor" aria-label="地点标签">
         {statusBadges.length > 0 ? (
           <div className="location-status-strip" aria-label="地点状态">
             {statusBadges.map((badge) => (
@@ -181,6 +179,11 @@ export function PlaceDetailDrawer({
             ))}
           </div>
         ) : null}
+      </div>
+      <div className="detail-drawer__identity">
+        <h2>{place.name}</h2>
+      </div>
+      <div className="detail-tags-editor" aria-label="地点标签">
         <div className="chip-list detail-priority-tags">
           {userFacingTags.length > 0 ? userFacingTags.map((tag) => (
             readonly || !onTagsChange ? (
@@ -212,56 +215,70 @@ export function PlaceDetailDrawer({
           </div>
         ) : null}
       </div>
-      {placePhotos.length > 0 ? (
-        <div className="detail-hero-photos">
-          {placePhotos.slice(0, 3).map((photo) => <img key={photo.id} src={photo.thumbnailDataUrl} alt={photo.fileName} />)}
-        </div>
-      ) : (
-        <div className="detail-photo-placeholder">暂无照片</div>
-      )}
-      <RatingStars value={place.rating} readonly />
-      <div className="meta-list">
-        <span><CalendarDays size={15} /> {place.visitedAt}</span>
-        {place.city ? <span><MapPin size={15} /> {place.city}</span> : null}
-        {place.address ? <span><MapPin size={15} /> {place.address}</span> : null}
-      </div>
-      {coordinateRisk.level !== "ok" ? (
-        <section className={coordinateRisk.level === "blocked" ? "coordinate-risk-card is-blocked" : "coordinate-risk-card"} data-testid="coordinate-risk-card">
-          <strong>{coordinateRisk.level === "blocked" ? "坐标风险" : "近似坐标提醒"}</strong>
-          {coordinateRisk.reasons.map((reason) => <span key={reason}>{reason}</span>)}
-        </section>
-      ) : null}
-      <div className="external-map-actions" data-testid="external-map-actions">
-        {mapLink.primaryHref && !navigationNeedsCalibration ? (
-          <a className="primary-button" href={mapLink.primaryHref} target="_blank" rel="noreferrer">
-            <ExternalLink size={16} /> {mapLink.primaryLabel}
-          </a>
-        ) : (
-          <button type="button" className="primary-button" disabled title={navigationNeedsCalibration ? "该地点仍待校准，暂不提供精确导航" : mapLink.disabledReason}>
-            <ExternalLink size={16} /> {navigationNeedsCalibration ? "待校准，暂不导航" : mapLink.primaryLabel}
-          </button>
-        )}
-        <button type="button" className="ghost-button" onClick={() => void copyFallback()}>
-          <Copy size={16} /> {copyState || mapLink.fallbackLabel}
-        </button>
-        {mapLink.secondaryLinks.map((link) => (
-          <a key={link.label} className="ghost-button" href={link.href} target="_blank" rel="noreferrer">{link.label}</a>
-        ))}
-        {navigationNeedsCalibration ? <span className="map-action-hint">确认地点后解锁地图导航</span> : null}
-      </div>
-      {canMovePin ? (
-        <section className="pin-move-card" data-testid="pin-move-card">
-          <div>
-            <strong>图钉位置</strong>
-            <span>{navigationNeedsCalibration ? "当前点位仍待校准，可以直接挪到真实门店位置。" : "如果图钉和真实门店有偏差，可以随时重新调整。"}</span>
-          </div>
-          {movingPin ? (
-            <button type="button" className="ghost-button" onClick={onCancelMovePin}>取消挪动</button>
+      <section className="detail-core-actions" data-testid="detail-core-actions" aria-label="核心操作">
+        {readonlyActions ? <div className="detail-readonly-actions">{readonlyActions}</div> : null}
+        <div className="external-map-actions" data-testid="external-map-actions">
+          {mapLink.primaryHref && !navigationNeedsCalibration ? (
+            <a className="primary-button" href={mapLink.primaryHref} target="_blank" rel="noreferrer">
+              <ExternalLink size={16} /> {mapLink.primaryLabel}
+            </a>
           ) : (
-            <button type="button" className="ghost-button" onClick={onStartMovePin}>手动挪动图钉</button>
+            <button type="button" className="primary-button" disabled title={navigationNeedsCalibration ? "该地点仍待校准，暂不提供精确导航" : mapLink.disabledReason}>
+              <ExternalLink size={16} /> {navigationNeedsCalibration ? "待校准，暂不导航" : mapLink.primaryLabel}
+            </button>
           )}
-        </section>
-      ) : null}
+          <button type="button" className="ghost-button" onClick={() => void copyFallback()}>
+            <Copy size={16} /> {copyState || mapLink.fallbackLabel}
+          </button>
+          {mapLink.secondaryLinks.map((link) => (
+            <a key={link.label} className="ghost-button" href={link.href} target="_blank" rel="noreferrer">{link.label}</a>
+          ))}
+          {navigationNeedsCalibration ? <span className="map-action-hint">确认地点后解锁地图导航</span> : null}
+        </div>
+        {canMovePin ? (
+          <section className="pin-move-card" data-testid="pin-move-card">
+            <div>
+              <strong>图钉位置</strong>
+              <span>{navigationNeedsCalibration ? "当前点位仍待校准，可以直接挪到真实门店位置。" : "如果图钉和真实门店有偏差，可以随时重新调整。"}</span>
+            </div>
+            {movingPin ? (
+              <button type="button" className="ghost-button" onClick={onCancelMovePin}>取消挪动</button>
+            ) : (
+              <button type="button" className="ghost-button" onClick={onStartMovePin}>手动挪动图钉</button>
+            )}
+          </section>
+        ) : null}
+        {!readonly && onOpenPoster ? (
+          <button type="button" className="ghost-button detail-poster-button" onClick={onOpenPoster} data-testid="detail-share-poster">
+            <Download size={16} /> 导出分享图
+          </button>
+        ) : null}
+      </section>
+      <section className="detail-record-section" aria-label="地点记录">
+        <RatingStars value={place.rating} readonly />
+        <div className="meta-list">
+          <span><CalendarDays size={15} /> {place.visitedAt}</span>
+          {place.city ? <span><MapPin size={15} /> {place.city}</span> : null}
+          {place.address ? <span><MapPin size={15} /> {place.address}</span> : null}
+        </div>
+        <details className="detail-disclosure" data-testid="detail-photo-disclosure">
+          <summary>照片记录 · {placePhotos.length} 张</summary>
+          {placePhotos.length > 0 ? (
+            <div className="detail-hero-photos">
+              {placePhotos.slice(0, 3).map((photo) => <img key={photo.id} src={photo.thumbnailDataUrl} alt={photo.fileName} />)}
+            </div>
+          ) : (
+            <div className="detail-photo-placeholder">暂无照片</div>
+          )}
+        </details>
+      </section>
+      <section className="detail-calibration-section" aria-label="坐标校准">
+        {coordinateRisk.level !== "ok" ? (
+          <section className={coordinateRisk.level === "blocked" ? "coordinate-risk-card is-blocked" : "coordinate-risk-card"} data-testid="coordinate-risk-card">
+            <strong>{coordinateRisk.level === "blocked" ? "坐标风险" : "近似坐标提醒"}</strong>
+            {coordinateRisk.reasons.map((reason) => <span key={reason}>{reason}</span>)}
+          </section>
+        ) : null}
       {canLiveSearch ? (
         <section className="live-map-search-card" data-testid="live-map-search-card">
           <div>
@@ -312,6 +329,7 @@ export function PlaceDetailDrawer({
                     {typeof candidate.distanceMeters === "number" ? ` · ${formatDistance(candidate.distanceMeters)}` : ""}
                   </span>
                   <span>{candidate.reasons.join(" · ")}</span>
+                  <CandidateEvidenceSummary candidate={candidate} />
                   <em><CheckCircle2 size={14} /> {savingCandidateId === candidate.id ? "固化中" : "挪到此地点"}</em>
                 </button>
               ))}
@@ -358,6 +376,7 @@ export function PlaceDetailDrawer({
                         {typeof candidate.distanceMeters === "number" ? ` · ${formatDistance(candidate.distanceMeters)}` : ""}
                       </span>
                       <span>{candidate.reasons.join(" · ")}</span>
+                      <CandidateEvidenceSummary candidate={candidate} />
                       {candidate.evidenceUrl ? (
                         <span className="candidate-card__evidence">
                           证据：{candidate.evidenceLabel ?? "网页地图搜索"}
@@ -377,8 +396,25 @@ export function PlaceDetailDrawer({
           ) : null}
         </section>
       ) : null}
-      {place.notes ? <p className="notes">{place.notes}</p> : <p className="notes is-muted">还没有文字记录。</p>}
+      </section>
+      <details className="detail-disclosure detail-notes-disclosure" data-testid="detail-notes-disclosure">
+        <summary>文字记录</summary>
+        {place.notes ? <p className="notes">{place.notes}</p> : <p className="notes is-muted">还没有文字记录。</p>}
+      </details>
     </aside>
+  );
+}
+
+function CandidateEvidenceSummary({ candidate }: { candidate: PlaceCandidate }) {
+  const signals = candidate.matchSignals?.slice(0, 2) ?? [];
+  const risks = candidate.riskReasons?.slice(0, 2) ?? [];
+  if (signals.length === 0 && risks.length === 0 && !candidate.lastCheckedAt) return null;
+  return (
+    <span className="candidate-card__evidence-summary">
+      {signals.length > 0 ? `匹配：${signals.join(" / ")}` : ""}
+      {risks.length > 0 ? `${signals.length > 0 ? " · " : ""}风险：${risks.join(" / ")}` : ""}
+      {candidate.lastCheckedAt ? `${signals.length > 0 || risks.length > 0 ? " · " : ""}核验：${formatCheckedAt(candidate.lastCheckedAt)}` : ""}
+    </span>
   );
 }
 
@@ -391,4 +427,8 @@ function coordinateAccuracyLabel(value: PlaceCandidate["coordinateAccuracy"]): s
 
 function formatDistance(distance: number): string {
   return distance >= 1000 ? `${(distance / 1000).toFixed(1)} 公里` : `${Math.round(distance)} 米`;
+}
+
+function formatCheckedAt(value: string): string {
+  return value.slice(0, 10);
 }

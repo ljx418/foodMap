@@ -25,6 +25,9 @@ const WEB_MAP_CANDIDATES: ExternalCandidateFixture[] = [
         tags: ["外部地图候选", "牛排", "西餐", "精确坐标"],
         confidence: 0.9,
         coordinateAccuracy: "exact",
+        riskReasons: [],
+        matchSignals: ["用户补充武汉国广附近", "高德网页地图候选", "与武商MALL商圈一致"],
+        lastCheckedAt: "2026-06-16",
         reasons: ["网页地图候选", "匹配用户补充的武汉国广附近", "用于替换当前商圈占位点"]
       },
       {
@@ -42,6 +45,9 @@ const WEB_MAP_CANDIDATES: ExternalCandidateFixture[] = [
         tags: ["外部地图候选", "牛排", "西餐", "精确坐标"],
         confidence: 0.86,
         coordinateAccuracy: "exact",
+        riskReasons: [],
+        matchSignals: ["百度网页地图候选", "与武商MALL/国广片区一致"],
+        lastCheckedAt: "2026-06-16",
         reasons: ["网页地图交叉候选", "与武商MALL/国广片区一致"]
       }
     ]
@@ -64,6 +70,9 @@ const WEB_MAP_CANDIDATES: ExternalCandidateFixture[] = [
         tags: ["外部地图候选", "羊肉", "湖北菜", "精确坐标"],
         confidence: 0.88,
         coordinateAccuracy: "exact",
+        riskReasons: [],
+        matchSignals: ["用户补充五龙路", "高德网页地图候选", "与汉阳五龙路线索一致"],
+        lastCheckedAt: "2026-06-16",
         reasons: ["网页地图候选", "匹配用户原始线索五龙路", "用于替换当前片区占位点"]
       },
       {
@@ -81,6 +90,9 @@ const WEB_MAP_CANDIDATES: ExternalCandidateFixture[] = [
         tags: ["外部地图候选", "羊肉", "湖北菜", "精确坐标"],
         confidence: 0.84,
         coordinateAccuracy: "exact",
+        riskReasons: [],
+        matchSignals: ["百度网页地图候选", "与五龙路线索一致"],
+        lastCheckedAt: "2026-06-16",
         reasons: ["网页地图交叉候选", "与五龙路线索一致"]
       }
     ]
@@ -92,4 +104,3 @@ export function getExternalMapCandidatesForPlace(place: FoodPlace): MapProviderS
   const fixture = WEB_MAP_CANDIDATES.find((item) => item.matchIds.includes(normalizedId));
   return fixture?.candidates ?? [];
 }
-

@@ -1,8 +1,8 @@
-# FoodMap P17 目标架构
+# FoodMap P18 目标架构
 
 ## 1. 架构结论
 
-FoodMap P17 继续采用**纯前端、本地优先、模块化单体**架构。用户个人记录、照片、图层、分享快照仍存储在浏览器本地 IndexedDB；高德扫街榜和钉图易分享数据作为可显隐参考图层保留；伴随式 Agent 只能通过受控的 `window.FoodMapAgentBridge` 调用能力，不能绕过领域校验、POI 准入、候选排序、坐标固化和导入导出规则。
+FoodMap P18 继续采用**纯前端、本地优先、模块化单体**架构。用户个人记录、照片、图层、分享快照仍存储在浏览器本地 IndexedDB；高德扫街榜和钉图易分享数据作为可显隐参考图层保留；伴随式 Agent 只能通过受控的 `window.FoodMapAgentBridge` 调用能力，不能绕过领域校验、POI 准入、候选排序、坐标固化和导入导出规则。
 
 P8-P14 的目标不是引入后端或做实时榜单，而是把现有 P1-P7 基线提升为可长期维护的产品化版本：
 
@@ -38,6 +38,17 @@ P17 新增目标：
 - 首页筛选栏、图钉视觉、分享图导出和移动端主路径在多尺寸下不截断、不遮挡、不误导。
 - 真实数据量下扫街榜、参考层、个人收藏、待确认队列同时存在时仍可流畅缩放和筛选。
 
+P18 新增目标：
+
+- 待确认详情和工作台内提供更强的候选搜索入口，用户能继续查找更多候选而不是只能手动挪动。
+- 候选来源、地址、坐标精度、置信度、证据和风险理由成为统一可审计模型。
+- 高德 Web 服务 Key、地图网页搜索、复制搜索词和 Agent 候选以纯前端方式接入，未配置 provider 时不得伪装成实时 POI 搜索。
+- 手动挪动展示新旧坐标和审计说明，保存前必须确认校准含义。
+- 移动详情首屏进一步精简，候选历史、照片、长笔记和高级搜索按需展开。
+- 首页筛选摘要解释当前可见点数、筛选条件、待确认数、扫街榜/参考层状态。
+- 分享图支持标题编辑、当前视野/当前筛选结果模式，并继续保证地点数和筛选事实一致。
+- 性能验收扩展到 500、1000、3000 点模拟数据。
+
 ## 2. 架构原则
 
 | 原则 | 说明 | 违反信号 |
@@ -51,6 +62,8 @@ P17 新增目标：
 | 可验收 | 每个阶段必须有命令、真实数据、截图和规格复检证据 | 只凭主观体验宣称通过 |
 | 纠错优先 | 坐标不确定时提供候选确认和手动挪动，而不是隐藏风险 | 水里、桥上、偏移点以普通地点展示 |
 | 多尺寸同权 | 桌面、平板、手机都必须能完成主路径 | 只在 1440 宽屏可用，窄屏裁切或不可滚动 |
+| 候选可追溯 | 所有候选必须说明来源、置信度、坐标精度和风险 | 候选只显示店名，用户不知道能不能信 |
+| Provider 可降级 | 没有外部 Key 或网络能力时仍提供复制/网页/手动路径 | 无 Key 时流程中断或伪装成已搜索 |
 
 ## 3. 技术栈
 
@@ -64,6 +77,36 @@ P17 新增目标：
 | 地图 | 当前基线为 Leaflet 适配器加载高德瓦片；远程瓦片失败时使用武汉本地示意 fallback；高德 Web JS Provider 属于后续可选增强，未配置并验收前不能宣称已具备 |
 | 测试 | Vitest + Playwright |
 | Agent | `window.FoodMapAgentBridge` |
+
+## 3D. P18 新增目标模块
+
+| 模块 | 职责 | 目标代码位置 |
+| --- | --- | --- |
+| `CandidateSearchWorkbench` | 在待确认详情和工作台内发起候选搜索、展示候选、解释风险和证据 | `src/features/workspace/PendingPlaceWorkbench.tsx`, `PlaceDetailDrawer.tsx` |
+| `CandidateEvidenceModel` | 统一候选来源、地址、坐标精度、置信度、证据、截图、风险理由和排序说明 | `src/domain/placeSearch.ts`, `src/domain/placeRecognition.ts` |
+| `AmapWebSearchProvider` | 纯前端调用高德 Web 服务；Key 仅本机保存；失败时返回可解释错误 | `src/domain/liveMapSearch.ts`, `PlaceDetailDrawer.tsx` |
+| `ExternalMapSearchFallback` | 生成复制搜索词、打开高德/百度/Apple/网页地图搜索链接的 fallback | `src/domain/externalMapLinks.ts` |
+| `PinMoveAuditPreview` | 挪动保存前展示新旧坐标、校准方式、风险说明和审计备注 | `src/domain/manualPinMove.ts`, `MapWorkspace.tsx` |
+| `MobileDetailProgressiveDisclosure` | 移动端详情首屏精简，高级信息折叠展开 | `PlaceDetailDrawer.tsx`, `src/styles/app.css` |
+| `FilterStateExplainer` | 首页展示当前筛选摘要、可见点数和清空入口 | `HomeMapControlDock.tsx`, `FilterPanel.tsx` |
+| `SharePosterComposer` | 分享图标题编辑、当前视野/筛选结果模式、传播友好布局 | `MapPosterDialog.tsx`, `src/domain/mapPoster.ts` |
+| `PersonalDataHealthReport` | 对个人收藏生成已核验、待确认、高风险、手动校准分组和下一步建议 | `ImportExportDialog.tsx`, `src/domain/locationStatus.ts` |
+| `LargeDatasetPerformanceHarness` | 500/1000/3000 点模拟数据性能 smoke | `e2e/workspace.spec.ts`, `scripts` |
+
+P18 的候选搜索、provider 降级、手动挪动审计、Agent 边界和验收 fixture 以 [P18 Candidate Search And Trust Calibration Contract](./p18-candidate-search-trust-contract.md) 为准。
+
+## 3E. P18 开发目标编排映射
+
+| 工作流 | 牵头模块 | 依赖模块 | 不可跨越的架构边界 |
+| --- | --- | --- | --- |
+| W18-A 坐标准确性与候选校准 | `CandidateSearchWorkbench`, `CandidateEvidenceModel`, `PinMoveAuditPreview` | `Candidate Provider Registry`, `Persistence`, `Map Adapter` | 候选确认和手动挪动都必须走 Domain 校验，不能直接改地图 marker 或 IndexedDB |
+| W18-B 详情页和移动主路径 | `MobileDetailProgressiveDisclosure`, `PlaceDetailInformationArchitecture` | `PinMoveController`, `ExternalMapLinkBuilder` | 详情 UI 不能维护独立事实状态，必须读取同一个 `FoodPlace` 和 `mapAccuracy` |
+| W18-C 首页筛选与图层解释 | `FilterStateExplainer`, `FilterCommandBar`, `LayerController` | `FoodFilterState`, `Recommendation Read Model` | 筛选摘要、地图 marker、列表和分享图必须读取同一筛选事实 |
+| W18-D 分享传播体验 | `SharePosterComposer`, `MapSnapshotExporter` | `FilterStateExplainer`, `Map Adapter` | 分享图不能重新解释筛选条件，必须使用当前视野或当前筛选结果之一 |
+| W18-E 数据健康与性能 | `PersonalDataHealthReport`, `LargeDatasetPerformanceHarness` | `Persistence`, `locationStatus`, `workspace.spec.ts` | 不可信地点不能被体检流程隐藏或自动改成 verified |
+| W18-F Agent 和验收治理 | `AgentPendingPlaceContext`, `FoodMapAgentBridge`, Acceptance | Domain、Persistence、E2E | Agent 不能暴露直接固化坐标、删除地点、隐藏待确认状态的写入入口 |
+
+P18 实现时可以按工作流并行推进，但跨工作流共享事实必须以 Domain/Persistence 为准。UI、地图 provider、Agent 和测试不得各自维护一套地点可信状态。
 
 ## 3A. P15 新增目标模块
 
@@ -114,12 +157,14 @@ Browser
     -> Share UI
     -> Agent Bridge
     -> Pending Place Workbench
+    -> Candidate Search Workbench
 
 Workspace UI
   -> Domain
   -> Persistence
   -> Map Provider Adapter
   -> Recommendation Read Model
+  -> Candidate Provider Registry
 
 Refresh Scripts
   -> Public Source Fetch
@@ -147,6 +192,7 @@ Acceptance
 | Agent Bridge | 供伴随式 Agent 调用的浏览器契约 | `src/agent/FoodMapAgentBridge.ts` |
 | Verification | 单测、浏览器验收、证据文档 | `src/tests`, `e2e`, `docs/active` |
 | UX Trust Layer | 待确认工作台、详情页信息架构、图钉视觉状态、移动主路径 | `src/features/workspace`, `src/styles/app.css`, `src/domain` |
+| Candidate Trust Layer | 候选搜索、证据模型、provider 降级、挪动审计和数据体检 | `src/features/workspace`, `src/domain`, `src/agent` |
 
 ## 5. 允许依赖关系
 
@@ -162,6 +208,7 @@ Acceptance
 | Agent Bridge | Domain、Persistence、Recommendation、Snapshot codec | 绕过校验的直接写入 |
 | Acceptance | 测试、报告、截图、真实数据证据 | 无证据的人工口头通过 |
 | UX Trust Layer | Domain 状态、Map Adapter 状态、Persistence 仓库 | 自行维护一套与领域模型不一致的事实状态 |
+| Candidate Trust Layer | Domain、Provider Adapter、Agent Bridge、Persistence | 绕过用户确认直接固化候选坐标 |
 
 ## 6. 核心数据模型
 

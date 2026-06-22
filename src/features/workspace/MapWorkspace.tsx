@@ -25,6 +25,7 @@ import { ImportExportDialog } from "./ImportExportDialog";
 import { LayerPanel } from "./LayerPanel";
 import { MapCanvas } from "./MapCanvas";
 import { MapPosterDialog } from "./MapPosterDialog";
+import { PendingPlaceWorkbench } from "./PendingPlaceWorkbench";
 import { PlaceDetailDrawer } from "./PlaceDetailDrawer";
 import { PlaceList } from "./PlaceList";
 import { PlaceEditorModal } from "./PlaceEditorModal";
@@ -45,7 +46,7 @@ import {
 
 type MobilePanelMode = "layers" | "places" | "detail" | "tools";
 type WorkspaceUiMode = "idle" | "display" | "list" | "detail" | "recommendation" | "dingtuyi" | "tools" | "create" | "edit" | "filter" | "importExport" | "share" | "poster";
-type RightPanelView = "list" | "detail" | "recommendations" | "dingtuyi";
+type RightPanelView = "list" | "detail" | "recommendations" | "dingtuyi" | "pending";
 
 export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
   const { places, layers, photos, filter, loading, visiblePlaces, setFilter, reload } = useFoodMapData();
@@ -67,6 +68,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
   const [dingtuyiLayerVisible, setDingtuyiLayerVisible] = useState(false);
   const [selectedDingtuyiId, setSelectedDingtuyiId] = useState<string | undefined>();
   const [manualMovePlaceId, setManualMovePlaceId] = useState<string | undefined>();
+  const [pendingManualMovePoint, setPendingManualMovePoint] = useState<{ longitude: number; latitude: number } | undefined>();
 
   const selectedPlace = useMemo(() => places.find((place) => place.id === selectedId), [places, selectedId]);
   const displayLayers = useMemo(() => [...layers, DINGTUYI_SHARE_LAYER], [layers]);
@@ -146,6 +148,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
   );
   const scanlistVisible = recommendationsLoaded && recommendationLayerVisible;
   const pendingPlaceCount = useMemo(() => places.filter(isPendingCalibrationPlace).length, [places]);
+  const pendingPlaces = useMemo(() => places.filter(isPendingCalibrationPlace), [places]);
   const highRiskPlaceCount = useMemo(() => places.filter((place) => place.tags.includes("位置高风险")).length, [places]);
   const selectedCanMovePin = canManuallyMovePlace(selectedPlace);
   const selectedDingtuyiCanSave = Boolean(selectedDingtuyiId && !places.some((place) => place.id === `personal-favorite:dingtuyi-${selectedDingtuyiId}`));
@@ -197,6 +200,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
     setSelectedRecommendationId(undefined);
     setSelectedDingtuyiId(undefined);
     setManualMovePlaceId(undefined);
+    setPendingManualMovePoint(undefined);
   }
 
   function closeDetailPanel() {
@@ -251,7 +255,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
     setFilter({ ...filter, source: "personal", verificationStatus: "pending" });
     setSelectedRecommendationId(undefined);
     setRightPanelOpen(true);
-    setRightView("list");
+    setRightView("pending");
     if (isMobileViewport()) setMobilePanel("places");
   }
 
@@ -333,11 +337,10 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
     notify("已更新标签");
   }
 
-  async function confirmSelectedCalibrationCandidate(candidate: PlaceCandidate) {
-    if (!selectedPlace) return;
+  async function confirmCalibrationCandidateForPlace(place: FoodPlace, candidate: PlaceCandidate) {
     const precise = candidateSolidifiesPrecisePlace(candidate);
-    const staleCalibrationTags = new Set(["待校准", "近似坐标", "默认候选"]);
-    const baseTags = selectedPlace.tags.filter((tag) => !staleCalibrationTags.has(tag));
+    const staleCalibrationTags = new Set(["待校准", "近似坐标", "默认候选", "位置待确认", "位置高风险", "陆地点修正", "暂时跳过"]);
+    const baseTags = place.tags.filter((tag) => !staleCalibrationTags.has(tag));
     const tags = normalizeTags([
       ...baseTags,
       ...candidate.tags.filter((tag) => !staleCalibrationTags.has(tag)),
@@ -346,7 +349,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
       candidate.sourceLabel
     ]);
     const notes = [
-      selectedPlace.notes,
+      place.notes,
       [
         `候选确认固化：${candidate.name}`,
         candidate.address ? `候选地址：${candidate.address}` : undefined,
@@ -356,13 +359,13 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
       ].filter(Boolean).join("\n")
     ].filter(Boolean).join("\n\n");
     const next: FoodPlace = {
-      ...selectedPlace,
-      name: candidate.name || selectedPlace.name,
-      address: candidate.address ?? selectedPlace.address,
-      city: candidate.city ?? selectedPlace.city ?? "武汉",
-      longitude: typeof candidate.longitude === "number" ? candidate.longitude : selectedPlace.longitude,
-      latitude: typeof candidate.latitude === "number" ? candidate.latitude : selectedPlace.latitude,
-      coordinateSystem: candidate.coordinateSystem ?? selectedPlace.coordinateSystem ?? "wgs84",
+      ...place,
+      name: candidate.name || place.name,
+      address: candidate.address ?? place.address,
+      city: candidate.city ?? place.city ?? "武汉",
+      longitude: typeof candidate.longitude === "number" ? candidate.longitude : place.longitude,
+      latitude: typeof candidate.latitude === "number" ? candidate.latitude : place.latitude,
+      coordinateSystem: candidate.coordinateSystem ?? place.coordinateSystem ?? "wgs84",
       tags,
       notes,
       mapAccuracy: precise ? "exact" : "approximate",
@@ -372,6 +375,33 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
     await reload();
     setSelectedId(next.id);
     notify(precise ? "已固化为精确地点" : "已保存候选，仍需校准");
+  }
+
+  async function confirmSelectedCalibrationCandidate(candidate: PlaceCandidate) {
+    if (!selectedPlace) return;
+    await confirmCalibrationCandidateForPlace(selectedPlace, candidate);
+  }
+
+  async function confirmPendingCandidate(placeId: string, candidate: PlaceCandidate) {
+    const place = places.find((item) => item.id === placeId);
+    if (!place) return;
+    await confirmCalibrationCandidateForPlace(place, candidate);
+    setRightView("pending");
+  }
+
+  async function skipPendingPlace(placeId: string) {
+    const place = places.find((item) => item.id === placeId);
+    if (!place) return;
+    const now = nowIso();
+    const tags = normalizeTags([...place.tags.filter((tag) => tag !== "暂时跳过"), "暂时跳过", "位置待确认"]);
+    const notes = [
+      place.notes,
+      [`待确认处理：用户暂时跳过。`, `操作时间：${now}`, "该地点仍保留在待确认工作台，不作为精确导航依据。"].join("\n")
+    ].filter(Boolean).join("\n\n");
+    await placeRepository.save({ ...place, tags, notes, updatedAt: now, mapAccuracy: place.mapAccuracy ?? "approximate" });
+    await reload();
+    setSelectedId(placeId);
+    notify("已暂时跳过，仍保留在待确认工作台");
   }
 
   async function searchSelectedMapCandidates(query: string, apiKey: string): Promise<PlaceCandidate[]> {
@@ -385,23 +415,49 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
     });
   }
 
-  async function movePlaceManually(placeId: string, point: { longitude: number; latitude: number }) {
+  async function searchPendingMapCandidates(placeId: string, query: string, apiKey: string): Promise<PlaceCandidate[]> {
+    const place = places.find((item) => item.id === placeId);
+    if (!place) return [];
+    return searchAmapPlaceCandidates({
+      apiKey,
+      query,
+      place,
+      historyPlaces: places,
+      limit: 10
+    });
+  }
+
+  function previewManualPinMove(placeId: string, point: { longitude: number; latitude: number }) {
     const place = places.find((item) => item.id === placeId);
     if (!place || manualMovePlaceId !== placeId || !canManuallyMovePlace(place)) {
       notify("当前图钉不可手动挪动");
       return;
     }
-    const next = applyManualPinMove(place, point);
+    setPendingManualMovePoint(point);
+    setSelectedId(placeId);
+    notify("已选择新位置，请确认后保存");
+  }
+
+  async function confirmManualPinMove() {
+    if (!manualMovePlaceId || !pendingManualMovePoint) return;
+    const place = places.find((item) => item.id === manualMovePlaceId);
+    if (!place || !canManuallyMovePlace(place)) {
+      notify("当前图钉不可手动挪动");
+      return;
+    }
+    const next = applyManualPinMove(place, pendingManualMovePoint);
     await placeRepository.save(next);
     await reload();
-    setSelectedId(placeId);
+    setSelectedId(place.id);
     setManualMovePlaceId(undefined);
+    setPendingManualMovePoint(undefined);
     if (isMobileViewport()) setMobilePanel("detail");
     notify("已手动校准图钉位置");
   }
 
   function startManualMove(placeId: string) {
     setManualMovePlaceId(placeId);
+    setPendingManualMovePoint(undefined);
     setSelectedId(placeId);
     setFilterOpen(false);
     if (isMobileViewport()) {
@@ -446,6 +502,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
   useEffect(() => {
     if (manualMovePlaceId && selectedId !== manualMovePlaceId) {
       setManualMovePlaceId(undefined);
+      setPendingManualMovePoint(undefined);
     }
   }, [manualMovePlaceId, selectedId]);
 
@@ -495,7 +552,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
             ? "share"
             : mobilePanel === "layers" || leftPanelOpen
             ? "display"
-            : mobilePanel === "places" || (desktopRightPanelOpen && rightView === "list")
+              : mobilePanel === "places" || (desktopRightPanelOpen && (rightView === "list" || rightView === "pending"))
               ? "list"
               : mobilePanel === "tools"
                 ? "tools"
@@ -510,6 +567,14 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
   const filterSummaryVisible = desktopViewport && mapStatusVisible && (structuralFilterCount > 0 || hiddenLayerCount > 0);
   const mobileActionBarVisible = !manualMovePlaceId && ["idle", "display", "list"].includes(uiMode);
   const movingPlace = manualMovePlaceId ? places.find((place) => place.id === manualMovePlaceId) : undefined;
+
+  function getCalibrationCandidatesForPlace(place: FoodPlace): PlaceCandidate[] {
+    return buildCalibrationCandidates({
+      place,
+      places,
+      mapProviderResults: getExternalMapCandidatesForPlace(place)
+    });
+  }
 
   return (
     <main className={manualMovePlaceId ? "workspace is-moving-pin" : "workspace"}>
@@ -584,7 +649,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
             onPlaceClick={selectPlace}
             onMapClick={(point) => {
               if (manualMovePlaceId) {
-                void movePlaceManually(manualMovePlaceId, point);
+                previewManualPinMove(manualMovePlaceId, point);
                 return;
               }
               setSelectedId(undefined);
@@ -592,7 +657,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
               setManualMovePlaceId(undefined);
               openCreateDraft(point);
             }}
-            onPlaceMove={(placeId, point) => void movePlaceManually(placeId, point)}
+            onPlaceMove={(placeId, point) => previewManualPinMove(placeId, point)}
             notify={notify}
           />
           {manualMovePlaceId ? (
@@ -600,9 +665,20 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
               <span>
                 <strong>校准图钉位置</strong>
                 {movingPlace ? <small>{movingPlace.name}</small> : null}
-                <em>拖动图钉，或点击地图上的真实位置后自动保存。</em>
+                <em>{pendingManualMovePoint ? "请确认新旧坐标后保存。" : "拖动图钉，或点击地图上的真实位置生成保存预览。"}</em>
+                {movingPlace && pendingManualMovePoint ? (
+                  <em data-testid="pin-move-audit-preview">
+                    原 {movingPlace.latitude.toFixed(6)}, {movingPlace.longitude.toFixed(6)}
+                    {" -> "}
+                    新 {pendingManualMovePoint.latitude.toFixed(6)}, {pendingManualMovePoint.longitude.toFixed(6)}
+                  </em>
+                ) : null}
               </span>
-              <button type="button" onClick={() => setManualMovePlaceId(undefined)}>取消挪动</button>
+              <button type="button" onClick={() => {
+                setManualMovePlaceId(undefined);
+                setPendingManualMovePoint(undefined);
+              }}>取消挪动</button>
+              <button type="button" disabled={!pendingManualMovePoint} onClick={() => void confirmManualPinMove()}>确认保存</button>
             </div>
           ) : null}
           {mapStatusVisible ? (
@@ -669,6 +745,22 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
                   onSelect={selectRecommendation}
                   onSave={saveRecommendation}
                 />
+              ) : rightView === "pending" ? (
+                <PendingPlaceWorkbench
+                  places={pendingPlaces}
+                  layers={layers}
+                  selectedId={selectedId}
+                  getCandidates={getCalibrationCandidatesForPlace}
+                  onSelect={selectPlace}
+                  onConfirmCandidate={confirmPendingCandidate}
+                  onSearchMapCandidates={searchPendingMapCandidates}
+                  onStartMovePin={startManualMove}
+                  onSkipPlace={skipPendingPlace}
+                  onShowAll={() => {
+                    setFilter({ ...filter, verificationStatus: "all" });
+                    setRightView("list");
+                  }}
+                />
               ) : rightView === "detail" && selectedPlace ? (
                 <PlaceDetailDrawer
                   place={selectedPlace}
@@ -678,6 +770,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
                   onEdit={() => setEditingPlace(selectedPlace)}
                   onDelete={deleteSelected}
                   onBack={() => setRightView("list")}
+                  onOpenPoster={() => setPosterOpen(true)}
                   onTagsChange={updateSelectedPlaceTags}
                   calibrationCandidates={selectedCalibrationCandidates}
                   onConfirmCalibrationCandidate={confirmSelectedCalibrationCandidate}
@@ -765,7 +858,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
         <div className="mobile-panel-backdrop" onClick={closeMobilePanel}>
           <section className="mobile-panel" role="dialog" aria-modal="true" aria-labelledby="mobile-panel-title" onClick={(event) => event.stopPropagation()}>
             <div className="mobile-panel__header">
-              <h2 id="mobile-panel-title">{mobilePanel === "layers" ? "地图显示" : mobilePanel === "places" ? (rightView === "recommendations" ? "扫街榜清单" : "地点清单") : mobilePanel === "tools" ? "更多工具" : rightView === "dingtuyi" ? "钉图易地点" : "地点详情"}</h2>
+              <h2 id="mobile-panel-title">{mobilePanel === "layers" ? "地图显示" : mobilePanel === "places" ? (rightView === "recommendations" ? "扫街榜清单" : rightView === "pending" ? "待确认工作台" : "地点清单") : mobilePanel === "tools" ? "更多工具" : rightView === "dingtuyi" ? "钉图易地点" : "地点详情"}</h2>
               <button type="button" className="ghost-button" onClick={closeMobilePanel}>关闭</button>
             </div>
             {mobilePanel === "tools" ? (
@@ -809,6 +902,22 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
                   onSelect={selectRecommendation}
                   onSave={saveRecommendation}
                 />
+              ) : rightView === "pending" ? (
+                <PendingPlaceWorkbench
+                  places={pendingPlaces}
+                  layers={layers}
+                  selectedId={selectedId}
+                  getCandidates={getCalibrationCandidatesForPlace}
+                  onSelect={selectPlace}
+                  onConfirmCandidate={confirmPendingCandidate}
+                  onSearchMapCandidates={searchPendingMapCandidates}
+                  onStartMovePin={startManualMove}
+                  onSkipPlace={skipPendingPlace}
+                  onShowAll={() => {
+                    setFilter({ ...filter, verificationStatus: "all" });
+                    setRightView("list");
+                  }}
+                />
               ) : (
                 <PlaceList
                   places={visiblePlaces}
@@ -833,6 +942,10 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
                 onEdit={rightView === "dingtuyi" ? undefined : () => setEditingPlace(selectedPlace)}
                 onDelete={rightView === "dingtuyi" ? undefined : deleteSelected}
                 onBack={() => setMobilePanel("places")}
+                onOpenPoster={rightView === "dingtuyi" ? undefined : () => {
+                  setMobilePanel(undefined);
+                  setPosterOpen(true);
+                }}
                 onTagsChange={rightView === "dingtuyi" ? undefined : updateSelectedPlaceTags}
                 calibrationCandidates={rightView === "dingtuyi" ? [] : selectedCalibrationCandidates}
                 onConfirmCalibrationCandidate={rightView === "dingtuyi" ? undefined : confirmSelectedCalibrationCandidate}

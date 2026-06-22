@@ -1,6 +1,6 @@
-# FoodMap P17 E2E Test And Evidence Matrix
+# FoodMap P18 E2E Test And Evidence Matrix
 
-Updated: 2026-06-15
+Updated: 2026-06-17
 
 Additional real-data command gate:
 
@@ -8,7 +8,18 @@ Additional real-data command gate:
 
 ## Summary
 
-This matrix defines the browser-level evidence needed to prove P17 satisfies the PRD, target architecture, [P16 Real Place Linking Implementation Contract](./p16-real-place-linking-implementation-contract.md), and [P17 UX Trust Implementation Contract](./p17-ux-trust-implementation-contract.md).
+This matrix defines the browser-level evidence needed to prove P18 satisfies the PRD, target architecture, [P17 UX Trust Implementation Contract](./p17-ux-trust-implementation-contract.md), and [P18 Candidate Search And Trust Calibration Contract](./p18-candidate-search-trust-contract.md).
+
+## P18 Workstream Evidence Map
+
+| Workstream | Covered E2E IDs | Required Evidence |
+| --- | --- | --- |
+| W18-A 坐标准确性与候选校准 | P18-E2E-01 to P18-E2E-07 | 候选搜索、fallback、候选确认、手动挪动、刷新持久化 |
+| W18-B 详情页和移动主路径 | P18-E2E-08, P17-E2E-07, P17-E2E-08, P17-E2E-11 | 桌面/平板/手机截图和核心动作可达 |
+| W18-C 首页筛选与图层解释 | P18-E2E-09, P16-E2E-11, P17-E2E-01 | 筛选摘要、点数一致、控件不截断 |
+| W18-D 分享传播体验 | P18-E2E-10, P16-E2E-12, P17-E2E-12 | 标题、模式、点数、PNG 非空 |
+| W18-E 数据健康与性能 | P18-E2E-11, P18-E2E-12, P17-E2E-14 | 数据体检、真实数据、500/1000/3000 点 smoke |
+| W18-F Agent 和验收治理 | P18-E2E-13, P18-E2E-14, P17-E2E-13 | Agent negative path、P16/P17 回归 |
 
 ## Required Commands
 
@@ -42,6 +53,14 @@ Use deterministic fixture data for E2E tests:
   - 2 manually movable places
   - 2 long name/address places
   - 5 tag-rich places
+- P18 candidate trust data:
+  - 10+ pending places with search entry coverage
+  - 3 candidates from provider mock
+  - 3 candidates from Agent submission
+  - 2 no-key fallback places
+  - 2 external map search fallback places
+  - 2 manual pin move audit-preview places
+  - 500, 1000, and 3000 simulated personal markers
 
 ## Selector Strategy
 
@@ -120,8 +139,42 @@ Use stable `data-testid` attributes for E2E-critical controls:
 | P17-E2E-10 | Scanlist/reference/personal pin states differ | Verified, pending, scanlist, reference and selected pins have distinguishable styles |
 | P17-E2E-11 | Mobile main path completes | Pending -> detail -> edit tags -> move pin -> map link fallback -> share entry |
 | P17-E2E-12 | Share poster preview matches filter | Preview/export count equals current filtered personal pins |
-| P17-E2E-13 | Agent pending context is read-only | Agent can list pending contexts but cannot directly confirm coordinates |
+| P17-E2E-13 | Agent pending context is read-only | Agent can list pending contexts and submit candidates, but direct coordinate confirmation, delete, or hide-pending attempts are rejected |
 | P17-E2E-14 | Real-data performance smoke | With scanlist, reference, personal and pending layers enabled, zoom/filter/detail remain usable |
+
+## P18 Required Browser Scenarios
+
+| ID | Scenario | Evidence |
+| --- | --- | --- |
+| P18-E2E-01 | Pending detail opens candidate search entry | Search more, copy search term, external map search and manual move actions visible |
+| P18-E2E-02 | No provider key fallback works | User sees explanation, copy search term and open external map search options |
+| P18-E2E-03 | Provider mock returns candidates | Candidate cards show source, address, confidence, coordinate accuracy, risk reasons and evidence |
+| P18-E2E-04 | Candidate selection does not auto-save | Coordinates and `mapAccuracy` remain unchanged until explicit confirmation |
+| P18-E2E-05 | Candidate confirmation updates shared facts | Map/list/detail/filter summary/share poster use the confirmed location |
+| P18-E2E-06 | Manual pin move audit preview supports cancel | Preview shows old/new coordinates; cancel preserves original coordinates |
+| P18-E2E-07 | Manual pin move audit preview confirms and persists | Confirm saves coordinates and refresh keeps audit state |
+| P18-E2E-08 | Mobile detail progressive disclosure | 390x844 and 430x932 keep status/tags/core actions visible and advanced content reachable |
+| P18-E2E-09 | Filter state explainer describes visible map | Summary lists visible count, active tags/status/source/layers and clear action |
+| P18-E2E-10 | Share poster composer supports title and mode | Current viewport and current filter modes produce matching counts and non-empty PNG |
+| P18-E2E-11 | Personal data health report appears after import | Summary groups verified, pending, high-risk and manual-adjusted places |
+| P18-E2E-12 | Large dataset performance smoke | 500, 1000, 3000 points can zoom/filter/open detail/open poster preview within thresholds |
+| P18-E2E-13 | Agent candidate/risk actions are bounded | Agent can explain risk and submit candidates but cannot finalize coordinates, delete or hide pending places |
+| P18-E2E-14 | P16/P17 regression still passes | Build/test/e2e/verify:scanlist remain green |
+
+## P18 Pre-Implementation Evidence
+
+Before P18-2 development starts, capture a short pre-implementation note proving:
+
+- Fixture availability: scanlist 50, reference layer 120, personal favorites 30+, pending places 10+, high-risk places 3+, provider mock candidates, no-key fallback places, and 500/1000/3000 simulated markers.
+- W18-A readiness: candidate search entry, provider fallback, candidate evidence fields, and pin-move audit preview are mapped to test selectors.
+- W18-B readiness: detail and mobile path viewports `390x844`, `430x932`, `768x900`, and `1280x900` are available.
+- W18-C readiness: filter summary, layer state, visible count, and clear-filter behavior have stable assertions.
+- W18-D readiness: share-poster composer title, mode, point count, and PNG non-empty checks are defined.
+- W18-E readiness: personal data health report and large-dataset smoke output paths are prepared.
+- W18-F readiness: Agent Bridge will not expose direct coordinate finalization, delete, or hide-pending actions.
+- Mobile viewports `390x844` and `430x932` can be used by Playwright.
+- Screenshot output paths under `docs/active/evidence/p18/` are prepared.
+- Required commands are unchanged: `npm run build`, `npm test`, `npm run verify:scanlist`, `npx playwright test`.
 
 ## Manual Evidence
 
@@ -132,7 +185,7 @@ Use stable `data-testid` attributes for E2E-critical controls:
 
 ## Final Report Requirements
 
-The P17 final acceptance report or acceptance summary should be created under `docs/active/` and must include:
+The P18 final acceptance report or acceptance summary should be created under `docs/active/` and must include:
 
 - Build output summary.
 - Unit test output summary.
@@ -140,5 +193,5 @@ The P17 final acceptance report or acceptance summary should be created under `d
 - Desktop, tablet, and mobile screenshot paths.
 - AMap and Leaflet verification notes.
 - Import/export round-trip result.
-- Pending workbench, manual pin move, detail IA, filter dock, pin visual, share poster and performance evidence.
+- Candidate search, provider fallback, candidate evidence, manual pin move preview, mobile progressive disclosure, filter explainer, share poster composer, data health report and large-dataset performance evidence.
 - Known issues and severity.

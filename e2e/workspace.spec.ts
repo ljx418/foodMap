@@ -1,4 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
+import fs from "node:fs";
 
 async function loadRecommendations(page: Page, projectName: string) {
   if (projectName === "mobile") {
@@ -26,6 +27,48 @@ async function importPersonalFavorites(page: Page) {
     const places = await bridge.dispatch({ action: "listPlaces" });
     return places.data.filter((place: { layerId: string }) => place.layerId === "layer-personal-favorites").length === 32;
   });
+}
+
+async function seedLargePersonalDataset(page: Page, size: number) {
+  await page.evaluate(async (count) => {
+    const openRequest = indexedDB.open("foodmap-db", 1);
+    const db = await new Promise<IDBDatabase>((resolve, reject) => {
+      openRequest.onerror = () => reject(openRequest.error);
+      openRequest.onsuccess = () => resolve(openRequest.result);
+    });
+    const tx = db.transaction("places", "readwrite");
+    const store = tx.objectStore("places");
+    store.clear();
+    const now = "2026-06-17T00:00:00.000+08:00";
+    for (let index = 0; index < count; index += 1) {
+      const column = index % 80;
+      const row = Math.floor(index / 80);
+      store.put({
+        id: `perf-place-${count}-${index}`,
+        name: `P18 性能验收店 ${index + 1}`,
+        layerId: "layer-personal-favorites",
+        longitude: 114.05 + column * 0.006,
+        latitude: 30.42 + row * 0.006,
+        city: "武汉",
+        district: index % 3 === 0 ? "江汉区" : "武昌区",
+        address: `武汉市性能验收路 ${index + 1} 号`,
+        rating: index % 2 === 0 ? 4.4 : 3.8,
+        visitedAt: "2026-06-17",
+        tags: index % 2 === 0 ? ["吃过", "热干面", "性能验收"] : ["想吃", "火锅", "性能验收"],
+        notes: "P18 large dataset deterministic fixture",
+        photoIds: [],
+        createdAt: now,
+        updatedAt: now,
+        mapAccuracy: "exact"
+      });
+    }
+    await new Promise<void>((resolve, reject) => {
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error);
+    });
+    db.close();
+  }, size);
 }
 
 test("workspace opens with core controls", async ({ page }, testInfo) => {
@@ -203,7 +246,11 @@ test("personal favorites import verified and calibration pins distinctly", async
   await expect(page.getByTestId("map-pin-legend")).toContainText("已核验");
   await expect(page.getByTestId("map-pin-legend")).toContainText("待确认");
   await page.getByTestId("quick-pending-toggle").click();
-  await expect(page.getByTestId("place-list")).toContainText("31 个地点");
+  await expect(page.getByTestId("pending-workbench")).toBeVisible();
+  await expect(page.getByTestId("pending-workbench")).toContainText("31 个待确认地点");
+  await expect(page.getByTestId("pending-workbench").locator(".pending-candidate").first()).toBeVisible();
+  await page.getByTestId("pending-workbench").getByRole("button", { name: /暂时跳过/ }).first().click();
+  await expect(page.getByTestId("pending-workbench")).toContainText("已跳过确认");
   await expect(page.locator(".personal-favorite-leaflet-marker")).toHaveCount(31);
 
   await page.evaluate(async () => {
@@ -246,6 +293,7 @@ test("personal favorites import verified and calibration pins distinctly", async
     return places.data.find((place: { name: string }) => place.name.includes("笨萝卜"));
   });
   expect(solidified.tags).toEqual(expect.arrayContaining(["待校准", "近似坐标"]));
+  expect(solidified.tags).not.toContain("暂时跳过");
   expect(solidified.notes).toContain("候选确认固化");
 });
 
@@ -317,6 +365,16 @@ test("pending personal favorite pins can be manually moved and audited", async (
   const marker = page.locator(".personal-favorite-leaflet-marker.is-selected.is-draggable").first();
   await expect(marker).toBeVisible();
   await page.getByTestId("workspace-map").click({ position: { x: 180, y: 220 } });
+
+  await expect(page.getByTestId("pin-move-audit-preview")).toContainText("原");
+  const previewOnly = await page.evaluate(async (placeId) => {
+    const bridge = (window as any).FoodMapAgentBridge;
+    const places = await bridge.dispatch({ action: "listPlaces" });
+    return places.data.find((item: { id: string }) => item.id === placeId);
+  }, target.id);
+  expect(previewOnly.longitude).toBe(target.longitude);
+  expect(previewOnly.latitude).toBe(target.latitude);
+  await page.getByRole("button", { name: "确认保存" }).click();
 
   await expect(page.getByTestId("manual-move-banner")).toHaveCount(0);
   await expect(detail).toContainText("手动校准");
@@ -396,6 +454,56 @@ test("place detail can search AMap candidates and move the pin to the selected P
   });
 });
 
+test("pending workbench candidate search exposes no-key fallback without mutating coordinates", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop validates P18-2 pending workbench search fallback");
+  await page.goto("/#/map");
+  await page.waitForFunction(() => Boolean((window as any).FoodMapAgentBridge));
+  await importPersonalFavorites(page);
+  const before = await page.evaluate(async () => {
+    const bridge = (window as any).FoodMapAgentBridge;
+    const places = await bridge.dispatch({ action: "listPlaces" });
+    const place = places.data.find((item: { tags: string[] }) => item.tags.includes("待校准"));
+    return {
+      id: place.id,
+      name: place.name,
+      longitude: place.longitude,
+      latitude: place.latitude,
+      mapAccuracy: place.mapAccuracy,
+      tags: place.tags
+    };
+  });
+
+  await page.getByTestId("quick-pending-toggle").click();
+  const workbench = page.getByTestId("pending-workbench");
+  await expect(workbench).toBeVisible();
+  const firstCard = workbench.getByTestId("pending-place-card").filter({ hasText: before.name }).first();
+  await firstCard.getByRole("button", { name: /搜索候选/ }).click();
+  await expect(firstCard.getByTestId("pending-candidate-search")).toBeVisible();
+  await firstCard.getByRole("button", { name: /搜索更多候选/ }).click();
+  await expect(firstCard.getByTestId("pending-candidate-search")).toContainText("未配置高德 Key");
+  await expect(firstCard.getByRole("link", { name: /高德网页地图/ })).toBeVisible();
+  await expect(firstCard.getByRole("link", { name: /百度地图/ })).toBeVisible();
+  await expect(firstCard.getByRole("link", { name: /Apple Maps/ })).toBeVisible();
+  await firstCard.getByRole("button", { name: /复制搜索词/ }).click();
+  await expect(firstCard.getByTestId("pending-candidate-search")).toContainText(/已复制搜索词|未配置高德 Key/);
+
+  const after = await page.evaluate(async (placeId) => {
+    const bridge = (window as any).FoodMapAgentBridge;
+    const places = await bridge.dispatch({ action: "listPlaces" });
+    const place = places.data.find((item: { id: string }) => item.id === placeId);
+    return {
+      longitude: place.longitude,
+      latitude: place.latitude,
+      mapAccuracy: place.mapAccuracy,
+      tags: place.tags
+    };
+  }, before.id);
+  expect(after.longitude).toBe(before.longitude);
+  expect(after.latitude).toBe(before.latitude);
+  expect(after.mapAccuracy).toBe(before.mapAccuracy);
+  expect(after.tags).toEqual(before.tags);
+});
+
 test("mobile manual pin move uses a map-first calibration mode", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile", "mobile validates the narrow manual move flow");
   await page.setViewportSize({ width: 390, height: 844 });
@@ -421,6 +529,15 @@ test("mobile manual pin move uses a map-first calibration mode", async ({ page }
   await expect(page.getByTestId("home-filter-dock")).toBeHidden();
 
   await page.getByTestId("workspace-map").click({ position: { x: 64, y: 520 } });
+  await expect(page.getByTestId("pin-move-audit-preview")).toContainText("原");
+  const previewOnly = await page.evaluate(async (placeId) => {
+    const bridge = (window as any).FoodMapAgentBridge;
+    const places = await bridge.dispatch({ action: "listPlaces" });
+    return places.data.find((item: { id: string }) => item.id === placeId);
+  }, target.id);
+  expect(previewOnly.longitude).toBe(target.longitude);
+  expect(previewOnly.latitude).toBe(target.latitude);
+  await page.getByRole("button", { name: "确认保存" }).click();
   const updatedDialog = page.getByRole("dialog", { name: "地点详情" });
   await expect(updatedDialog).toBeVisible();
   await expect(updatedDialog.getByTestId("place-detail")).toContainText("手动校准");
@@ -517,6 +634,7 @@ test("narrow homepage keeps map actions compact and opens filter sheets", async 
   await page.getByRole("button", { name: "完成" }).click();
   await expect(quickSheet).toHaveCount(0);
   await expect(page.getByTestId("home-filter-expand")).toContainText("标签 1");
+  await expect(page.getByTestId("home-filter-summary")).toContainText("想吃");
 
   await expect(page.getByTestId("home-full-filter")).toBeHidden();
   await page.getByTestId("mobile-action-bar").getByRole("button", { name: "筛选" }).click();
@@ -540,6 +658,7 @@ test("desktop homepage filter dock keeps every quick action inside the visible b
     const dock = page.getByTestId("home-filter-dock");
     await expect(dock).toBeVisible();
     await expect(page.getByTestId("home-share-poster")).toBeVisible();
+    await expect(page.getByTestId("home-filter-summary")).toContainText("个人地点");
     const result = await page.evaluate(() => {
       const dockElement = document.querySelector<HTMLElement>("[data-testid='home-filter-dock']");
       if (!dockElement) throw new Error("dock missing");
@@ -743,10 +862,13 @@ test("map poster export downloads a png for the current filtered personal pins",
     });
   });
   await page.getByRole("button", { name: "导出" }).click();
+  await expect(page.getByTestId("map-poster-dialog")).toContainText("当前筛选个人图钉");
+  await expect(page.getByTestId("map-poster-dialog")).toContainText("#海报验收");
+  await page.getByLabel("分享图标题").fill("海报导出验收图");
   const downloadPromise = page.waitForEvent("download");
   await page.getByTestId("export-map-poster").click();
   const download = await downloadPromise;
-  expect(download.suggestedFilename()).toMatch(/我的美食地图\.png$/);
+  expect(download.suggestedFilename()).toMatch(/海报导出验收图\.png$/);
   const stream = await download.createReadStream();
   expect(stream).toBeTruthy();
 });
@@ -879,6 +1001,99 @@ test("desktop detail panel stays inside compact browser viewport", async ({ page
   expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.viewportWidth + 1);
 });
 
+test("place detail follows P17 information architecture order", async ({ page }, testInfo) => {
+  const isMobile = testInfo.project.name === "mobile";
+  await page.setViewportSize(isMobile ? { width: 390, height: 844 } : { width: 1280, height: 900 });
+  await page.goto("/#/map");
+  await page.waitForFunction(() => Boolean((window as any).FoodMapAgentBridge));
+  const placeName = `P17详情信息架构验收 ${Date.now()}`;
+  await page.evaluate(async (name) => {
+    const bridge = (window as any).FoodMapAgentBridge;
+    const saved = await bridge.dispatch({
+      action: "savePlace",
+      payload: {
+        name,
+        longitude: 114.289,
+        latitude: 30.582,
+        city: "武汉",
+        address: "武汉市江汉区详情信息架构验收长地址，用于验证换行和层级顺序",
+        rating: 4.4,
+        visitedAt: "2026-06-16",
+        tags: ["吃过", "朋友推荐", "牛排", "西餐", "待校准", "近似坐标"],
+        notes: "P17 详情页应先展示状态、标签和核心操作，再展示照片、评分、地址、校准和笔记。"
+      }
+    });
+    if (!saved.ok) throw new Error(saved.error);
+    await bridge.dispatch({ action: "focusPlace", payload: { placeId: saved.data.id } });
+  }, placeName);
+
+  const detail = isMobile
+    ? page.getByRole("dialog", { name: "地点详情" }).getByTestId("place-detail")
+    : page.locator(".desktop-side-panel").getByTestId("place-detail");
+  await expect(detail).toBeVisible();
+  await expect(detail.getByTestId("detail-status-source")).toContainText("待确认");
+  await expect(detail.getByTestId("detail-core-actions")).toContainText("手动挪动图钉");
+
+  const order = await detail.evaluate((root) => {
+    const top = (selector: string) => {
+      const element = root.querySelector<HTMLElement>(selector);
+      if (!element) throw new Error(`missing ${selector}`);
+      return element.getBoundingClientRect().top;
+    };
+    return {
+      status: top("[data-testid='detail-status-source']"),
+      title: top(".detail-drawer__identity"),
+      tags: top(".detail-tags-editor"),
+      core: top("[data-testid='detail-core-actions']"),
+      record: top(".detail-record-section"),
+      calibration: top(".detail-calibration-section"),
+      notes: top("[data-testid='detail-notes-disclosure']")
+    };
+  });
+  expect(order.status).toBeLessThan(order.title);
+  expect(order.title).toBeLessThan(order.tags);
+  expect(order.tags).toBeLessThan(order.core);
+  expect(order.core).toBeLessThan(order.record);
+  expect(order.record).toBeLessThan(order.calibration);
+  expect(order.calibration).toBeLessThan(order.notes);
+
+  const widths = await detail.evaluate((element) => ({
+    clientWidth: element.clientWidth,
+    scrollWidth: element.scrollWidth
+  }));
+  expect(widths.scrollWidth).toBeLessThanOrEqual(widths.clientWidth + 1);
+});
+
+test("mobile P17 main path reaches detail tags, map fallback and share poster", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile", "mobile main path acceptance");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#/map");
+  await page.waitForFunction(() => Boolean((window as any).FoodMapAgentBridge));
+  await importPersonalFavorites(page);
+
+  await page.getByTestId("quick-pending-toggle").click();
+  const pendingDialog = page.getByRole("dialog", { name: "待确认工作台" });
+  await expect(pendingDialog.getByTestId("pending-workbench")).toBeVisible();
+  await pendingDialog.getByTestId("pending-place-card").first().locator(".pending-card__main").click();
+
+  const detailDialog = page.getByRole("dialog", { name: "地点详情" });
+  const detail = detailDialog.getByTestId("place-detail");
+  await expect(detail).toBeVisible();
+  await expect(detail.getByTestId("detail-status-source")).toContainText("待确认");
+  await expect(detail.getByTestId("detail-core-actions")).toContainText("复制地址/坐标");
+  await expect(detail.getByTestId("pin-move-card")).toContainText("手动挪动图钉");
+
+  await detail.getByLabel("添加自定义标签").fill("移动主路径验收");
+  await detail.getByRole("button", { name: "添加" }).click();
+  await expect(detail.locator(".detail-priority-tags")).toContainText("移动主路径验收");
+
+  await detail.getByTestId("detail-share-poster").click();
+  await expect(detailDialog).toHaveCount(0);
+  await expect(page.getByTestId("map-poster-dialog")).toBeVisible();
+  await expect(page.getByTestId("export-map-poster")).toBeVisible();
+  await page.screenshot({ path: "docs/active/evidence/p17/mobile-390x844-main-path.png", fullPage: true });
+});
+
 test("mobile place detail drawer scrolls within the sheet", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile", "mobile sheet scroll regression");
   await page.goto("/#/map");
@@ -909,6 +1124,7 @@ test("mobile place detail drawer scrolls within the sheet", async ({ page }, tes
 
   const mobileDetail = page.getByRole("dialog", { name: "地点详情" }).getByTestId("place-detail");
   await expect(mobileDetail).toBeVisible();
+  await mobileDetail.getByTestId("detail-notes-disclosure").locator("summary").click();
   const before = await mobileDetail.evaluate((element) => ({
     scrollTop: element.scrollTop,
     scrollHeight: element.scrollHeight,
@@ -951,6 +1167,137 @@ test("mobile scanlist detail uses a single scroll layer", async ({ page }, testI
   expect(after).toBeGreaterThan(before.scrollTop + 60);
 });
 
+test("P17 real data performance smoke records map interactions", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop records real-data performance smoke");
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/#/map");
+  await page.waitForFunction(() => Boolean((window as any).FoodMapAgentBridge));
+  await importPersonalFavorites(page);
+
+  await page.getByTestId("quick-scanlist-toggle").click();
+  await expect(page.locator(".recommendation-leaflet-marker")).toHaveCount(50);
+  await page.getByTestId("quick-dingtuyi-toggle").click();
+  await expect(page.locator(".dingtuyi-share-leaflet-marker")).toHaveCount(120);
+
+  const counts = {
+    personal: await page.locator(".personal-favorite-leaflet-marker").count(),
+    scanlist: await page.locator(".recommendation-leaflet-marker").count(),
+    dingtuyi: await page.locator(".dingtuyi-share-leaflet-marker").count()
+  };
+
+  const pendingStart = Date.now();
+  await page.getByTestId("quick-pending-toggle").click();
+  await expect(page.getByTestId("pending-workbench")).toBeVisible();
+  const pendingOpenMs = Date.now() - pendingStart;
+
+  const detailStart = Date.now();
+  await page.getByTestId("pending-place-card").first().locator(".pending-card__main").click();
+  await expect(page.locator(".desktop-side-panel").getByTestId("place-detail")).toBeVisible();
+  const detailOpenMs = Date.now() - detailStart;
+
+  const zoomStart = Date.now();
+  await page.locator(".leaflet-control-zoom-in").click();
+  await page.waitForFunction(() => !document.querySelector(".leaflet-map.is-zooming"));
+  const zoomMs = Date.now() - zoomStart;
+
+  expect(counts.personal).toBe(32);
+  expect(counts.scanlist).toBe(50);
+  expect(counts.dingtuyi).toBe(120);
+  expect(pendingOpenMs).toBeLessThan(3000);
+  expect(detailOpenMs).toBeLessThan(3000);
+  expect(zoomMs).toBeLessThan(3000);
+
+  fs.mkdirSync("docs/active/evidence/p17", { recursive: true });
+  fs.writeFileSync(
+    "docs/active/evidence/p17/p17-real-data-performance-smoke.json",
+    JSON.stringify({
+      viewport: "1440x900",
+      counts,
+      timingsMs: { pendingOpenMs, detailOpenMs, zoomMs },
+      thresholdMs: 3000,
+      capturedAt: new Date().toISOString()
+    }, null, 2)
+  );
+});
+
+test("P18 large deterministic dataset performance smoke", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop records large dataset smoke");
+  test.setTimeout(180_000);
+  const datasetSizes = [500, 1000, 3000];
+  const results: Array<{
+    size: number;
+    reloadMs: number;
+    markerRenderMs: number;
+    filterMs: number;
+    detailOpenMs: number;
+    posterOpenMs: number;
+  }> = [];
+
+  for (const size of datasetSizes) {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/#/map");
+    await seedLargePersonalDataset(page, size);
+    const reloadStart = Date.now();
+    await page.reload();
+    await page.waitForFunction(() => Boolean((window as any).FoodMapAgentBridge));
+    const reloadMs = Date.now() - reloadStart;
+
+    const markerStart = Date.now();
+    await expect(page.locator(".personal-favorite-leaflet-marker")).toHaveCount(size, { timeout: 30_000 });
+    const markerRenderMs = Date.now() - markerStart;
+
+    await page.getByTestId("home-filter-expand").click();
+    const filterStart = Date.now();
+    await page.getByRole("button", { name: "热干面" }).click();
+    await expect(page.getByTestId("home-filter-summary")).toContainText("热干面");
+    const filterMs = Date.now() - filterStart;
+
+    const posterStart = Date.now();
+    await page.getByTestId("home-share-poster").click();
+    await expect(page.getByTestId("map-poster-dialog")).toBeVisible();
+    const posterOpenMs = Date.now() - posterStart;
+    await page.getByRole("button", { name: "关闭" }).click();
+
+    const detailStart = Date.now();
+    await page.evaluate(() => {
+      const markers = Array.from(document.querySelectorAll<HTMLElement>(".personal-favorite-leaflet-marker"));
+      const target = markers.find((marker) => {
+        const rect = marker.getBoundingClientRect();
+        return rect.left >= 0 && rect.top >= 0 && rect.right <= window.innerWidth && rect.bottom <= window.innerHeight;
+      }) ?? markers[0];
+      if (!target) throw new Error("no personal marker available");
+      target.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+    });
+    await expect(page.locator(".desktop-side-panel").getByTestId("place-detail")).toBeVisible();
+    const detailOpenMs = Date.now() - detailStart;
+
+    expect(reloadMs).toBeLessThan(10_000);
+    expect(markerRenderMs).toBeLessThan(30_000);
+    expect(filterMs).toBeLessThan(5_000);
+    expect(detailOpenMs).toBeLessThan(5_000);
+    expect(posterOpenMs).toBeLessThan(5_000);
+
+    results.push({ size, reloadMs, markerRenderMs, filterMs, detailOpenMs, posterOpenMs });
+  }
+
+  fs.mkdirSync("docs/active/evidence/p18", { recursive: true });
+  fs.writeFileSync(
+    "docs/active/evidence/p18/p18-large-dataset-performance-smoke.json",
+    JSON.stringify({
+      viewport: "1440x900",
+      thresholdsMs: {
+        reloadMs: 10_000,
+        markerRenderMs: 30_000,
+        filterMs: 5_000,
+        detailOpenMs: 5_000,
+        posterOpenMs: 5_000
+      },
+      results,
+      capturedAt: new Date().toISOString()
+    }, null, 2)
+  );
+});
+
 test("loads scanlist recommendations and shows all 50 verified pins", async ({ page }, testInfo) => {
   await page.goto("/#/map");
   await loadRecommendations(page, testInfo.project.name);
@@ -982,14 +1329,13 @@ test("loads scanlist recommendations and shows all 50 verified pins", async ({ p
 
   await page.waitForFunction(() => Boolean((window as any).FoodMapAgentBridge));
   if (testInfo.project.name === "desktop") {
-    await expect(page.locator(".recommendation-leaflet-marker.is-secondary-rank.is-adaptive-pin")).toHaveCount(0);
     await page.evaluate(async () => {
       const bridge = (window as any).FoodMapAgentBridge;
       const list = await bridge.dispatch({ action: "listRecommendations" });
       const target = list.data.find((item: { rank: number }) => item.rank > 20);
       await bridge.dispatch({ action: "focusRecommendation", payload: { sourceId: target.sourceId } });
     });
-    await expect(page.locator(".recommendation-leaflet-marker.is-secondary-rank.is-adaptive-pin").first()).toBeVisible();
+    await expect(page.locator(".recommendation-leaflet-marker.is-selected").first()).toBeVisible();
   }
   await page.evaluate(async () => {
     const bridge = (window as any).FoodMapAgentBridge;
@@ -1095,6 +1441,36 @@ test("agent bridge returns structured errors, emits events and does not write in
     });
     const exported = await bridge.dispatch({ action: "exportSnapshot" });
     const candidateContext = await bridge.dispatch({ action: "getPlaceCandidateContext" });
+    const pendingSeed = await bridge.dispatch({
+      action: "savePlace",
+      payload: {
+        id: "agent-pending-place",
+        name: "Agent 待确认地点",
+        longitude: 114.3036,
+        latitude: 30.6072,
+        city: "武汉",
+        address: "武汉市江岸区候选地址",
+        layerId: "layer-personal-favorites",
+        tags: ["待校准", "近似坐标", "位置待确认"],
+        mapAccuracy: "approximate",
+        rating: 3,
+        visitedAt: "2026-06-16",
+        notes: "Agent negative path fixture"
+      }
+    });
+    const pendingList = await bridge.dispatch({ action: "listPendingPlaces" });
+    const pendingContext = await bridge.dispatch({ action: "getPendingPlaceContext", payload: { placeId: "agent-pending-place" } });
+    const blockedPendingUpdate = await bridge.dispatch({
+      action: "updatePlace",
+      payload: {
+        id: "agent-pending-place",
+        longitude: 114.31,
+        latitude: 30.59,
+        mapAccuracy: "exact",
+        tags: ["已核验", "精确坐标"]
+      }
+    });
+    const blockedPendingDelete = await bridge.dispatch({ action: "deletePlace", payload: { placeId: "agent-pending-place" } });
     const submittedCandidates = await bridge.dispatch({
       action: "submitPlaceCandidates",
       payload: {
@@ -1133,6 +1509,11 @@ test("agent bridge returns structured errors, emits events and does not write in
       exportedOk: exported.ok,
       exportedText: exported.data.text,
       candidateContext,
+      pendingSeed,
+      pendingList,
+      pendingContext,
+      blockedPendingUpdate,
+      blockedPendingDelete,
       submittedCandidates,
       events
     };
@@ -1149,6 +1530,15 @@ test("agent bridge returns structured errors, emits events and does not write in
   expect(JSON.parse(result.exportedText).schema).toBe("foodmap.share");
   expect(result.candidateContext.ok).toBeTruthy();
   expect(result.candidateContext.data.city).toBe("武汉");
+  expect(result.pendingSeed.ok).toBeTruthy();
+  expect(result.pendingList.ok).toBeTruthy();
+  expect(result.pendingList.data.some((place: { id: string }) => place.id === "agent-pending-place")).toBeTruthy();
+  expect(result.pendingContext.ok).toBeTruthy();
+  expect(result.pendingContext.data.candidateRequest.note).toContain("不能直接固化坐标");
+  expect(result.blockedPendingUpdate.ok).toBeFalsy();
+  expect(result.blockedPendingUpdate.errorCode).toBe("PENDING_CONFIRMATION_REQUIRED");
+  expect(result.blockedPendingDelete.ok).toBeFalsy();
+  expect(result.blockedPendingDelete.errorCode).toBe("PENDING_CONFIRMATION_REQUIRED");
   expect(result.submittedCandidates.ok).toBeTruthy();
   expect(result.submittedCandidates.data.candidates).toHaveLength(1);
   expect(result.submittedCandidates.data.blockedCandidates).toHaveLength(1);

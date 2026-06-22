@@ -5,18 +5,15 @@ export interface ManualPinMovePoint {
   latitude: number;
 }
 
-const PERSONAL_FAVORITE_LAYER_ID = "layer-personal-favorites";
 const STALE_CALIBRATION_TAGS = new Set(["待校准", "近似坐标", "默认候选", "位置待确认", "位置高风险", "陆地点修正"]);
 
 export function canManuallyMovePlace(place?: FoodPlace): place is FoodPlace {
-  if (!place) return false;
-  const personal = place.layerId === PERSONAL_FAVORITE_LAYER_ID || place.id.startsWith("personal-favorite:");
-  return personal;
+  return Boolean(place);
 }
 
 export function applyManualPinMove(place: FoodPlace, point: ManualPinMovePoint, movedAt = new Date().toISOString()): FoodPlace {
   if (!canManuallyMovePlace(place)) {
-    throw new Error("只有个人收藏图钉可以手动挪动");
+    throw new Error("只有用户保存的图钉可以手动挪动");
   }
   const retainedTags = place.tags.filter((tag) => !STALE_CALIBRATION_TAGS.has(tag));
   const tags = uniqueTags(["已核验", "精确坐标", "手动校准", ...retainedTags]);

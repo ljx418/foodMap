@@ -32,6 +32,9 @@ export interface MapProviderSearchResult {
   sourceUrl?: string;
   evidenceLabel?: string;
   screenshotPath?: string;
+  riskReasons?: string[];
+  matchSignals?: string[];
+  lastCheckedAt?: string;
   tags?: string[];
   confidence?: number;
   coordinateAccuracy?: PlaceCandidate["coordinateAccuracy"];
@@ -99,7 +102,15 @@ export function mapSearchResultToPlaceCandidate(result: MapProviderSearchResult,
     rawInputRef: result.sourceUrl ?? context.text ?? context.url,
     evidenceUrl: result.sourceUrl,
     evidenceLabel: result.evidenceLabel,
-    screenshotPath: result.screenshotPath
+    screenshotPath: result.screenshotPath,
+    riskReasons: result.riskReasons ?? (hasCompleteFields ? [] : ["地图候选字段不完整，确认后仍需复核"]),
+    matchSignals: result.matchSignals ?? [
+      result.provider === "amap" ? "来自高德地图搜索" : "来自网页地图搜索",
+      result.address ? "地址字段完整" : "地址字段缺失",
+      Number.isFinite(result.longitude) && Number.isFinite(result.latitude) ? "坐标字段完整" : "坐标字段缺失"
+    ],
+    lastCheckedAt: result.lastCheckedAt,
+    requiresUserConfirmation: true
   };
 }
 
@@ -140,7 +151,11 @@ function candidatesFromHistory(query: string, historyPlaces: FoodPlace[]): Place
       confidence: 0.82,
       coordinateAccuracy: place.mapAccuracy ?? "exact",
       reasons: ["来自已保存地点", "可用于重复提醒和历史偏好"],
-      rawInputRef: query
+      rawInputRef: query,
+      riskReasons: place.mapAccuracy === "exact" ? [] : ["历史地点坐标并非精确状态"],
+      matchSignals: ["命中已保存个人地点", place.address ? "历史地址可用" : "历史地址缺失"],
+      lastCheckedAt: place.updatedAt,
+      requiresUserConfirmation: true
     }));
 }
 
@@ -176,7 +191,13 @@ function scanlistToCandidate(recommendation: AmapScanlistRecommendation, query: 
       `核验置信度 ${Math.round(verification.confidence * 100)}%`,
       recommendation.locationAccuracy === "exact" ? "精确坐标" : "近似坐标"
     ],
-    rawInputRef: query
+    rawInputRef: query,
+    evidenceUrl: recommendation.sourceUrl,
+    evidenceLabel: "高德扫街榜核验来源",
+    riskReasons: recommendation.locationAccuracy === "exact" ? [] : ["扫街榜坐标为近似坐标，确认后仍需复核"],
+    matchSignals: ["命中已核验扫街榜", `${recommendation.district} · 榜单 #${recommendation.rank}`],
+    lastCheckedAt: recommendation.crawledAt,
+    requiresUserConfirmation: true
   };
 }
 

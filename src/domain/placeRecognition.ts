@@ -36,6 +36,10 @@ export interface PlaceCandidate {
   evidenceUrl?: string;
   evidenceLabel?: string;
   screenshotPath?: string;
+  riskReasons?: string[];
+  matchSignals?: string[];
+  lastCheckedAt?: string;
+  requiresUserConfirmation?: boolean;
   blockers?: string[];
 }
 
@@ -85,7 +89,14 @@ export function parsePlaceCandidatesFromText(input: PlaceRecognitionInput): Plac
     confidence: Math.min(0.9, 0.35 + (name ? 0.2 : 0) + (address ? 0.2 : 0) + (tags.length > 0 ? 0.1 : 0) + (hasUrl ? 0.05 : 0)),
     coordinateAccuracy: input.point ? "inferred" as const : "unknown" as const,
     reasons,
-    rawInputRef: hasUrl ? "用户输入链接或含链接文本" : "用户输入文本"
+    rawInputRef: hasUrl ? "用户输入链接或含链接文本" : "用户输入文本",
+    riskReasons: input.point ? ["坐标来自用户点击或文本推断，保存前需要确认"] : ["缺少坐标，不能直接导航"],
+    matchSignals: [
+      name ? "识别到店名" : undefined,
+      address ? "识别到地址" : undefined,
+      tags.length > 0 ? "识别到标签" : undefined
+    ].filter(Boolean) as string[],
+    requiresUserConfirmation: true
   }].filter((candidate) => candidate.name);
 }
 
@@ -113,7 +124,14 @@ export function normalizeAgentCandidates(payload: AgentPlaceCandidatePayload | u
       coordinateAccuracy: candidate.coordinateAccuracy ?? (typeof candidate.longitude === "number" && typeof candidate.latitude === "number" ? "exact" : "unknown"),
       distanceMeters: typeof candidate.distanceMeters === "number" ? candidate.distanceMeters : undefined,
       reasons: normalizeTags(candidate.reasons ?? ["Agent 结构化识别"]),
-      rawInputRef: candidate.rawInputRef
+      rawInputRef: candidate.rawInputRef,
+      evidenceUrl: candidate.evidenceUrl,
+      evidenceLabel: candidate.evidenceLabel,
+      screenshotPath: candidate.screenshotPath,
+      riskReasons: normalizeTags(candidate.riskReasons ?? ["Agent 候选必须由用户确认后才能固化"]),
+      matchSignals: normalizeTags(candidate.matchSignals ?? ["Agent 提交结构化候选"]),
+      lastCheckedAt: candidate.lastCheckedAt,
+      requiresUserConfirmation: true
     }))
     .filter((candidate) => candidate.name);
 }
@@ -140,7 +158,13 @@ export function scanlistToPlaceCandidates(scanlist: AmapScanlistRecommendation[]
       confidence: Math.min(0.95, 0.72 + item.verification.confidence * 0.2),
       coordinateAccuracy: item.locationAccuracy,
       reasons: ["来自已核验扫街榜参考", `${item.district} · 榜单 #${item.rank}`],
-      rawInputRef: item.sourceUrl
+      rawInputRef: item.sourceUrl,
+      evidenceUrl: item.sourceUrl,
+      evidenceLabel: "高德扫街榜核验来源",
+      riskReasons: item.locationAccuracy === "exact" ? [] : ["榜单坐标为近似坐标，确认后仍需注意导航精度"],
+      matchSignals: ["名称命中扫街榜", `${item.district} 榜单 #${item.rank}`],
+      lastCheckedAt: item.crawledAt,
+      requiresUserConfirmation: true
     }));
 }
 
