@@ -4,9 +4,9 @@ Date: 2026-06-25
 
 ## Status
 
-`Proposed primary route for P25 implementation.`
+`Implemented primary route with gh-pages branch fallback.`
 
-This document narrows P25 from a generic "stable static host" target to an implementation-ready deployment profile. It does not prove P25 acceptance; it defines the route that implementation and acceptance should try first.
+This document narrows P25 from a generic "stable static host" target to the implemented deployment profile. It does not prove P25 acceptance; final acceptance still requires Mate70 fixed-URL evidence.
 
 ## Decision
 
@@ -25,7 +25,7 @@ https://ljx418.github.io/foodMap/#/map
 https://ljx418.github.io/foodMap/#/share/:snapshotId
 ```
 
-Implementation should prefer a GitHub Actions workflow that builds `dist/` from `main` and publishes it to GitHub Pages. Manual upload is acceptable only as temporary evidence and cannot be the final P25 durable profile unless the final report records why automation is unavailable.
+Implementation should prefer a GitHub Actions workflow that builds `dist/` from `main` and publishes it to GitHub Pages. If the available GitHub token cannot create or update workflow files, a versioned `gh-pages` branch source is an accepted fallback because it still produces a durable GitHub Pages URL under the same repository. Manual upload is acceptable only as temporary evidence and cannot be the final P25 durable profile unless the final report records why automation is unavailable.
 
 ## Required Code And Config Touchpoints
 
@@ -35,6 +35,7 @@ Implementation should prefer a GitHub Actions workflow that builds `dist/` from 
 | `vite.config.ts` | Support GitHub Pages subpath base `/foodMap/` without breaking local dev |
 | `dist/` | Static artifact published to GitHub Pages |
 | `.github/workflows/` | Add Pages build/deploy workflow if repository settings permit |
+| `gh-pages` branch | Approved fallback source when workflow creation is blocked by token scope |
 | `index.html` | Remains the static entry; hash routes must resolve after load |
 | `public/manifest.webmanifest` | WebApp metadata must work under the deployed subpath |
 | `public/sw.js` and `src/registerServiceWorker.ts` | Service worker scope and source-down fallback must not claim offline map tiles |

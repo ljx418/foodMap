@@ -66,7 +66,7 @@
         <mxCell id="p2_c_evidence" value="P24 验收证据层&#xa;HDC workflow&#xa;临时公网 HTTPS smoke&#xa;P18-P24 regression&#xa;p24-final-acceptance-report.md" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=12;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1">
           <mxGeometry x="380" y="395" width="220" height="115" as="geometry" />
         </mxCell>
-        <mxCell id="p2_t_host" value="稳定发布层&#xa;GitHub Pages&#xa;https://ljx418.github.io/foodMap/&#xa;.github/workflows&#xa;dist/ publish" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+        <mxCell id="p2_t_host" value="稳定发布层&#xa;GitHub Pages&#xa;https://ljx418.github.io/foodMap/&#xa;gh-pages branch&#xa;dist/ publish" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
           <mxGeometry x="795" y="235" width="210" height="125" as="geometry" />
         </mxCell>
         <mxCell id="p2_t_base" value="部署适配层&#xa;vite.config.ts base=/foodMap/&#xa;manifest 路径&#xa;service worker scope&#xa;cache/fallback policy" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=12;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1">
@@ -228,7 +228,7 @@
         <mxCell id="p5_5" value="P25-5 回归证据&#xa;build/unit/scanlist&#xa;P18-P24 regression&#xa;P25 targeted E2E&#xa;出门：基线不破坏" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=center;fillColor=#e1f5e8;strokeColor=#82b366" vertex="1" parent="1">
           <mxGeometry x="1000" y="145" width="210" height="150" as="geometry" />
         </mxCell>
-        <mxCell id="p5_6" value="P25-6 总验收&#xa;p25-final-acceptance-report.md&#xa;host profile / URL / screenshots / blockers&#xa;出门：可声明 accepted" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=center;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1">
+        <mxCell id="p5_6" value="P25-6 总验收&#xa;p25-final-acceptance-report.md&#xa;host profile / URL / screenshots / blockers&#xa;出门：需Mate70固定URL证据" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=center;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1">
           <mxGeometry x="595" y="430" width="240" height="160" as="geometry" />
         </mxCell>
         <mxCell id="p5_e1" edge="1" parent="1" source="p5_1" target="p5_2" style="endArrow=block;html=1">

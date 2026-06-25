@@ -4,9 +4,9 @@ Date: 2026-06-25
 
 ## Status
 
-`Documentation-ready / implementation not started.`
+`Implemented / deployed-origin automation passed / Mate70 fixed-URL evidence blocked.`
 
-P25 follows accepted P24. P24 proved that FoodMap can run as a mobile-friendly WebApp on Mate70 using HDC evidence and a temporary public HTTPS tunnel. P25 turns that temporary acceptance profile into a planned durable static deployment stage.
+P25 follows accepted P24. P24 proved that FoodMap can run as a mobile-friendly WebApp on Mate70 using HDC evidence and a temporary public HTTPS tunnel. P25 turns that temporary acceptance profile into a durable static deployment stage. Code, GitHub Pages deployment, deployed-origin browser checks, and automated regression are complete; final acceptance is blocked until Mate70 fixed-URL real-device evidence is captured.
 
 P25 is still pure frontend and local-first. It must not add account login, cloud sync, remote backup, collaboration, public permanent share links, FoodMap business backend APIs, HarmonyOS native HAP delivery, AppGallery release, offline map tiles, automatic coordinate repair, or completed external real-time POI search claims.
 
@@ -54,7 +54,7 @@ P25 is still pure frontend and local-first. It must not add account login, cloud
 
 ## Initial Audit
 
-Result: `Go for P25 implementation planning; no code implementation yet.`
+Result: `P25 implementation route was valid; implementation and deployed-origin automation are complete, but final acceptance remains blocked by missing Mate70 fixed-URL evidence.`
 
 Current docs now support P25 planning after synchronization. PRD, target architecture, development plan, roadmap, acceptance gate, gap document, drawio, evidence matrix, visual checklist, audit, and stage contract agree that P25 is a durable static deployment and release-governance stage. The remaining gap is implementation evidence, not documentation scope.
 

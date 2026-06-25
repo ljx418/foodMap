@@ -2,7 +2,7 @@
 
 ## P25 里程碑
 
-P25 is the current documentation and planning stage. It builds on the accepted P24 WebApp/Mate70 baseline and targets durable static deployment and release governance. It does not implement or claim a HarmonyOS native package, AppGallery release, account system, cloud sync, backend API, offline map tiles, or permanent public social sharing.
+P25 is the current durable static deployment and release-governance stage. It builds on the accepted P24 WebApp/Mate70 baseline and targets a stable static URL plus honest release evidence. It does not implement or claim a HarmonyOS native package, AppGallery release, account system, cloud sync, backend API, offline map tiles, or permanent public social sharing.
 
 | Milestone | Completion Definition | Evidence |
 | --- | --- | --- |
@@ -24,7 +24,7 @@ P25 is the current documentation and planning stage. It builds on the accepted P
 - `npm run build`, `npm test -- --run`, `npm run verify:scanlist`, P18-P24 regression, and P25 targeted checks pass or have documented non-product blockers.
 - P25 final acceptance report is created before declaring accepted.
 
-P25 acceptance status: documentation/planning stage; implementation not started; not accepted.
+P25 acceptance status: implemented and deployed to GitHub Pages with automated browser/regression evidence; not accepted because Mate70 fixed-URL real-device evidence remains blocked.
 
 ## P24 里程碑
 

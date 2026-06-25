@@ -13,7 +13,7 @@ P18 is accepted and becomes the regression baseline:
 - Share poster composer for current filtered personal places.
 - Agent negative boundaries and large deterministic performance smoke.
 
-P22 adds interaction-shell work over the accepted P19/P20-C/P21 baselines. P23 corrects the remaining interaction evidence gaps found during human review and full PRD regression. P24 implements mobile-friendly WebApp deployment readiness and Mate70 usability evidence over the accepted baseline. P25 plans durable static deployment and release governance over the accepted P24 WebApp baseline. No stage adds accounts, backend POI services, cloud sync, multiplayer collaboration, permanent public links, HarmonyOS native delivery, automatic coordinate correction, offline map tiles, or new external real-time POI claims.
+P22 adds interaction-shell work over the accepted P19/P20-C/P21 baselines. P23 corrects the remaining interaction evidence gaps found during human review and full PRD regression. P24 implements mobile-friendly WebApp deployment readiness and Mate70 usability evidence over the accepted baseline. P25 implements durable static deployment and release governance over the accepted P24 WebApp baseline, but is not accepted until Mate70 fixed-URL evidence is captured. No stage adds accounts, backend POI services, cloud sync, multiplayer collaboration, permanent public links, HarmonyOS native delivery, automatic coordinate correction, offline map tiles, or new external real-time POI claims.
 
 ## 0C. P25 Target Deployment Architecture
 
@@ -21,7 +21,7 @@ P25 turns the accepted P24 temporary tunnel evidence into a durable static deplo
 
 | Module | Responsibility | Target Location |
 | --- | --- | --- |
-| `StaticHostProfile` | Define GitHub Pages as the primary durable host for `ljx418/foodMap`; record build output, deploy command, base path, route fallback, cache policy, rollback notes, and fallback host decision rules | `p25-static-deployment-profile.md`, `.github/workflows`, `vite.config.ts`, `dist/` |
+| `StaticHostProfile` | Define GitHub Pages as the primary durable host for `ljx418/foodMap`; record build output, deploy command, base path, route fallback, cache policy, rollback notes, and fallback host decision rules | `p25-static-deployment-profile.md`, `vite.config.ts`, `dist/`, `gh-pages` branch |
 | `HashRouteRecovery` | Ensure direct open and refresh for `#/map` and `#/share/:snapshotId` on the static host | `src/app/App.tsx`, `index.html`, static host fallback |
 | `WebAppShellRuntime` | Keep manifest, icon, viewport, service worker, and source-down fallback aligned with P24 accepted behavior | `index.html`, `public/manifest.webmanifest`, `public/sw.js`, `src/registerServiceWorker.ts` |
 | `Mate70StaticReleaseHarness` | Capture fixed-URL Mate70 screenshots for workspace, create/import, valid share, refresh persistence, and fallback states | HDC commands, `docs/active/evidence/p25`, final report |

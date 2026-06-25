@@ -2,7 +2,7 @@
 
 ## P25 Summary
 
-P25 is the current documentation and planning stage after accepted P24. It turns the P24 mobile-friendly WebApp proof into a durable static deployment and release-governance target, while preserving FoodMap's pure frontend, local-first, no-account, no-cloud product boundary.
+P25 is the current durable static deployment and release-governance stage after accepted P24. It turns the P24 mobile-friendly WebApp proof into a durable static deployment target, while preserving FoodMap's pure frontend, local-first, no-account, no-cloud product boundary.
 
 P25 focuses on:
 
@@ -24,7 +24,7 @@ Detailed implementation and acceptance are defined in [P25 Detailed Development 
 | P25-5 | 回归和证据包 | build/unit/scanlist/P18-P24 regression/P25 targeted evidence | Existing accepted baselines remain green |
 | P25-6 | 总验收和 final report | P25 final report with host profile, URL, evidence, blockers, residual limits | P25 can be accepted only after evidence exists |
 
-Current P25 status: documentation-ready after this active-doc sync, implementation not started, final acceptance not claimed.
+Current P25 status: implementation and deployed-origin browser acceptance are complete; final acceptance is not claimed because Mate70 fixed-URL real-device evidence is still blocked by missing HDC tooling in the current shell.
 
 P25 must not claim HarmonyOS native HAP/AppGallery delivery, account login, cloud sync, remote backup, collaboration, backend API, offline map tiles, permanent public social sharing, or external realtime POI search.
 
