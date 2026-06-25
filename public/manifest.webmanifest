@@ -1,0 +1,29 @@
+{
+  "name": "FoodMap 美食地图",
+  "short_name": "FoodMap",
+  "description": "本地优先的个人美食手账地图，支持浏览器和 WebApp 入口使用。",
+  "lang": "zh-CN",
+  "start_url": "./#/map",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F6EBD6",
+  "theme_color": "#C76A32",
+  "categories": ["food", "maps", "lifestyle"],
+  "icons": [
+    {
+      "src": "./icons/foodmap-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "打开地图",
+      "short_name": "地图",
+      "url": "./#/map",
+      "icons": [{ "src": "./icons/foodmap-icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    }
+  ]
+}

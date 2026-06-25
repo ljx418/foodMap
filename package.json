@@ -6,8 +6,12 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
+    "build:pages": "tsc -b && vite build --mode pages",
     "test": "vitest run",
     "e2e": "playwright test",
+    "preview": "vite preview --host 0.0.0.0",
+    "verify:p24:webapp": "node scripts/verify_p24_webapp.mjs",
+    "verify:p25:deployment": "node scripts/verify_p25_deployment.mjs",
     "refresh:amap": "node scripts/refresh_amap_scanlist.mjs",
     "verify:scanlist": "node scripts/verify_scanlist_baseline.mjs"
   },

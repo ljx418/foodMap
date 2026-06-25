@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { ToastStack, type ToastMessage } from "../components/Toast";
+import { WebAppStatus } from "../components/WebAppStatus";
 import { ShareView } from "../features/share/ShareView";
 import { MapWorkspace } from "../features/workspace/MapWorkspace";
 import { useHashRoute } from "./router";
@@ -20,6 +21,7 @@ export function App() {
 
   return (
     <>
+      <WebAppStatus />
       {route.name === "share" ? <ShareView snapshotId={route.snapshotId} notify={notify} /> : <MapWorkspace notify={notify} />}
       <ToastStack messages={toasts} />
     </>

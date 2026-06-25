@@ -71,9 +71,15 @@ export class LeafletProvider implements MapProviderAdapter {
       maxZoom: 19,
       attribution: "高德地图"
     });
+    tileLayer.on("tileerror", () => {
+      container.classList.add("has-tile-error");
+      container.setAttribute("data-map-tile-status", "error");
+    });
     tileLayer.once("load", () => {
       this.fallbackOverlay?.remove();
       this.fallbackOverlay = undefined;
+      container.classList.remove("has-tile-error");
+      container.setAttribute("data-map-tile-status", "loaded");
     });
     tileLayer.addTo(this.map);
 
@@ -106,7 +112,8 @@ export class LeafletProvider implements MapProviderAdapter {
     }
     this.map?.remove();
     this.map = undefined;
-    this.container?.classList.remove("is-zooming", "is-zooming-out");
+    this.container?.classList.remove("is-zooming", "is-zooming-out", "has-tile-error");
+    this.container?.removeAttribute("data-map-tile-status");
     this.container = undefined;
     this.markers.clear();
   }

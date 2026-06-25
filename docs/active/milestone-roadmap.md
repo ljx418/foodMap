@@ -1,4 +1,63 @@
-# FoodMap P19/P20-C/P21/P22 Milestone Roadmap
+# FoodMap P19/P20-C/P21/P22/P23/P24/P25 Milestone Roadmap
+
+## P25 里程碑
+
+P25 is the current documentation and planning stage. It builds on the accepted P24 WebApp/Mate70 baseline and targets durable static deployment and release governance. It does not implement or claim a HarmonyOS native package, AppGallery release, account system, cloud sync, backend API, offline map tiles, or permanent public social sharing.
+
+| Milestone | Completion Definition | Evidence |
+| --- | --- | --- |
+| M25-1 文档与审计基线 | Active docs and drawio define P25 durable static deployment scope without native/cloud over-claim | P25 plan, audit, contract, drawio validation |
+| M25-2 GitHub Pages 稳定静态部署 profile | Built `dist/` can be hosted at `https://ljx418.github.io/foodMap/` with hash route fallback and no FoodMap backend API, or a fallback route is justified | Static-host profile, direct `#/map` smoke, direct `#/share/:snapshotId` smoke |
+| M25-3 Mate70 固定 URL 主路径 | Mate70 opens the durable URL and completes workspace, create/detail/filter, import/export, share, and refresh persistence | Real-device screenshots or recording under `docs/active/evidence/p25/` |
+| M25-4 发布失败态 | Source-down, tile failure, missing-share, installability-unavailable, and copy/external-map fallback are honest and non-destructive | Failure-state screenshots plus no-write evidence where relevant |
+| M25-5 回归和证据包 | P18-P24 accepted baselines, scanlist, build, unit tests, and P25 targeted browser checks remain green | Command logs, Playwright artifacts, screenshots, JSON evidence |
+| M25-6 总验收 | Final report records host profile, durable URL, Mate70 evidence, blocker status, and residual limits | `docs/active/p25-final-acceptance-report.md` after implementation |
+
+## P25 出门条件
+
+- P24 accepted baseline remains green.
+- FoodMap is served from the GitHub Pages target `https://ljx418.github.io/foodMap/`, or a documented fallback durable static URL, rather than a temporary tunnel, HDC-only address, or local-only preview.
+- Direct entry and refresh work for `#/map` and generated `#/share/:snapshotId` routes.
+- Mate70 real-device evidence proves the fixed URL main paths.
+- IndexedDB and `.foodmap.json` remain the only user-data persistence and portability model.
+- Failure states do not imply cloud recovery, automatic POI repair, backend sync, or native-app capability.
+- `npm run build`, `npm test -- --run`, `npm run verify:scanlist`, P18-P24 regression, and P25 targeted checks pass or have documented non-product blockers.
+- P25 final acceptance report is created before declaring accepted.
+
+P25 acceptance status: documentation/planning stage; implementation not started; not accepted.
+
+## P24 里程碑
+
+| Milestone | Completion Definition | Evidence |
+| --- | --- | --- |
+| M24-1 文档与审计基线 | Active docs and drawio define P24 WebApp-first Mate70 scope without native/cloud over-claim | P24 plan, audit, contract, drawio validation |
+| M24-2 WebApp 身份资产 | App name, icon, theme color, manifest/display/launch policy are implemented or blocked with fallback | Implemented; manifest/icon/static verification pass |
+| M24-3 Mate70 移动主路径 | Mate70 can complete map, detail, filters, import/export, and read-only share | HDC workflow and public static URL workflow screenshots pass |
+| M24-4 静态部署和弱网 fallback | Static host smoke passes; tile/external-map/installability failures have clear copy | Local static preview, temporary public URL smoke, external-map fallback, and source-down FoodMap fallback pass |
+| M24-5 回归和证据包 | build/unit/scanlist/P18-P23 regression/P24 mobile tests pass | Full local automated regression passed |
+| M24-6 总验收 | Final report records static deployment profile, Mate70 evidence, blockers, and residual limits | P24 final report accepted with residual limits |
+
+## P24 出门条件
+
+- P23 accepted baseline remains green.
+- FoodMap can be served as static build output without a FoodMap backend API.
+- WebApp identity is present or browser limitation is recorded with fallback.
+- Mate70 real-device evidence proves the core mobile paths.
+- Local IndexedDB and `.foodmap.json` remain the only persistence and portability model.
+- No account, cloud sync, collaboration, public permanent share, HarmonyOS native app, or AppGallery release is claimed.
+- P24 final acceptance report is created before declaring accepted.
+
+P24 acceptance status: accepted; full local automated gates, local static preview, Mate70 HDC workflow, temporary public HTTPS static deployment smoke, valid public share route, installability evidence, and non-destructive source-down fallback evidence pass.
+
+## P24 关闭记录
+
+| Milestone | Completion Definition | Evidence |
+| --- | --- | --- |
+| M24-7 Mate70 完整主路径 | 地图、筛选、详情、导入导出、有效只读分享、刷新持久化全部在 Mate70 上可见 | `docs/active/evidence/p24/08` through `19` |
+| M24-8 安装与失败态 | 安装/快捷入口能力、外部地图 fallback、源站不可用 fallback 被真实记录 | `14`, `15`, `22` |
+| M24-9 最终接受 | 所有 P24 blocker 关闭，final report 为 `Accepted` | `docs/active/p24-final-acceptance-report.md` |
+
+---
 
 ## P22 里程碑
 

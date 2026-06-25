@@ -1,4 +1,66 @@
-# FoodMap P19/P20-C/P21/P22/P23 Acceptance Gate
+# FoodMap P19/P20-C/P21/P22/P23/P24/P25 Acceptance Gate
+
+## P25 Gate Status
+
+Current status: `Documentation-ready / implementation not started`.
+
+P25 is a durable static deployment and release-governance stage after accepted P24. P24 remains the latest accepted implementation baseline until P25 implementation, Mate70 fixed-URL evidence, regression evidence, and `p25-final-acceptance-report.md` exist.
+
+P25 cannot be accepted from HDC-only testing, local `vite preview`, a temporary tunnel, or desktop mobile emulation alone. It requires a stable static URL, direct hash-route recovery, real Mate70 evidence, P18-P24 regression, and an honest final report. The primary URL target is GitHub Pages for `ljx418/foodMap`: `https://ljx418.github.io/foodMap/`.
+
+P25 must not be described as a HarmonyOS native app, AppGallery release, account system, cloud sync, backend service, offline map product, public permanent social share platform, or external realtime POI search completion.
+
+## P25 必过门槛
+
+| Gate | Pass Criteria | Blocker Conditions |
+| --- | --- | --- |
+| 文档与审计 | PRD、目标架构、计划、gate、roadmap、gap/drawio、matrix、visual checklist define P25 as durable static deployment and release governance | Docs claim native HAP/AppGallery, cloud sync, backend API, permanent social share, or P25 accepted before evidence |
+| 稳定静态部署 | Built `dist/` is served by GitHub Pages at `https://ljx418.github.io/foodMap/`, or an approved fallback static host if GitHub Pages is blocked, without FoodMap backend API | Only local preview, USB reverse, or temporary tunnel evidence exists; fallback host is used without documenting why GitHub Pages failed |
+| Hash route fallback | Direct open and refresh work for `#/map` and generated `#/share/:snapshotId` | Static host returns 404/blank page on direct hash routes or refresh |
+| Mate70 固定 URL | HarmonyOS Mate70 opens the stable URL and completes workspace, create/detail/filter, import/export, read-only share, and refresh persistence | Only Playwright/mobile emulation exists, or real-device evidence is missing |
+| 本地持久化与可携带 | IndexedDB and `.foodmap.json` remain the only persistence/portability model and survive refresh/reopen | UI implies cloud backup/sync, account recovery, or remote shared state |
+| 失败态 | Source-down, tile failure, missing-share, external-map/copy fallback, and installability-unavailable states are understandable and non-destructive | Failure copy looks like data loss, cloud repair, or successful native/offline capability |
+| 回归 | build/unit/scanlist/P18-P24 targeted or full regression remain green | P25 breaks accepted candidate, governance, share/import/export, mobile, or Agent boundaries |
+| 最终报告 | P25 final report records GitHub Pages profile or fallback rationale, durable URL, screenshots, Mate70 evidence, commands, blockers, and residual limits | P25 is claimed accepted without final report or without fixed-URL Mate70 evidence |
+
+## P24 Gate Status
+
+Current status: `Accepted`.
+
+P24 has WebApp app-like assets, mobile-safe layout improvements, offline/tile fallback copy, static build metadata checks, local `vite preview` smoke, HDC-connected Mate70 workflow screenshots, temporary public HTTPS static deployment smoke, valid public `#/share/:snapshotId` evidence, targeted P24 browser evidence, and full local `workspace.spec.ts` regression. P24 is accepted with the documented limitation that the public URL was a temporary acceptance tunnel, not a permanent hosting endpoint.
+
+P24 must not be described as a HarmonyOS native app, AppGallery release, cloud sync, public permanent sharing, or offline map product.
+
+## P24 必过门槛
+
+| Gate | Pass Criteria | Blocker Conditions |
+| --- | --- | --- |
+| 文档与审计 | PRD、目标架构、计划、gate、roadmap、gap/drawio、matrix、visual checklist define P24 as WebApp-first Mate70 usability | Docs describe P24 as HarmonyOS native app, cloud sync, account system, collaboration, or public permanent sharing |
+| WebApp 资产 | App name, icon, theme color, launch URL, display mode, and viewport policy are implemented or explicitly blocked with fallback | No app identity exists, or installability is claimed without browser support evidence |
+| 静态部署 | Built app can be served by a static host and opened on mobile without FoodMap backend API | Any required P24 path depends on account, cloud, or custom backend service |
+| Mate70 实机 | HarmonyOS Mate70 opens deployed URL and completes required main paths with screenshot/recording evidence | Only Playwright/mobile emulation exists, or real-device evidence is missing |
+| 移动安全区 | Map, search, quick filters, bottom actions, sheets, dialogs, and keyboard states remain usable with browser chrome/safe area | Core actions are hidden behind system/browser bars or keyboard |
+| 本地持久化 | IndexedDB data and share snapshots survive refresh/reopen; `.foodmap.json` remains the cross-device path | UI implies cloud backup/sync, or local data loss is unexplained |
+| 弱网和失败态 | Tile failure, external-map failure, installability unavailable, and weak/offline states show understandable fallback | Failure states look like data loss or successful cloud behavior |
+| 回归 | build/unit/scanlist/P18-P23 targeted/full workspace gates remain green | P24 breaks accepted candidate, governance, share, import/export, or Agent boundaries |
+| 最终报告 | P24 final report records commands, static deployment URL/profile, screenshots, Mate70 evidence, blockers, and residual limits | P24 is claimed done without final report or without Mate70 evidence |
+
+## P24 Mate70 Completion Gate
+
+The current evidence proves that Mate70 can complete FoodMap's required main paths through USB reverse forwarding and through a temporary public HTTPS static deployment smoke. It does not prove durable production hosting.
+
+| User-visible path | Required evidence |
+| --- | --- |
+| Workspace entry | Passed through HDC evidence: `08-mate70-workspace-entry.jpeg` shows `#/map` with map, search, quick filters, and bottom actions |
+| Detail and filtering | Passed through HDC evidence: `09-mate70-filter-detail.jpeg` shows a real created place detail and mobile actions |
+| Import/export | Passed through HDC evidence: `11-mate70-export-package.jpeg` shows `.foodmap.json` data package actions without cloud-sync copy |
+| Valid read-only share | Passed through HDC evidence: `12-mate70-valid-share.jpeg` shows an actual generated `#/share/:snapshotId` route, not only missing-share fallback |
+| Local persistence | Passed through HDC evidence: `13-mate70-refresh-persistence.jpeg` shows the generated read-only share remains readable after refresh |
+| Installability | Passed with limitation: `14-mate70-installability.jpeg` shows the Mate70 browser `添加至桌面` entry; no native HarmonyOS package is claimed |
+| Public static deployment | Passed: `16` through `19` show Mate70 opening the temporary public HTTPS URL, creating a place, opening valid share, and refreshing successfully |
+| Failure states | Passed with scoped evidence: `15` shows external-map/copy fallback actions and `22` shows source-down FoodMap fallback after service-worker fix; phone network toggles were not performed |
+
+---
 
 ## P23 Gate Status
 

@@ -1,10 +1,10 @@
-# FoodMap P19/P20/P21/P22/P23 Visual Acceptance Checklist
+# FoodMap P19/P20/P21/P22/P23/P24/P25 Visual Acceptance Checklist
 
 Updated: 2026-06-25
 
 ## Summary
 
-P19 preserves the accepted Scheme 4 travel-journal direction and P18 trust baseline. P20 extends that baseline with personal data governance. P21 extends release readiness with local read-only share and `.foodmap.json` portability. P22 improves interaction readability over those accepted flows. P23 corrects the remaining mobile/narrow-screen readability gaps and adds full PRD screenshot evidence. New UI must remain map-first, readable, local-first, and must not imply cloud or public sharing.
+P19 preserves the accepted Scheme 4 travel-journal direction and P18 trust baseline. P20 extends that baseline with personal data governance. P21 extends release readiness with local read-only share and `.foodmap.json` portability. P22 improves interaction readability over those accepted flows. P23 corrects the remaining mobile/narrow-screen readability gaps and adds full PRD screenshot evidence. P24 accepted a mobile-friendly, app-like WebApp on Mate70. P25 targets durable static deployment and release-governance evidence. New UI must remain map-first, readable, local-first, and must not imply cloud, account, collaboration, public permanent sharing, backend services, or native app delivery.
 
 ## Required Tokens
 
@@ -78,6 +78,28 @@ P19 preserves the accepted Scheme 4 travel-journal direction and P18 trust basel
 | Full acceptance report | HTML report includes screenshots for workspace, import/export, personal map, detail, health, governance, poster, share, missing snapshot, invalid import, and mobile paths |
 | False acceptance guard | Screenshots must match implemented UI and report must state residual limits instead of claiming unsupported cloud/backend/realtime POI features |
 
+## P24 Visual Requirements
+
+| Area | Requirement |
+| --- | --- |
+| WebApp identity | App name, icon, theme color, and launch surface feel like FoodMap without adding marketing landing chrome |
+| Mate70 workspace | Mate70 portrait view keeps map, search, quick filters, and bottom actions reachable under browser chrome and safe areas |
+| Touch targets | Primary actions, chips, tabs, upload/import controls, and share navigation meet comfortable touch size and spacing |
+| Keyboard behavior | Search and text inputs do not hide save/cancel, import, or detail actions when the mobile keyboard appears |
+| Static deployment fallback | Unsupported install/add-to-home, tile failure, external map failure, and weak/offline states show concise fallback copy |
+| Local-first clarity | No visual element implies login, cloud backup, automatic sync, collaboration, native HarmonyOS install, or public permanent link |
+
+## P25 Visual Requirements
+
+| Area | Requirement |
+| --- | --- |
+| Stable URL entry | Mate70 evidence shows the app entered from `https://ljx418.github.io/foodMap/` or a documented fallback fixed static URL, not from local preview, HDC-only, or a temporary tunnel |
+| Deployed workspace | The deployed `#/map` view shows map, search, quick filters, status, and bottom actions without browser chrome overlap |
+| Deployed share | The deployed `#/share/:snapshotId` view is read-only, refresh-safe, and does not show create/edit/delete/upload/account/cloud controls |
+| Local-first release copy | Import/export and persistence wording explain local browser data and `.foodmap.json` portability without implying cloud backup |
+| Failure fallback | Source-down, tile failure, missing snapshot, installability unavailable, and external-map failure states are concise and non-destructive |
+| Release report evidence | Screenshots in the report are tied to the stable URL, host profile, device, viewport, and pass/fail interpretation |
+
 ## Desktop Checklist
 
 Viewports: `2048x768`, `1440x900`, `1280x820`.
@@ -118,6 +140,28 @@ Viewports: `390x844`, `430x932`.
 - Detail core actions, candidate search, manual move, map fallback, and share entry remain reachable.
 - Long names, long tags, and long addresses wrap cleanly.
 
+## Mate70 Checklist
+
+Device: HarmonyOS Mate70 real device, final viewport recorded in evidence.
+
+P24 Mate70 completion screenshots must show:
+
+- File names and pass/fail interpretation follow `docs/active/p24-mate70-real-device-acceptance-script.md`.
+- Workspace map route with search, quick filters, and bottom actions visible.
+- Detail drawer or share detail readable without browser chrome overlap.
+- Import/export dialog or `.foodmap.json` package handling path.
+- Valid read-only share route after package restore.
+- Refresh/reopen persistence proof.
+- Install/add-to-home behavior or fallback copy.
+- Weak/offline/tile/external-map fallback if available; otherwise final report blocker.
+
+- Deployed URL opens without requiring account, VPN-specific local host, or desktop-only tooling.
+- `#/map` loads, pans/zooms, and keeps map-first layout under actual browser chrome.
+- Search, quick filters, bottom actions, detail, import/export, and read-only share are reachable by touch.
+- Refresh/reopen preserves local data or clearly reports why browser storage is unavailable.
+- Install/add-to-home behavior is evidenced if supported; if unsupported, fallback instructions are visible and accurate.
+- Screenshots or recording show the actual device, not only Playwright emulation.
+
 ## Negative Checks
 
 Reject visual implementation if any of these appear:
@@ -129,6 +173,7 @@ Reject visual implementation if any of these appear:
 - Dark cyber or glassmorphism visual direction.
 - Mobile desktop sidebars.
 - Public link, login, cloud sync, or collaboration UI.
+- HarmonyOS native install/AppGallery copy unless a future native stage explicitly implements and accepts it.
 - Current viewport mode that visually appears enabled but exports a different point set.
 - Data health UI that hides or softens pending/high-risk/manual states.
 - Governance UI that looks like a backend admin console.
@@ -195,4 +240,26 @@ docs/active/evidence/p23/mobile-share-full-detail.png
 docs/active/evidence/p23/mobile-320-quick-filters.png
 docs/active/evidence/p23/desktop-health-governance-readable.png
 docs/active/evidence/full-acceptance-2026-06-25/
+```
+
+Save P24 WebApp and Mate70 evidence to:
+
+```text
+docs/active/evidence/p24/webapp-identity.png
+docs/active/evidence/p24/mobile-390-safe-area.png
+docs/active/evidence/p24/static-deployment-smoke.png
+docs/active/evidence/p24/weak-network-fallback.png
+docs/active/evidence/p24/mate70-workspace.jpg
+docs/active/evidence/p24/mate70-readonly-share.jpg
+```
+
+Save P25 durable static deployment evidence to:
+
+```text
+docs/active/evidence/p25/github-pages-workspace.png
+docs/active/evidence/p25/github-pages-share.png
+docs/active/evidence/p25/hash-route-refresh.png
+docs/active/evidence/p25/mate70-fixed-url-workspace.jpg
+docs/active/evidence/p25/mate70-fixed-url-share.jpg
+docs/active/evidence/p25/release-failure-states.png
 ```

@@ -1,4 +1,72 @@
-# FoodMap P19/P20-C/P21/P22/P23 Development And Acceptance Plan
+# FoodMap P19/P20-C/P21/P22/P23/P24/P25 Development And Acceptance Plan
+
+## P25 Summary
+
+P25 is the current documentation and planning stage after accepted P24. It turns the P24 mobile-friendly WebApp proof into a durable static deployment and release-governance target, while preserving FoodMap's pure frontend, local-first, no-account, no-cloud product boundary.
+
+P25 focuses on:
+
+1. A GitHub Pages primary deployment profile that can serve the built FoodMap app without a FoodMap business backend.
+2. A durable user-facing URL that can be opened directly on the user's Mate70, including direct hash routes and browser refresh.
+3. Hash-route recovery for `#/map` and `#/share/:snapshotId` on a static host.
+4. Local IndexedDB persistence and `.foodmap.json` portability as the only cross-device data paths.
+5. Honest source-down, tile failure, unavailable installability, and missing-share fallback behavior.
+6. Release evidence and final reporting that distinguish durable static hosting from P24's temporary public tunnel.
+
+Detailed implementation and acceptance are defined in [P25 Detailed Development And Acceptance Plan](./p25-detailed-development-and-acceptance-plan.md).
+
+| Phase | Development Scope | Acceptance Evidence | Exit Condition |
+| --- | --- | --- | --- |
+| P25-1 | 文档审计与部署边界冻结 | P25 audit, contract, active docs, drawio validation | No fatal or major unresolved spec risk |
+| P25-2 | GitHub Pages 静态部署 profile | Build artifact profile, GitHub Pages config, direct-route smoke | FoodMap opens from `https://ljx418.github.io/foodMap/` or a documented fallback durable URL without backend API |
+| P25-3 | Mate70 固定 URL 主路径 | Mate70 screenshots/recording for workspace, create/detail/filter, import/export, share, refresh | Real device proves core paths through the fixed URL |
+| P25-4 | 失败态与发布安全 | Source-down, tile failure, missing-share, installability fallback evidence | Failures are understandable and do not imply cloud repair |
+| P25-5 | 回归和证据包 | build/unit/scanlist/P18-P24 regression/P25 targeted evidence | Existing accepted baselines remain green |
+| P25-6 | 总验收和 final report | P25 final report with host profile, URL, evidence, blockers, residual limits | P25 can be accepted only after evidence exists |
+
+Current P25 status: documentation-ready after this active-doc sync, implementation not started, final acceptance not claimed.
+
+P25 must not claim HarmonyOS native HAP/AppGallery delivery, account login, cloud sync, remote backup, collaboration, backend API, offline map tiles, permanent public social sharing, or external realtime POI search.
+
+## P24 Summary
+
+P24 is the accepted implementation stage after accepted P23. It targets a mobile-friendly, app-like WebApp that can be statically deployed and used on the user's HarmonyOS Mate70, without changing FoodMap's local-first product boundary.
+
+P24 focuses on:
+
+1. WebApp installability assets and browser-supported app-like launch behavior.
+2. Mate70-first mobile usability for map, detail, filters, import/export, and read-only share.
+3. Static deployment without a FoodMap business backend.
+4. Local IndexedDB persistence and `.foodmap.json` portability as the only cross-device data paths.
+5. Weak-network, tile failure, installability-unavailable, and external-map fallback clarity.
+6. Mate70 real-device evidence as a required final acceptance artifact.
+
+Detailed implementation and acceptance are defined in [P24 Detailed Development And Acceptance Plan](./p24-detailed-development-and-acceptance-plan.md).
+
+| Phase | Development Scope | Acceptance Evidence | Exit Condition |
+| --- | --- | --- | --- |
+| P24-1 | 文档审计与边界收口 | P24 audit, contract, active docs, drawio | No fatal or major unresolved spec risk |
+| P24-2 | WebApp 安装资产实现 | Manifest/icon/theme/launch URL, status fallback, service worker app shell | App-like assets implemented without native-app over-claim |
+| P24-3 | Mate70 移动主路径实现 | Safe-area status, bottom controls, read-only share mobile path | Desktop mobile evidence and Mate70 real-device evidence pass |
+| P24-4 | 静态部署与弱网 fallback 实现 | Static asset smoke, offline notice, tile failure copy | No backend/cloud dependency is introduced |
+| P24-5 | 自动化和实机验收 | P24 E2E matrix, screenshot plan, Mate70 evidence protocol | Desktop simulation and Mate70 evidence are clearly separated |
+| P24-6 | 总验收和 final report | Build/unit/scanlist/regression/static smoke/Mate70 final report | P24 can only be accepted with required evidence |
+
+P24 is accepted because full automated regression, temporary public static deployment smoke, Mate70 real-device evidence, non-destructive failure-state evidence, and an accepted `p24-final-acceptance-report.md` now exist.
+
+## P24 Completion Addendum
+
+Current P24 code, local automation, temporary public deployment smoke, and Mate70 evidence are complete. The real-device acceptance loop closed as follows:
+
+| Phase | Development / Evidence Scope | Exit Condition |
+| --- | --- | --- |
+| P24-C1 | Write and follow the Mate70 real-device acceptance script | Script maps PRD 4K.3 steps to screenshots or recording names |
+| P24-C2 | Capture Mate70 complete workflow | Map, filters, details, import/export, valid read-only share, and refresh persistence are evidenced |
+| P24-C3 | Capture installability behavior | Browser install/add-to-home support or unsupported fallback is recorded honestly |
+| P24-C4 | Capture failure states | External-map/copy fallback and source-down FoodMap fallback are evidenced; phone network toggles were not performed |
+| P24-C5 | Update final report | P24 final report is accepted and records the temporary deployment profile and residual limits |
+
+---
 
 ## P23 Summary
 

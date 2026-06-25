@@ -1,8 +1,8 @@
-# FoodMap P19/P20-C/P21/P22/P23 Target Architecture
+# FoodMap P19/P20-C/P21/P22/P23/P24/P25 Target Architecture
 
 ## 1. Architecture Conclusion
 
-FoodMap remains a **pure frontend, local-first, modular monolith**. User places, layers, photos, snapshots, and governance history remain in browser IndexedDB. AMap scanlist and Dingtuyi data remain optional reference layers. Agent access remains limited to the controlled `window.FoodMapAgentBridge` surface.
+FoodMap remains a **pure frontend, local-first, static-deployable modular monolith**. User places, layers, photos, snapshots, and governance history remain in browser IndexedDB. AMap scanlist and Dingtuyi data remain optional reference layers. Agent access remains limited to the controlled `window.FoodMapAgentBridge` surface.
 
 P18 is accepted and becomes the regression baseline:
 
@@ -13,7 +13,72 @@ P18 is accepted and becomes the regression baseline:
 - Share poster composer for current filtered personal places.
 - Agent negative boundaries and large deterministic performance smoke.
 
-P22 adds interaction-shell work over the accepted P19/P20-C/P21 baselines. P23 corrects the remaining interaction evidence gaps found during human review and full PRD regression. Neither stage adds accounts, backend POI services, cloud sync, permanent public links, automatic coordinate correction, or new external real-time POI claims.
+P22 adds interaction-shell work over the accepted P19/P20-C/P21 baselines. P23 corrects the remaining interaction evidence gaps found during human review and full PRD regression. P24 implements mobile-friendly WebApp deployment readiness and Mate70 usability evidence over the accepted baseline. P25 plans durable static deployment and release governance over the accepted P24 WebApp baseline. No stage adds accounts, backend POI services, cloud sync, multiplayer collaboration, permanent public links, HarmonyOS native delivery, automatic coordinate correction, offline map tiles, or new external real-time POI claims.
+
+## 0C. P25 Target Deployment Architecture
+
+P25 turns the accepted P24 temporary tunnel evidence into a durable static deployment target. It remains a browser-delivered static WebApp, not a native HarmonyOS HAP package and not a backend application.
+
+| Module | Responsibility | Target Location |
+| --- | --- | --- |
+| `StaticHostProfile` | Define GitHub Pages as the primary durable host for `ljx418/foodMap`; record build output, deploy command, base path, route fallback, cache policy, rollback notes, and fallback host decision rules | `p25-static-deployment-profile.md`, `.github/workflows`, `vite.config.ts`, `dist/` |
+| `HashRouteRecovery` | Ensure direct open and refresh for `#/map` and `#/share/:snapshotId` on the static host | `src/app/App.tsx`, `index.html`, static host fallback |
+| `WebAppShellRuntime` | Keep manifest, icon, viewport, service worker, and source-down fallback aligned with P24 accepted behavior | `index.html`, `public/manifest.webmanifest`, `public/sw.js`, `src/registerServiceWorker.ts` |
+| `Mate70StaticReleaseHarness` | Capture fixed-URL Mate70 screenshots for workspace, create/import, valid share, refresh persistence, and fallback states | HDC commands, `docs/active/evidence/p25`, final report |
+| `LocalDataPortabilityBoundary` | Preserve IndexedDB as local source of truth and `.foodmap.json` as only cross-device path | IndexedDB repositories, import/export codec, snapshot codec |
+| `RegressionGatePack` | Prove P18-P24 accepted behavior remains green before release acceptance | Vitest, Playwright, `verify:scanlist`, P25 final report |
+
+P25 runtime flow:
+
+```text
+Mate70 browser
+  -> stable GitHub Pages URL (https://ljx418.github.io/foodMap/)
+  -> dist/index.html + manifest.webmanifest + sw.js
+  -> App hash router (#/map or #/share/:snapshotId)
+  -> MapWorkspace or ShareView
+  -> IndexedDB local facts and snapshots
+  -> .foodmap.json import/export for portability
+  -> FoodMap-owned fallback for source-down or unsupported browser states
+```
+
+P25 write-path rule: deployment work may change static hosting configuration, GitHub Actions workflow, Vite base handling, docs, verification scripts, and fallback behavior only when needed for release safety. It must not introduce a business backend, account identity, cloud synchronization, remote backup, multiplayer editing, public permanent share URLs, HarmonyOS native packaging, or hidden writes that change P18-P24 trust boundaries.
+
+If GitHub Pages cannot be enabled for the repository or cannot produce a durable URL, the implementer may switch to Cloudflare Pages, Netlify, or a self-hosted static server only after recording the blocker and trade-off in the final report. The product architecture remains the same static WebApp architecture regardless of host.
+
+## 0B. P24 Target WebApp Architecture
+
+P24 turns the accepted responsive frontend into a mobile-friendly, app-like WebApp target. It remains a browser-delivered application, not a HarmonyOS native HAP package.
+
+| Module | Responsibility | Target Location |
+| --- | --- | --- |
+| `WebAppShell` | Define app name, launch URL, theme color, display mode, viewport behavior, and static deployment assumptions | `index.html`, `public/manifest.webmanifest`, `public/icons/foodmap-icon.svg`, Vite build output |
+| `AppShellRuntime` | Register app-shell-only offline fallback without claiming offline map tiles or cloud backup | `src/registerServiceWorker.ts`, `public/sw.js` |
+| `InstallabilityFallbackStatus` | Show browser/WebApp mode, offline notice, and Mate70 installability limitation copy | `src/components/WebAppStatus.tsx`, `src/app/App.tsx`, `src/styles/app.css` |
+| `WorkspaceMobileSurface` | Keep map, search, quick filters, bottom actions, sheets, dialogs, and keyboard states usable under browser chrome | `MapWorkspace`, `HomeMapControlDock`, `MapCanvas`, `src/styles/app.css` |
+| `ShareMobileSurface` | Keep read-only share route, missing snapshot import fallback, and mobile detail summary usable on Mate70 | `ShareView`, `ImportExportDialog`, share/import codec |
+| `MapFallbackAdapter` | Preserve local data and explain map tile failure without implying record loss | `LeafletProvider`, `MapCanvas`, `src/styles/app.css` |
+| `LocalDataBoundary` | Keep personal data local and portable only through IndexedDB and `.foodmap.json` | IndexedDB repositories, import/export codec, snapshot codec |
+| `AgentBoundary` | Keep assistant access behind read/guarded local actions, not deployment or cloud sync | `window.FoodMapAgentBridge` |
+| `StaticDeploymentProfile` | Ensure built assets can be served from a static host and opened from Mate70 without a business backend | `package.json` build/preview scripts, `scripts/verify_p24_webapp.mjs`, final report |
+| `Mate70AcceptanceHarness` | Combine Playwright evidence, HDC reverse workflow screenshots, static-deployment smoke, and final real-device evidence limits | `e2e/workspace.spec.ts`, HDC commands, `docs/active/evidence/p24`, final report |
+
+P24 write-path rule: P24 may add WebApp packaging assets, layout fixes, deployment docs, and fallback UI only. It must not add account identity, cloud synchronization, remote backup, multiplayer editing, public permanent share URLs, native HarmonyOS packaging, or hidden writes that change P18-P23 trust boundaries.
+
+P24 runtime flow:
+
+```text
+Mate70 browser
+  -> index.html / manifest.webmanifest / sw.js
+  -> App router (#/map or #/share/:snapshotId)
+  -> MapWorkspace or ShareView
+  -> MapCanvas + LeafletProvider for map rendering and tile fallback
+  -> Domain helpers and IndexedDB repositories for local facts
+  -> Import/export codec for .foodmap.json portability
+  -> WebAppStatus for browser/offline/installability fallback copy
+  -> Playwright/HDC evidence harness for acceptance only
+```
+
+HDC reverse forwarding is an acceptance transport, not a product architecture dependency. It can prove Mate70 workflow usability during development, but it does not replace a deployable static URL unless the final report explicitly accepts that limitation.
 
 ## 0A. P23 Target Interaction Correction
 
@@ -243,12 +308,12 @@ P20 final acceptance must include:
 npm run build
 npm test -- --run
 npm run verify:scanlist
-LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/extracted/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P19 current viewport poster"
-LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/extracted/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P19 data health"
-LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/extracted/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P20 governance"
-LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/extracted/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P20 import conflict"
-LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/extracted/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P20 agent negative"
-LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/extracted/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P20 responsive"
+LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/root/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P19 current viewport poster"
+LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/root/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P19 data health"
+LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/root/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P20 governance"
+LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/root/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P20 import conflict"
+LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/root/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P20 agent negative"
+LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/root/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P20 responsive"
 ```
 
 P20 must also include visual evidence for governance workbench, duplicate comparison, import conflict preview, and maintenance history on required responsive viewports.
@@ -324,10 +389,10 @@ P21 final acceptance must include:
 npm run build
 npm test -- --run
 npm run verify:scanlist
-LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/extracted/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P18 large deterministic"
-LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/extracted/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P19 current viewport poster|P19 data health"
-LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/extracted/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P20-C|P20 governance|P20 import conflict|P20 agent governance"
-LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/extracted/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P21 share portability|P21 import safety|P21 read only share"
+LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/root/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P18 large deterministic"
+LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/root/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P19 current viewport poster|P19 data health"
+LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/root/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P20-C|P20 governance|P20 import conflict|P20 agent governance"
+LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/root/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P21 share portability|P21 import safety|P21 read only share"
 ```
 
 P21 also requires visual evidence for share generation/export, clean profile import, read-only share page, missing snapshot fallback, and invalid import no-op across 390x844, 430x932, 768x900, and 1280x820 where applicable.
@@ -354,3 +419,15 @@ P23 exits only when:
 - Missing share, invalid import, clean-profile import, share snapshot, current viewport poster, health, governance, and detail paths have screenshot evidence.
 - Build, unit, real scanlist, P18/P19/P20/P21/P22 targeted regression, full workspace Playwright, PRD/document review, and P23 final report all pass.
 - The final acceptance report does not claim cloud sharing, backend sync, automatic repair, or external real-time POI completion.
+
+## 16. P24 Architecture Exit Conditions
+
+P24 exits only when:
+
+- A static deployment of the Vite build can be opened on HarmonyOS Mate70.
+- WebApp metadata, icon, theme, launch URL, and viewport behavior are implemented or explicitly blocked by target browser support with fallback copy.
+- Mobile safe-area, browser chrome, keyboard, bottom action, and panel interactions keep map-first workflows usable on 320px, 390px, 430px, and Mate70 evidence.
+- IndexedDB local persistence and `.foodmap.json` portability remain the only cross-device data paths.
+- Weak-network, tile failure, external-map failure, and installability-unavailable states are visible and do not imply cloud loss or data loss.
+- Build, unit, real scanlist, P18-P23 regression, P24 mobile E2E, static deployment smoke, PRD/document review, Mate70 evidence, and P24 final report all pass.
+- The final report does not claim HarmonyOS native app delivery, AppGallery release, account sync, cloud backup, collaboration, or public permanent sharing.

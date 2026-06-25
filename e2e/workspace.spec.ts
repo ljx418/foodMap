@@ -1,6 +1,18 @@
 import { expect, type Page, test } from "@playwright/test";
 import fs from "node:fs";
 
+function getRuntimeEnv(name: string): string | undefined {
+  return (globalThis as typeof globalThis & { process?: { env?: Record<string, string | undefined> } }).process?.env?.[name];
+}
+
+function getDeployUrl(): string | undefined {
+  const value = getRuntimeEnv("FOODMAP_DEPLOY_URL")?.trim();
+  if (!value) return undefined;
+  const url = new URL(value);
+  if (!url.pathname.endsWith("/")) url.pathname = `${url.pathname}/`;
+  return url.toString();
+}
+
 async function loadRecommendations(page: Page, projectName: string) {
   if (projectName === "mobile") {
     await page.getByRole("button", { name: "更多工具" }).click();
@@ -2499,6 +2511,151 @@ test("P23 health and governance panels are readable and action text is not clipp
   });
   expect(clippedButtons).toEqual([]);
   await page.screenshot({ path: "docs/active/evidence/p23/05-governance-readable.png", fullPage: true });
+});
+
+test("P24 WebApp metadata, offline notice and hash routes are present", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop project validates deterministic P24 browser metadata");
+  fs.mkdirSync("docs/active/evidence/p24", { recursive: true });
+  await page.goto("/#/map");
+  await expect(page.getByTestId("webapp-status")).toBeVisible();
+  await expect(page.getByTestId("webapp-status")).toContainText("WebApp 模式");
+  await expect(page.getByTestId("webapp-status")).toHaveAttribute("data-mode", "browser");
+
+  const metadata = await page.evaluate(() => ({
+    manifest: document.querySelector<HTMLLinkElement>('link[rel="manifest"]')?.getAttribute("href"),
+    themeColor: document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')?.content,
+    viewport: document.querySelector<HTMLMetaElement>('meta[name="viewport"]')?.content,
+    mobileCapable: document.querySelector<HTMLMetaElement>('meta[name="mobile-web-app-capable"]')?.content,
+    description: document.querySelector<HTMLMetaElement>('meta[name="description"]')?.content
+  }));
+  expect(metadata.manifest).toContain("manifest.webmanifest");
+  expect(metadata.themeColor).toBe("#C76A32");
+  expect(metadata.viewport).toContain("viewport-fit=cover");
+  expect(metadata.mobileCapable).toBe("yes");
+  expect(metadata.description).toContain("移动端浏览器");
+
+  const manifestResponse = await page.request.get("/manifest.webmanifest");
+  expect(manifestResponse.ok()).toBeTruthy();
+  const manifest = await manifestResponse.json();
+  expect(manifest.name).toBe("FoodMap 美食地图");
+  expect(manifest.display).toBe("standalone");
+  expect(manifest.start_url).toContain("#/map");
+  expect(manifest.icons.some((icon: { src: string }) => icon.src.includes("foodmap-icon.svg"))).toBeTruthy();
+
+  await page.context().setOffline(true);
+  await page.evaluate(() => window.dispatchEvent(new Event("offline")));
+  await expect(page.getByTestId("webapp-offline-notice")).toBeVisible();
+  await expect(page.getByTestId("webapp-offline-notice")).toContainText("本地记录可查看");
+  await page.screenshot({ path: "docs/active/evidence/p24/01-webapp-offline-notice.png", fullPage: true });
+  await page.context().setOffline(false);
+
+  await page.goto("/#/share/missing-p24-snapshot");
+  await expect(page.getByTestId("share-missing-snapshot")).toContainText(".foodmap.json");
+});
+
+test("P24 mobile WebApp shell keeps controls inside the Mate-style viewport", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop project drives deterministic P24 mobile viewport");
+  fs.mkdirSync("docs/active/evidence/p24", { recursive: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#/map");
+  await expect(page.getByTestId("home-filter-dock")).toBeVisible();
+  await expect(page.getByTestId("mobile-action-bar")).toBeVisible();
+  await expect(page.getByTestId("webapp-status")).toBeVisible();
+
+  const offenders = await page.evaluate(() => {
+    return [...document.querySelectorAll<HTMLElement>("[data-testid='home-filter-dock'], [data-testid='mobile-action-bar'], [data-testid='webapp-status']")]
+      .map((element) => {
+        const rect = element.getBoundingClientRect();
+        return {
+          testid: element.dataset.testid ?? element.className,
+          left: rect.left,
+          right: rect.right,
+          top: rect.top,
+          bottom: rect.bottom
+        };
+      })
+      .filter((rect) => rect.left < -1 || rect.right > window.innerWidth + 1 || rect.top < -1 || rect.bottom > window.innerHeight + 1);
+  });
+  expect(offenders).toEqual([]);
+  await page.screenshot({ path: "docs/active/evidence/p24/02-mobile-webapp-shell.png", fullPage: true });
+});
+
+test("P24 mobile readonly share and local data remain usable after refresh", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop project drives deterministic P24 mobile viewport");
+  fs.mkdirSync("docs/active/evidence/p24", { recursive: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#/map");
+  await importPersonalFavorites(page);
+  await expect(page.locator(".personal-favorite-leaflet-marker")).toHaveCount(32);
+  await page.reload();
+  await expect(page.getByTestId("workspace-map")).toBeVisible();
+  await expect(page.locator(".personal-favorite-leaflet-marker")).toHaveCount(32);
+
+  await page.getByRole("button", { name: "更多工具" }).click();
+  await page.getByRole("dialog", { name: "更多工具" }).getByRole("button", { name: "数据包" }).click();
+  await expect(page.getByTestId("import-export-dialog")).toBeVisible();
+  await page.getByTestId("import-readonly-snapshot").click();
+  await page.locator('input[type="file"]').nth(1).setInputFiles({
+    name: "p24-mobile-share.foodmap.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(buildP21PortablePackage("p24-mobile-share")), "utf-8")
+  });
+  await expect(page.getByTestId("share-view")).toContainText("P21 分享热干面");
+  await expect(page.getByRole("navigation", { name: "只读分享导航" })).toBeVisible();
+  await page.getByRole("navigation", { name: "只读分享导航" }).getByRole("button", { name: "详情" }).click();
+  await expect(page.getByTestId("share-mobile-detail-summary")).toBeVisible();
+  await expect(page.getByTestId("share-mobile-detail-summary")).toContainText("P21 分享热干面");
+  await page.screenshot({ path: "docs/active/evidence/p24/03-mobile-share-and-refresh.png", fullPage: true });
+});
+
+test("P25 deployed GitHub Pages stable URL supports map, real data and readonly share", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop validates P25 deployed release path");
+  const deployUrl = getDeployUrl();
+  test.skip(!deployUrl, "FOODMAP_DEPLOY_URL is required for deployed-origin P25 acceptance");
+
+  fs.mkdirSync("docs/active/evidence/p25", { recursive: true });
+
+  const mapUrl = new URL(deployUrl!);
+  mapUrl.hash = "/map";
+  await page.goto(mapUrl.toString());
+  await expect(page.getByTestId("workspace-map")).toBeVisible();
+  await expect(page.getByTestId("webapp-status")).toBeVisible();
+  await expect(page.getByTestId("webapp-status")).toContainText("WebApp 模式");
+
+  await importPersonalFavorites(page);
+  await expect(page.locator(".personal-favorite-leaflet-marker")).toHaveCount(32);
+  await page.waitForFunction(() => Boolean((window as any).FoodMapAgentBridge));
+  await page.evaluate(async () => {
+    const bridge = (window as any).FoodMapAgentBridge;
+    await bridge.dispatch({ action: "focusPlace", payload: { placeId: "personal-favorite:xiashi-casserole" } });
+  });
+  const detail = page.locator(".desktop-side-panel").getByTestId("place-detail");
+  await expect(detail).toBeVisible();
+  await expect(detail).toContainText("夏氏砂锅");
+  await page.screenshot({ path: "docs/active/evidence/p25/github-pages-workspace.png", fullPage: true });
+
+  await page.reload();
+  await expect(page.getByTestId("workspace-map")).toBeVisible();
+  await expect(page.locator(".personal-favorite-leaflet-marker")).toHaveCount(32);
+
+  await page.getByTestId("workspace-import").click();
+  await expect(page.getByTestId("import-export-dialog")).toBeVisible();
+  await page.getByTestId("import-readonly-snapshot").click();
+  await page.locator('input[type="file"]').nth(1).setInputFiles({
+    name: "p25-deployed-share.foodmap.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(buildP21PortablePackage("p25-deployed-share")), "utf-8")
+  });
+  await expect(page).toHaveURL(/#\/share\/p25-deployed-share/);
+  await expect(page.getByTestId("share-view")).toContainText("P21 分享热干面");
+  await expect(page.getByTestId("share-readonly-notice")).toContainText("本地只读快照");
+  await expect(page.getByTestId("share-view").getByRole("button", { name: /新增|编辑|删除|上传|账号|云|公网/ })).toHaveCount(0);
+  await page.screenshot({ path: "docs/active/evidence/p25/github-pages-share.png", fullPage: true });
+
+  await page.reload();
+  await expect(page.getByTestId("share-view")).toContainText("P21 分享热干面");
+  await expect(page.getByTestId("share-readonly-notice")).toContainText("本地只读快照");
+  await page.screenshot({ path: "docs/active/evidence/p25/hash-route-refresh.png", fullPage: true });
 });
 
 const P21_RESPONSIVE_VIEWPORTS = [
