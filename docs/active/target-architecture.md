@@ -13,7 +13,7 @@ P18 is accepted and becomes the regression baseline:
 - Share poster composer for current filtered personal places.
 - Agent negative boundaries and large deterministic performance smoke.
 
-P22 adds interaction-shell work over the accepted P19/P20-C/P21 baselines. P23 corrects the remaining interaction evidence gaps found during human review and full PRD regression. P24 implements mobile-friendly WebApp deployment readiness and Mate70 usability evidence over the accepted baseline. P25 implements durable static deployment and release governance over the accepted P24 WebApp baseline, but is not accepted until Mate70 fixed-URL evidence is captured. No stage adds accounts, backend POI services, cloud sync, multiplayer collaboration, permanent public links, HarmonyOS native delivery, automatic coordinate correction, offline map tiles, or new external real-time POI claims.
+P22 adds interaction-shell work over the accepted P19/P20-C/P21 baselines. P23 corrects the remaining interaction evidence gaps found during human review and full PRD regression. P24 implements mobile-friendly WebApp deployment readiness and Mate70 usability evidence over the accepted baseline. P25 implements and accepts durable static deployment and release governance over the accepted P24 WebApp baseline. No stage adds accounts, backend POI services, cloud sync, multiplayer collaboration, permanent public links, HarmonyOS native delivery, automatic coordinate correction, offline map tiles, or new external real-time POI claims.
 
 ## 0C. P25 Target Deployment Architecture
 

@@ -2,11 +2,11 @@
 
 ## P25 Gate Status
 
-Current status: `Implemented / deployed-origin automation passed / Mate70 fixed-URL evidence blocked`.
+Current status: `Accepted`.
 
-P25 is a durable static deployment and release-governance stage after accepted P24. P24 remains the latest accepted implementation baseline until P25 implementation, Mate70 fixed-URL evidence, regression evidence, and `p25-final-acceptance-report.md` all support acceptance.
+P25 is the accepted durable static deployment and release-governance stage after accepted P24. P25 is the latest accepted implementation baseline.
 
-P25 cannot be accepted from HDC-only testing, local `vite preview`, a temporary tunnel, or desktop mobile emulation alone. It requires a stable static URL, direct hash-route recovery, real Mate70 evidence, P18-P24 regression, and an honest final report. The implemented URL target is GitHub Pages for `ljx418/foodMap`: `https://ljx418.github.io/foodMap/`.
+P25 was not accepted from HDC-only testing, local `vite preview`, a temporary tunnel, or desktop mobile emulation alone. It passed with a stable GitHub Pages URL, direct hash-route recovery, real Mate70 fixed-URL evidence, P18-P24 regression, and an accepted final report. The implemented URL target is GitHub Pages for `ljx418/foodMap`: `https://ljx418.github.io/foodMap/`.
 
 P25 must not be described as a HarmonyOS native app, AppGallery release, account system, cloud sync, backend service, offline map product, public permanent social share platform, or external realtime POI search completion.
 

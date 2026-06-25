@@ -4,9 +4,9 @@ Date: 2026-06-25
 
 ## Status
 
-`Implemented / deployed-origin automation passed / Mate70 fixed-URL evidence blocked.`
+`Accepted.`
 
-P25 follows accepted P24. P24 proved that FoodMap can run as a mobile-friendly WebApp on Mate70 using HDC evidence and a temporary public HTTPS tunnel. P25 turns that temporary acceptance profile into a durable static deployment stage. Code, GitHub Pages deployment, deployed-origin browser checks, and automated regression are complete; final acceptance is blocked until Mate70 fixed-URL real-device evidence is captured.
+P25 follows accepted P24. P24 proved that FoodMap can run as a mobile-friendly WebApp on Mate70 using HDC evidence and a temporary public HTTPS tunnel. P25 turns that temporary acceptance profile into an accepted durable static deployment stage. Code, GitHub Pages deployment, deployed-origin browser checks, automated regression, real scanlist verification, Mate70 fixed-URL evidence, and final acceptance report are complete.
 
 P25 is still pure frontend and local-first. It must not add account login, cloud sync, remote backup, collaboration, public permanent share links, FoodMap business backend APIs, HarmonyOS native HAP delivery, AppGallery release, offline map tiles, automatic coordinate repair, or completed external real-time POI search claims.
 
@@ -54,8 +54,8 @@ P25 is still pure frontend and local-first. It must not add account login, cloud
 
 ## Initial Audit
 
-Result: `P25 implementation route was valid; implementation and deployed-origin automation are complete, but final acceptance remains blocked by missing Mate70 fixed-URL evidence.`
+Result: `P25 accepted after implementation, deployed-origin automation, Mate70 fixed-URL evidence, and final report.`
 
 Current docs now support P25 planning after synchronization. PRD, target architecture, development plan, roadmap, acceptance gate, gap document, drawio, evidence matrix, visual checklist, audit, and stage contract agree that P25 is a durable static deployment and release-governance stage. The remaining gap is implementation evidence, not documentation scope.
 
-P25 implementation should start with GitHub Pages. If GitHub Pages is blocked by repository settings or account limitations, the implementer must use the fallback matrix in `p25-static-deployment-profile.md` and record the reason before accepting an alternate route.
+P25 implementation started with GitHub Pages. GitHub Actions workflow creation was blocked by token scope, so P25 used the documented `gh-pages` branch fallback and recorded that route in the final report.

@@ -31,4 +31,4 @@ The automated evidence supports PRD 4L's stable URL, local-first data, `.foodmap
 
 ## Quality Decision
 
-Automated regression is green. P25 final acceptance remains blocked only by the missing Mate70 fixed-URL evidence.
+Automated regression is green. P25 final acceptance is now closed by Mate70 fixed-URL evidence in `p25-final-acceptance-report.md`.

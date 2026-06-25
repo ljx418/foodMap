@@ -24,7 +24,7 @@ P25 is the current durable static deployment and release-governance stage. It bu
 - `npm run build`, `npm test -- --run`, `npm run verify:scanlist`, P18-P24 regression, and P25 targeted checks pass or have documented non-product blockers.
 - P25 final acceptance report is created before declaring accepted.
 
-P25 acceptance status: implemented and deployed to GitHub Pages with automated browser/regression evidence; not accepted because Mate70 fixed-URL real-device evidence remains blocked.
+P25 acceptance status: accepted. GitHub Pages deployment, automated browser/regression evidence, real scanlist verification, Mate70 fixed-URL evidence, and final report passed.
 
 ## P24 里程碑
 

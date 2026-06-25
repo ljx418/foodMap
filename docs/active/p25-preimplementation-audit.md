@@ -39,7 +39,7 @@ Forbidden:
 | `current-vs-target-gap.md` still says P24 not accepted | Major | Closed: top section now defines P25 and marks P24 accepted |
 | drawio is still P24-focused | Major | Closed: drawio replaced with 7 P25 pages under the 8-page limit |
 | P25 has no contract/final gate yet | Major | Closed: P25 contract, detailed plan, roadmap, gate, matrix, and visual checklist are aligned |
-| Durable static hosting choice is not implemented | Expected | Keep as P25 implementation task, not accepted state |
+| Durable static hosting choice is not implemented | Expected before implementation | Closed by GitHub Pages `gh-pages` deployment and accepted P25 final report |
 
 ## Decision
 

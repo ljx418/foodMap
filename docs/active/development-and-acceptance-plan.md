@@ -24,7 +24,7 @@ Detailed implementation and acceptance are defined in [P25 Detailed Development 
 | P25-5 | 回归和证据包 | build/unit/scanlist/P18-P24 regression/P25 targeted evidence | Existing accepted baselines remain green |
 | P25-6 | 总验收和 final report | P25 final report with host profile, URL, evidence, blockers, residual limits | P25 can be accepted only after evidence exists |
 
-Current P25 status: implementation and deployed-origin browser acceptance are complete; final acceptance is not claimed because Mate70 fixed-URL real-device evidence is still blocked by missing HDC tooling in the current shell.
+Current P25 status: accepted. Implementation, deployed-origin browser acceptance, real scanlist verification, automated regression, Mate70 fixed-URL real-device evidence, and final report passed.
 
 P25 must not claim HarmonyOS native HAP/AppGallery delivery, account login, cloud sync, remote backup, collaboration, backend API, offline map tiles, permanent public social sharing, or external realtime POI search.
 

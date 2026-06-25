@@ -7,7 +7,7 @@ This directory is the active documentation baseline for FoodMap. It keeps the V1
 - Active baseline: V1.0 PRD plus accepted P1-P19 implementation scope, P20 core regression scope, accepted P20-C governance completion scope, accepted P21 local share/data portability release scope, accepted P22 interaction experience refactor scope, accepted P23 interaction-quality correction scope, accepted P24 WebApp/Mate70 implementation scope, and P25 durable static deployment implementation scope.
 - Current project state: runnable Vite React TypeScript frontend with IndexedDB persistence, Leaflet/AMap-tile map, share/import/export, Agent Bridge, mobile filter controls, editable tags, manual pin move with audit preview, external map links, map-poster export, current-viewport poster mode, personal data health center, pending-place workbench, P17 detail IA, P18 candidate search and evidence, P19 acceptance evidence, P20 core personal data governance workbench, duplicate merge preview, import conflict preview, maintenance history, Agent governance boundary, responsive governance evidence, and 50 verified AMap Wuhan scanlist pins as a toggleable reference layer.
 - Current-stage focus: P25 implements durable static deployment and release governance: GitHub Pages static host profile, fixed URL entry on Mate70, hash-route recovery, source-down fallback, regression evidence, and final release reporting.
-- Current-stage acceptance status: P25 code, GitHub Pages deployment, deployed-origin browser checks, and automated regression have been implemented and verified, but P25 is not accepted because Mate70 fixed-URL real-device evidence is still blocked by missing HDC tooling in the current shell. P24 remains the latest accepted implementation baseline after full local automated checks, local static preview, Mate70 HDC workflow evidence, temporary public HTTPS static deployment smoke, valid public `#/share/:snapshotId` evidence, and non-destructive source-down fallback verification.
+- Current-stage acceptance status: P25 is accepted after GitHub Pages deployment, deployed-origin browser checks, automated regression, real scanlist verification, and Mate70 fixed-URL real-device evidence passed. P25 is now the latest accepted implementation baseline.
 - Primary constraint: pure frontend first, static-deployable, no backend dependency for user records or share snapshots.
 - Product direction: map-first personal food journal with a verified recommendation overlay, not a generic admin panel or public social product.
 
@@ -39,7 +39,7 @@ Forbidden claims:
 - Future stages treat P21 as a regression baseline before changing local share/import/export behavior.
 - P22 may not claim new cloud/public share capability, automatic data repair, or new external real-time POI search.
 - P24 may not claim HarmonyOS native HAP/AppGallery delivery, account login, cloud sync, remote backup, collaboration, or public permanent sharing.
-- P25 may not claim durable static deployment acceptance until a stable URL, Mate70 fixed-URL evidence, regression evidence, and `p25-final-acceptance-report.md` exist.
+- P25 may claim durable static deployment acceptance only within the accepted `p25-final-acceptance-report.md` boundaries: stable GitHub Pages URL, Mate70 fixed-URL WebApp evidence, local-first data, and no native/cloud/backend over-claim.
 - P25 may not turn FoodMap into a native HAP/AppGallery release, account/cloud product, backend service, offline map product, or permanent public social sharing platform.
 
 ## Document Index
@@ -179,7 +179,7 @@ The app also supports a local read-only share view and `.foodmap.json` import/ex
 
 Use these documents for external PRD/architecture/acceptance audit:
 
-This audit set is intentionally below 20 documents. `docs/active/p24-final-acceptance-report.md` is the latest accepted implementation baseline. P25 implementation and deployment evidence exists, but `docs/active/p25-final-acceptance-report.md` currently records a not-accepted decision because Mate70 fixed-URL evidence is blocked.
+This audit set is intentionally below 20 documents. `docs/active/p25-final-acceptance-report.md` is the latest accepted implementation baseline.
 
 1. `docs/active/product-requirements-document.md`
 2. `docs/active/target-architecture.md`
