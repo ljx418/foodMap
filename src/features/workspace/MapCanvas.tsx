@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import type { FoodPlace } from "../../domain/types";
+import type { FoodPlace, MapViewportBounds } from "../../domain/types";
 import { DEFAULT_CENTER } from "../../domain/types";
 import { createMapProvider } from "../../map/createMapProvider";
 import type { MapProviderAdapter } from "../../map/MapProviderAdapter";
@@ -12,15 +12,17 @@ interface Props {
   onPlaceClick: (placeId: string) => void;
   onMapClick: (point: { longitude: number; latitude: number }) => void;
   onPlaceMove?: (placeId: string, point: { longitude: number; latitude: number }) => void;
+  onViewportChange?: (bounds: MapViewportBounds) => void;
   notify: (text: string) => void;
 }
 
-export function MapCanvas({ places, readonly, focusedPlaceId, draggablePlaceIds = [], onPlaceClick, onMapClick, onPlaceMove, notify }: Props) {
+export function MapCanvas({ places, readonly, focusedPlaceId, draggablePlaceIds = [], onPlaceClick, onMapClick, onPlaceMove, onViewportChange, notify }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const providerRef = useRef<MapProviderAdapter | null>(null);
   const onPlaceClickRef = useRef(onPlaceClick);
   const onMapClickRef = useRef(onMapClick);
   const onPlaceMoveRef = useRef(onPlaceMove);
+  const onViewportChangeRef = useRef(onViewportChange);
 
   useEffect(() => {
     onPlaceClickRef.current = onPlaceClick;
@@ -35,12 +37,17 @@ export function MapCanvas({ places, readonly, focusedPlaceId, draggablePlaceIds 
   }, [onPlaceMove]);
 
   useEffect(() => {
+    onViewportChangeRef.current = onViewportChange;
+  }, [onViewportChange]);
+
+  useEffect(() => {
     if (!containerRef.current) return;
     const selection = createMapProvider();
     providerRef.current = selection.provider;
     selection.provider.onPlaceClick((placeId) => onPlaceClickRef.current(placeId));
     selection.provider.onMapClick((point) => onMapClickRef.current(point));
     selection.provider.onPlaceMove((placeId, point) => onPlaceMoveRef.current?.(placeId, point));
+    selection.provider.onViewportChange?.((bounds) => onViewportChangeRef.current?.(bounds));
     void selection.provider
       .initialize(containerRef.current, { center: DEFAULT_CENTER, zoom: 12, readonly })
       .then(() => {

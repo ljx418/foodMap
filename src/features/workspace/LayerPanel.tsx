@@ -15,6 +15,7 @@ interface Props {
   places: FoodPlace[];
   readonly?: boolean;
   onReload?: () => void;
+  onLayerVisibleChange?: (layerId: string, visible: boolean) => void;
   recommendationControl?: {
     visible: boolean;
     total: number;
@@ -24,7 +25,7 @@ interface Props {
   };
 }
 
-export function LayerPanel({ layers, places, readonly, onReload, recommendationControl }: Props) {
+export function LayerPanel({ layers, places, readonly, onReload, onLayerVisibleChange, recommendationControl }: Props) {
   const visibleLayerIds = new Set(layers.filter((layer) => layer.visible).map((layer) => layer.id));
   const visiblePlaceCount = places.filter((place) => visibleLayerIds.has(place.layerId)).length;
   const hiddenLayerCount = layers.filter((layer) => !layer.visible).length;
@@ -91,10 +92,15 @@ export function LayerPanel({ layers, places, readonly, onReload, recommendationC
                     <small>{count} 个地点</small>
                   </span>
                   <input
+                    data-testid={readonly ? "share-layer-toggle" : undefined}
                     type="checkbox"
                     checked={layer.visible}
-                    disabled={readonly}
+                    disabled={readonly && !onLayerVisibleChange}
                     onChange={async (event) => {
+                      if (onLayerVisibleChange) {
+                        onLayerVisibleChange(layer.id, event.target.checked);
+                        return;
+                      }
                       await layerRepository.save({ ...layer, visible: event.target.checked });
                       onReload?.();
                     }}

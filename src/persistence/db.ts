@@ -1,12 +1,12 @@
 import { DEFAULT_LAYERS } from "../domain/sampleData";
-import type { FoodLayer, FoodPlace, PhotoAsset, ShareSnapshot } from "../domain/types";
+import type { FoodLayer, FoodPlace, GovernanceJournalEntry, PhotoAsset, ShareSnapshot } from "../domain/types";
 
 export const DB_NAME = "foodmap-db";
-export const DB_VERSION = 1;
+export const DB_VERSION = 2;
 
 export interface FoodMapDB extends IDBDatabase {}
 
-export type StoreName = "places" | "layers" | "photos" | "snapshots" | "meta";
+export type StoreName = "places" | "layers" | "photos" | "snapshots" | "meta" | "governanceJournal";
 
 let dbPromise: Promise<FoodMapDB> | undefined;
 
@@ -38,6 +38,10 @@ export function openFoodMapDb(): Promise<FoodMapDB> {
         }
         if (!db.objectStoreNames.contains("meta")) {
           db.createObjectStore("meta", { keyPath: "key" });
+        }
+        if (!db.objectStoreNames.contains("governanceJournal")) {
+          const journal = db.createObjectStore("governanceJournal", { keyPath: "id" });
+          journal.createIndex("createdAt", "createdAt");
         }
       };
       request.onerror = () => reject(request.error);
@@ -106,4 +110,5 @@ export type StoreValueMap = {
   layers: FoodLayer;
   photos: PhotoAsset;
   snapshots: ShareSnapshot;
+  governanceJournal: GovernanceJournalEntry;
 };

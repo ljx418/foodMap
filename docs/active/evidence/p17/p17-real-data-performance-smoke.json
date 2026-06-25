@@ -6,10 +6,10 @@
     "dingtuyi": 120
   },
   "timingsMs": {
-    "pendingOpenMs": 305,
-    "detailOpenMs": 184,
-    "zoomMs": 387
+    "pendingOpenMs": 234,
+    "detailOpenMs": 64,
+    "zoomMs": 355
   },
   "thresholdMs": 3000,
-  "capturedAt": "2026-06-16T09:16:13.506Z"
+  "capturedAt": "2026-06-25T02:45:05.805Z"
 }

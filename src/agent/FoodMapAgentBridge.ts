@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { DEFAULT_LAYERS } from "../domain/sampleData";
 import { isPendingCalibrationPlace } from "../domain/filters";
+import { deriveGovernanceIssueGroups, suggestDuplicatePlaces } from "../domain/governance";
 import type { FoodFilterState, FoodLayer, FoodPlace, PhotoAsset, ShareSnapshot } from "../domain/types";
 import { DEFAULT_CENTER } from "../domain/types";
 import { searchPlaceCandidates } from "../domain/placeSearch";
@@ -8,7 +9,7 @@ import { tagsFromGroups } from "../domain/tagGroups";
 import { createId, nowIso, validatePlaceDraft } from "../domain/validators";
 import { createSnapshot, encodeSnapshot } from "../persistence/importExportCodec";
 import { placeRepository } from "../persistence/placeRepository";
-import { snapshotRepository } from "../persistence/snapshotRepository";
+import { governanceJournalRepository } from "../persistence/governanceJournalRepository";
 import { AMAP_WUHAN_SCANLIST } from "../recommendations/amapWuhanScanlist";
 import { recommendationToFoodPlace } from "../recommendations/recommendationUtils";
 import { evaluateRecommendation } from "../recommendations/verification";
@@ -33,7 +34,15 @@ export type FoodMapAgentAction =
   | "submitPlaceCandidates"
   | "getPlaceCandidateContext"
   | "listPendingPlaces"
-  | "getPendingPlaceContext";
+  | "getPendingPlaceContext"
+  | "getGovernanceSummary"
+  | "listDuplicateSuggestions"
+  | "listGovernanceJournal"
+  | "applyGovernanceBatch"
+  | "mergePlaces"
+  | "commitImportPlan"
+  | "hideGovernanceRisk"
+  | "finalizeCoordinates";
 
 export interface FoodMapAgentCommand {
   action: FoodMapAgentAction;
@@ -57,6 +66,7 @@ export type AgentErrorCode =
   | "EXPORT_FAILED"
   | "RECOGNITION_FAILED"
   | "PENDING_CONFIRMATION_REQUIRED"
+  | "GOVERNANCE_CONFIRMATION_REQUIRED"
   | "UNSUPPORTED_ACTION";
 
 export interface FoodMapAgentEvent {
@@ -260,9 +270,7 @@ async function runCommand(
       return { placeId };
     }
     case "createSnapshot": {
-      const snapshot = createSnapshot("Agent 生成的美食地图", options.visiblePlaces, options.layers, options.photos);
-      await snapshotRepository.save(snapshot);
-      return snapshot;
+      throw new AgentCommandError("GOVERNANCE_CONFIRMATION_REQUIRED", "Agent 不能绕过用户确认生成本地分享快照");
     }
     case "exportSnapshot": {
       const snapshot: ShareSnapshot = createSnapshot("Agent 导出的美食地图", options.visiblePlaces, options.layers, options.photos);
@@ -373,6 +381,37 @@ async function runCommand(
         }
       };
     }
+    case "getGovernanceSummary": {
+      const places = await placeRepository.list();
+      return {
+        groups: deriveGovernanceIssueGroups(places).map((group) => ({
+          kind: group.kind,
+          title: group.title,
+          count: group.issues.length,
+          issues: group.issues.slice(0, 10)
+        })),
+        note: "Agent 只能读取治理摘要，批处理、合并、导入和坐标确认必须由用户在 UI 中确认。"
+      };
+    }
+    case "listDuplicateSuggestions": {
+      const places = await placeRepository.list();
+      return suggestDuplicatePlaces(places).map((suggestion) => ({
+        id: suggestion.id,
+        primary: { id: suggestion.primary.id, name: suggestion.primary.name },
+        duplicate: { id: suggestion.duplicate.id, name: suggestion.duplicate.name },
+        distanceMeters: suggestion.distanceMeters,
+        score: suggestion.score,
+        evidence: suggestion.evidence
+      }));
+    }
+    case "listGovernanceJournal":
+      return governanceJournalRepository.list();
+    case "applyGovernanceBatch":
+    case "mergePlaces":
+    case "commitImportPlan":
+    case "hideGovernanceRisk":
+    case "finalizeCoordinates":
+      throw new AgentCommandError("GOVERNANCE_CONFIRMATION_REQUIRED", "P20 治理写入必须由用户在界面预览并确认，Agent 不能批量修改、合并、导入、隐藏风险或固化坐标");
     default:
       throw new AgentCommandError("UNSUPPORTED_ACTION", "不支持的 Agent action");
   }

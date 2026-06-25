@@ -1,0 +1,61 @@
+{
+  "generatedAt": "2026-06-24T13:13:16.945Z",
+  "baseUrl": "http://127.0.0.1:5174",
+  "browser": "Chromium headless via Playwright",
+  "screenshots": [
+    {
+      "name": "01-workspace-home.png",
+      "title": "工作台首屏",
+      "notes": "地图工作台、搜索、图层快捷入口和本地优先操作入口。",
+      "path": "docs/active/evidence/html-acceptance-2026-06-24/01-workspace-home.png"
+    },
+    {
+      "name": "02-import-export-dialog.png",
+      "title": "导入导出弹窗",
+      "notes": "用户可从这里导入个人收藏或处理导入导出数据。",
+      "path": "docs/active/evidence/html-acceptance-2026-06-24/02-import-export-dialog.png"
+    },
+    {
+      "name": "03-personal-favorites-map.png",
+      "title": "导入个人收藏后的地图",
+      "notes": "使用项目内置真实验收数据导入个人收藏，地图出现个人地点。",
+      "path": "docs/active/evidence/html-acceptance-2026-06-24/03-personal-favorites-map.png"
+    },
+    {
+      "name": "04-place-detail.png",
+      "title": "地点详情面板",
+      "notes": "聚焦地点：薄冰羊肉馆(五龙路店)；导入后列表数量：32。",
+      "path": "docs/active/evidence/html-acceptance-2026-06-24/04-place-detail.png"
+    },
+    {
+      "name": "05-data-health-center.png",
+      "title": "个人数据健康中心",
+      "notes": "展示已核验、待确认、高风险、手动校准、已跳过等分组。",
+      "path": "docs/active/evidence/html-acceptance-2026-06-24/05-data-health-center.png"
+    },
+    {
+      "name": "06-governance-workbench.png",
+      "title": "治理工作台",
+      "notes": "从数据健康入口进入治理工作台，查看问题队列和治理动作。",
+      "path": "docs/active/evidence/html-acceptance-2026-06-24/06-governance-workbench.png"
+    },
+    {
+      "name": "07-share-poster-current-viewport.png",
+      "title": "当前视野分享图 Composer",
+      "notes": "验证分享图入口、当前筛选/当前视野模式和来源数量展示。",
+      "path": "docs/active/evidence/html-acceptance-2026-06-24/07-share-poster-current-viewport.png"
+    },
+    {
+      "name": "08-share-missing-snapshot.png",
+      "title": "分享快照缺失页",
+      "notes": "只读分享路径在快照缺失时给出明确失败状态。",
+      "path": "docs/active/evidence/html-acceptance-2026-06-24/08-share-missing-snapshot.png"
+    },
+    {
+      "name": "09-mobile-workspace.png",
+      "title": "移动端工作台",
+      "notes": "移动端主路径可见：地图、搜索、底部动作入口。",
+      "path": "docs/active/evidence/html-acceptance-2026-06-24/09-mobile-workspace.png"
+    }
+  ]
+}

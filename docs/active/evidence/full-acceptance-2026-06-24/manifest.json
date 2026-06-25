@@ -1,0 +1,102 @@
+{
+  "generatedAt": "2026-06-24T00:00:00+08:00",
+  "baseUrl": "http://127.0.0.1:5174",
+  "screenshots": [
+    {
+      "file": "01-workspace-home.png",
+      "path": "evidence/full-acceptance-2026-06-24/01-workspace-home.png",
+      "description": "工作台首屏，地图、搜索、导入、新增和图层入口可见",
+      "bytes": 186186
+    },
+    {
+      "file": "02-import-export-dialog.png",
+      "path": "evidence/full-acceptance-2026-06-24/02-import-export-dialog.png",
+      "description": "导入导出弹窗，个人收藏导入、只读快照导入和治理预览路径分离",
+      "bytes": 651619
+    },
+    {
+      "file": "03-personal-favorites-map.png",
+      "path": "evidence/full-acceptance-2026-06-24/03-personal-favorites-map.png",
+      "description": "导入真实个人收藏后，个人地点在地图和统计中可见",
+      "bytes": 1100309
+    },
+    {
+      "file": "04-place-detail.png",
+      "path": "evidence/full-acceptance-2026-06-24/04-place-detail.png",
+      "description": "地点详情展示状态、标签、坐标可信度和核心操作",
+      "bytes": 890720
+    },
+    {
+      "file": "05-data-health-center.png",
+      "path": "evidence/full-acceptance-2026-06-24/05-data-health-center.png",
+      "description": "个人数据健康中心展示已核验、待确认、高风险、手动校准、已跳过分组",
+      "bytes": 791287
+    },
+    {
+      "file": "06-governance-workbench.png",
+      "path": "evidence/full-acceptance-2026-06-24/06-governance-workbench.png",
+      "description": "治理工作台或待确认队列可从健康/快捷入口进入",
+      "bytes": 820359
+    },
+    {
+      "file": "07-share-poster-current-viewport.png",
+      "path": "evidence/full-acceptance-2026-06-24/07-share-poster-current-viewport.png",
+      "description": "分享图 composer 支持当前筛选和当前视野来源说明",
+      "bytes": 647634
+    },
+    {
+      "file": "08-share-snapshot-summary.png",
+      "path": "evidence/full-acceptance-2026-06-24/08-share-snapshot-summary.png",
+      "description": "P21 分享快照生成前展示本地只读边界、标题、数量和导出范围",
+      "bytes": 617133
+    },
+    {
+      "file": "09-share-snapshot-generated.png",
+      "path": "evidence/full-acceptance-2026-06-24/09-share-snapshot-generated.png",
+      "description": "P21 分享快照生成后展示本地链接和 .foodmap.json 导出入口",
+      "bytes": 636619
+    },
+    {
+      "file": "10-readonly-share-generated.png",
+      "path": "evidence/full-acceptance-2026-06-24/10-readonly-share-generated.png",
+      "description": "本地生成的只读分享页展示地图、图层、地点和只读提示",
+      "bytes": 708600
+    },
+    {
+      "file": "11-clean-profile-readonly-import.png",
+      "path": "evidence/full-acceptance-2026-06-24/11-clean-profile-readonly-import.png",
+      "description": "clean profile 导入 .foodmap.json 后打开只读分享页",
+      "bytes": 624420
+    },
+    {
+      "file": "12-invalid-import-error.png",
+      "path": "evidence/full-acceptance-2026-06-24/12-invalid-import-error.png",
+      "description": "无效导入显示错误提示，未进入分享页",
+      "bytes": 680956
+    },
+    {
+      "file": "13-missing-share-fallback.png",
+      "path": "evidence/full-acceptance-2026-06-24/13-missing-share-fallback.png",
+      "description": "缺失分享快照展示本地只读导入要求和恢复路径",
+      "bytes": 45805
+    },
+    {
+      "file": "14-mobile-workspace.png",
+      "path": "evidence/full-acceptance-2026-06-24/14-mobile-workspace.png",
+      "description": "390x844 移动端工作台主路径可见",
+      "bytes": 88762
+    },
+    {
+      "file": "15-mobile-readonly-share.png",
+      "path": "evidence/full-acceptance-2026-06-24/15-mobile-readonly-share.png",
+      "description": "390x844 移动端只读分享页可用",
+      "bytes": 216556
+    }
+  ],
+  "checks": {
+    "generatedShareHasNoEditControls": true,
+    "cleanProfileShareRoute": "http://127.0.0.1:5174/#/share/full-acceptance-share-1782314278308",
+    "cleanProfileHasReadonlyNotice": true,
+    "screenshotCount": 15
+  }
+}

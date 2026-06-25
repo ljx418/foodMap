@@ -53,17 +53,17 @@ export function WorkspaceHeader({ keyword, onKeywordChange, onSearchAdd, onAdd, 
           <Filter size={18} />
           <span>筛选</span>
         </button>
-        <button type="button" className="tool-button header-secondary-tool" onClick={onImport} aria-label="导入">
+        <button type="button" className="tool-button header-secondary-tool" onClick={onImport} aria-label="数据包" data-testid="workspace-import">
           <Upload size={18} />
-          <span>导入</span>
+          <span>数据包</span>
         </button>
-        <button type="button" className="tool-button header-secondary-tool" onClick={onExport} aria-label="导出">
+        <button type="button" className="tool-button header-secondary-tool" onClick={onExport} aria-label="分享图">
           <Download size={18} />
-          <span>导出</span>
+          <span>分享图</span>
         </button>
-        <button type="button" className="tool-button header-secondary-tool" onClick={onShare} aria-label="分享">
+        <button type="button" className="tool-button header-secondary-tool" onClick={onShare} aria-label="快照">
           <Share2 size={18} />
-          <span>分享</span>
+          <span>快照</span>
         </button>
         <button type="button" className="tool-button mobile-more-button" onClick={onMore} aria-label="更多工具">
           <MoreHorizontal size={18} />

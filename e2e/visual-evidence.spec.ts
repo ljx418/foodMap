@@ -18,9 +18,9 @@ async function closeVisibleDialogs(page: Page) {
 async function importPersonalFavorites(page: Page, isMobile: boolean) {
   if (isMobile) {
     await page.getByRole("button", { name: "更多工具" }).click();
-    await page.getByRole("dialog", { name: "更多工具" }).getByRole("button", { name: "导入" }).click();
+    await page.getByRole("dialog", { name: "更多工具" }).getByRole("button", { name: "数据包" }).click();
   } else {
-    await page.getByRole("button", { name: "导入" }).click();
+    await page.getByTestId("workspace-import").click();
   }
   await expect(page.getByTestId("import-export-dialog")).toBeVisible();
   await page.getByTestId("import-personal-favorites").click();
@@ -71,9 +71,9 @@ test("captures P16 visual evidence", async ({ page }, testInfo) => {
   }
   if (isMobile) {
     await page.getByRole("button", { name: "更多工具" }).click();
-    await page.getByRole("dialog", { name: "更多工具" }).getByRole("button", { name: "导出分享图" }).click();
+    await page.getByRole("dialog", { name: "更多工具" }).getByRole("button", { name: "分享图" }).click();
   } else {
-    await page.getByRole("button", { name: "导出", exact: true }).click();
+    await page.locator("header").getByRole("button", { name: "分享图" }).click();
   }
   await expect(page.getByTestId("map-poster-dialog")).toBeVisible();
   await expect(page.getByTestId("export-map-poster")).toBeVisible();

@@ -1,7 +1,9 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import type { FoodLayer, FoodPlace, PhotoAsset } from "../../domain/types";
 import { navigateToShare } from "../../app/router";
-import { createSnapshot, downloadSnapshot, importSnapshotText } from "../../persistence/importExportCodec";
+import type { ImportConflictPlan } from "../../domain/governance";
+import { planImportConflicts } from "../../domain/governance";
+import { createSnapshot, decodeSnapshotFile, downloadSnapshot, importSnapshotText, validateSnapshotPackageText } from "../../persistence/importExportCodec";
 
 interface Props {
   open: boolean;
@@ -11,10 +13,13 @@ interface Props {
   onClose: () => void;
   notify: (text: string) => void;
   onImportPersonalFavorites?: () => Promise<number>;
+  onImportPlan?: (plan: ImportConflictPlan) => void;
 }
 
-export function ImportExportDialog({ open, places, layers, photos, onClose, notify, onImportPersonalFavorites }: Props) {
-  const inputRef = useRef<HTMLInputElement | null>(null);
+export function ImportExportDialog({ open, places, layers, photos, onClose, notify, onImportPersonalFavorites, onImportPlan }: Props) {
+  const governanceInputRef = useRef<HTMLInputElement | null>(null);
+  const readonlyInputRef = useRef<HTMLInputElement | null>(null);
+  const [error, setError] = useState("");
   if (!open) return null;
 
   async function exportFile() {
@@ -22,14 +27,37 @@ export function ImportExportDialog({ open, places, layers, photos, onClose, noti
     notify("已导出文件");
   }
 
-  async function importFile(file?: File) {
+  async function importReadonlySnapshot(file?: File) {
     if (!file) return;
+    setError("");
     try {
-      const snapshot = await importSnapshotText(await file.text());
-      notify("已导入快照");
+      const text = await file.text();
+      const validation = validateSnapshotPackageText(text);
+      if (!validation.ok) throw new Error(validation.errors.join("；"));
+      const snapshot = await importSnapshotText(text);
+      notify("已导入本地只读分享快照");
       onClose();
       navigateToShare(snapshot.id);
-    } catch {
+    } catch (importError) {
+      const message = importError instanceof Error && importError.message ? importError.message : "文件格式不正确，未导入任何数据";
+      setError(message);
+      notify("文件格式不正确，未导入任何数据");
+    }
+  }
+
+  async function previewGovernanceImport(file?: File) {
+    if (!file || !onImportPlan) return;
+    setError("");
+    try {
+      const text = await file.text();
+      const snapshot = decodeSnapshotFile(text);
+      const plan = planImportConflicts(snapshot, places);
+      onImportPlan(plan);
+      notify("已生成导入冲突预览，确认前不会写入");
+      onClose();
+    } catch (importError) {
+      const message = importError instanceof Error && importError.message ? importError.message : "文件格式不正确，未导入任何数据";
+      setError(message);
       notify("文件格式不正确，未导入任何数据");
     }
   }
@@ -45,17 +73,23 @@ export function ImportExportDialog({ open, places, layers, photos, onClose, noti
     <div className="modal-backdrop">
       <section className="modal compact" data-testid="import-export-dialog">
         <div className="modal__header">
-          <h2>导入 / 备份</h2>
+          <h2>数据包</h2>
           <button type="button" onClick={onClose}>关闭</button>
         </div>
         <div className="dialog-actions">
-          <button type="button" className="primary-button" onClick={exportFile}>导出 .foodmap.json</button>
-          <button type="button" className="ghost-button" onClick={() => inputRef.current?.click()}>导入 .foodmap.json</button>
+          <button type="button" className="primary-button" data-testid="export-foodmap-json" onClick={exportFile}>导出数据包 .foodmap.json</button>
+          <button type="button" className="ghost-button" onClick={() => readonlyInputRef.current?.click()} data-testid="import-readonly-snapshot">只读查看数据包</button>
+          {onImportPlan ? (
+            <button type="button" className="ghost-button" onClick={() => governanceInputRef.current?.click()} data-testid="import-governance-preview">合并到我的地图</button>
+          ) : null}
           {onImportPersonalFavorites ? (
             <button type="button" className="ghost-button" onClick={() => void importPersonalFavorites()} data-testid="import-personal-favorites">导入我的收藏清单</button>
           ) : null}
         </div>
-        <input ref={inputRef} hidden type="file" accept=".json,.foodmap.json,application/json" onChange={(event) => void importFile(event.target.files?.[0])} />
+        <p className="help-text">先选择数据包意图：只读查看只写入本地 snapshots；合并到我的地图必须先进入冲突治理预览，确认前不会写入个人图钉。</p>
+        {error ? <p className="inline-error" data-testid="import-error-message">{error}</p> : null}
+        <input ref={governanceInputRef} hidden type="file" accept=".json,.foodmap.json,application/json" onChange={(event) => void previewGovernanceImport(event.target.files?.[0])} />
+        <input ref={readonlyInputRef} hidden type="file" accept=".json,.foodmap.json,application/json" onChange={(event) => void importReadonlySnapshot(event.target.files?.[0])} />
       </section>
     </div>
   );

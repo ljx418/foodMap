@@ -10,28 +10,28 @@
   "results": [
     {
       "size": 500,
-      "reloadMs": 215,
-      "markerRenderMs": 165,
-      "filterMs": 121,
-      "detailOpenMs": 101,
-      "posterOpenMs": 74
+      "reloadMs": 132,
+      "markerRenderMs": 382,
+      "filterMs": 66,
+      "detailOpenMs": 65,
+      "posterOpenMs": 42
     },
     {
       "size": 1000,
-      "reloadMs": 260,
-      "markerRenderMs": 141,
-      "filterMs": 126,
-      "detailOpenMs": 86,
-      "posterOpenMs": 58
+      "reloadMs": 164,
+      "markerRenderMs": 1297,
+      "filterMs": 70,
+      "detailOpenMs": 66,
+      "posterOpenMs": 53
     },
     {
       "size": 3000,
-      "reloadMs": 206,
-      "markerRenderMs": 520,
-      "filterMs": 295,
-      "detailOpenMs": 113,
-      "posterOpenMs": 97
+      "reloadMs": 156,
+      "markerRenderMs": 5317,
+      "filterMs": 163,
+      "detailOpenMs": 116,
+      "posterOpenMs": 71
     }
   ],
-  "capturedAt": "2026-06-17T08:00:40.784Z"
+  "capturedAt": "2026-06-25T02:45:20.097Z"
 }

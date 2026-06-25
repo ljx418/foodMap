@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-06-24T00:00:00.000Z",
+  "evidence": [
+    {
+      "file": "01-desktop-readonly-share.png",
+      "purpose": "桌面只读分享页：图层、地图、详情、只读提示同屏"
+    },
+    {
+      "file": "02-mobile-readonly-share-detail.png",
+      "purpose": "移动只读分享页：底部导航打开详情"
+    },
+    {
+      "file": "03-missing-snapshot-recovery.png",
+      "purpose": "缺失快照恢复：直接导入 .foodmap.json"
+    },
+    {
+      "file": "04-data-health-wide-panel.png",
+      "purpose": "数据健康宽面板"
+    },
+    {
+      "file": "05-governance-wide-panel.png",
+      "purpose": "治理工作台宽面板"
+    },
+    {
+      "file": "06-mobile-compact-dock.png",
+      "purpose": "移动顶部 dock 紧凑"
+    },
+    {
+      "file": "07-mobile-quick-filter-sheet.png",
+      "purpose": "快捷标签 sheet 按钮在视口内可点击"
+    }
+  ]
+}

@@ -2,6 +2,7 @@ import { inferCoordinateSystem, toWgs84Point } from "./coordinates";
 import { searchPlaceCandidates, type MapProviderSearchResult } from "./placeSearch";
 import type { PlaceCandidate } from "./placeRecognition";
 import type { FoodPlace } from "./types";
+import { normalizeTags } from "./validators";
 
 interface CalibrationCandidateInput {
   place: FoodPlace;
@@ -28,6 +29,44 @@ export function buildCalibrationCandidates(input: CalibrationCandidateInput): Pl
 
 export function candidateSolidifiesPrecisePlace(candidate: PlaceCandidate): boolean {
   return candidate.coordinateAccuracy === "exact" && typeof candidate.longitude === "number" && typeof candidate.latitude === "number";
+}
+
+export function confirmPlaceCandidate(place: FoodPlace, candidate: PlaceCandidate, confirmedAt = new Date().toISOString()): FoodPlace {
+  const precise = candidateSolidifiesPrecisePlace(candidate);
+  const staleCalibrationTags = new Set(["待校准", "近似坐标", "默认候选", "位置待确认", "位置高风险", "陆地点修正", "暂时跳过"]);
+  const baseTags = place.tags.filter((tag) => !staleCalibrationTags.has(tag));
+  const tags = normalizeTags([
+    ...baseTags,
+    ...candidate.tags.filter((tag) => !staleCalibrationTags.has(tag)),
+    precise ? "已核验" : "待校准",
+    precise ? "精确坐标" : "近似坐标",
+    candidate.sourceLabel
+  ]);
+  const notes = [
+    place.notes,
+    [
+      `候选确认固化：${candidate.name}`,
+      candidate.address ? `候选地址：${candidate.address}` : undefined,
+      `候选来源：${candidate.sourceLabel}`,
+      `候选置信度：${Math.round(candidate.confidence * 100)}%`,
+      `操作时间：${confirmedAt}`,
+      precise ? "固化结果：已替换为精确坐标，可打开地图导航。" : "固化结果：仍需校准；候选仍非精确坐标，继续保留待校准状态。"
+    ].filter(Boolean).join("\n")
+  ].filter(Boolean).join("\n\n");
+
+  return {
+    ...place,
+    name: candidate.name || place.name,
+    address: candidate.address ?? place.address,
+    city: candidate.city ?? place.city ?? "武汉",
+    longitude: typeof candidate.longitude === "number" ? candidate.longitude : place.longitude,
+    latitude: typeof candidate.latitude === "number" ? candidate.latitude : place.latitude,
+    coordinateSystem: candidate.coordinateSystem ?? place.coordinateSystem ?? "wgs84",
+    tags,
+    notes,
+    mapAccuracy: precise ? "exact" : "approximate",
+    updatedAt: confirmedAt
+  };
 }
 
 function placeToCurrentCandidate(place: FoodPlace): PlaceCandidate {

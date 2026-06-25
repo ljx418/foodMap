@@ -2,6 +2,7 @@ node_modules/
 dist/
 test-results/
 playwright-report/
+.tmp/
 *.tsbuildinfo
 .DS_Store
 *DS_Store

@@ -1,13 +1,13 @@
 # FoodMap Active Design Docs
 
-This directory is the active documentation baseline for FoodMap. It keeps the V1.0 PRD as the product foundation, records the accepted implementation baseline, and now defines the P18 stage: candidate search, trustworthy calibration, provider fallback, manual pin-move audit preview, mobile detail simplification, filter-state explanation, share-poster composer, personal data health, and large-dataset performance acceptance.
+This directory is the active documentation baseline for FoodMap. It keeps the V1.0 PRD as the product foundation, records the accepted implementation baseline, and now records the accepted P23 interaction-quality correction after the P22 interaction refactor.
 
 ## Current Version
 
-- Active baseline: V1.0 PRD plus accepted P1-P17 implementation scope.
-- Current project state: runnable Vite React TypeScript frontend with IndexedDB persistence, Leaflet/AMap-tile map, share/import/export, Agent Bridge, mobile filter controls, editable tags, manual pin move, external map links, map-poster export, pending-place workbench, P17 detail IA, and 50 verified AMap Wuhan scanlist pins as a toggleable reference layer.
-- Current-stage focus: P18 candidate search and trustworthy calibration, organized into six workstreams: coordinate/candidate calibration, detail and mobile path, homepage filter/layer explanation, share-poster communication, data health/performance, and Agent/acceptance governance.
-- Current-stage planning status: P18 planning and implementation baseline is ready for review. This does not mean P18 implementation or acceptance is complete.
+- Active baseline: V1.0 PRD plus accepted P1-P19 implementation scope, P20 core regression scope, accepted P20-C governance completion scope, accepted P21 local share/data portability release scope, accepted P22 interaction experience refactor scope, and accepted P23 interaction-quality correction scope.
+- Current project state: runnable Vite React TypeScript frontend with IndexedDB persistence, Leaflet/AMap-tile map, share/import/export, Agent Bridge, mobile filter controls, editable tags, manual pin move with audit preview, external map links, map-poster export, current-viewport poster mode, personal data health center, pending-place workbench, P17 detail IA, P18 candidate search and evidence, P19 acceptance evidence, P20 core personal data governance workbench, duplicate merge preview, import conflict preview, maintenance history, Agent governance boundary, responsive governance evidence, and 50 verified AMap Wuhan scanlist pins as a toggleable reference layer.
+- Current-stage focus: P23 corrects P22 interaction evidence and usability risks: mobile read-only share summary-first detail, unobstructed mobile panels, 320px quick-filter reachability, and readable health/governance panels.
+- Current-stage acceptance status: P23 is accepted after build, unit, real scanlist, P23 targeted E2E, P21 responsive regression, full workspace E2E, screenshots, PRD review, and final report.
 - Primary constraint: pure frontend first, no backend dependency for user records or share snapshots.
 - Product direction: map-first personal food journal with a verified recommendation overlay, not a generic admin panel or public social product.
 
@@ -15,21 +15,34 @@ This directory is the active documentation baseline for FoodMap. It keeps the V1
 
 Allowed claims:
 
-- P18 planning baseline is ready for review.
-- P18 implementation contracts are sufficient to start P18-2 after document review.
-- P16/P17 accepted capabilities remain the regression baseline.
+- P18 accepted capabilities remain preserved inside the P19 regression baseline.
+- P19 accepted capabilities include acceptance-environment baseline, current-viewport poster, data health, domain/repository consolidation, responsive regression, and final governance evidence.
+- P19 browser reproducibility uses the documented local `LD_LIBRARY_PATH` workaround unless the machine has Playwright system dependencies installed.
+- P20 core regression capabilities include local personal data governance workbench, duplicate merge preview, import conflict preview, maintenance history, Agent governance boundaries, and responsive governance evidence.
+- P20-C accepted capabilities include at least three safe batch operations, duplicate ignore/keep/merge decisions, import strategy selection, stale-reference grouping, governance report export, and P20-C E2E gates.
+- P21 accepted capabilities include local snapshot portability review, complete `.foodmap.json` export, clean profile import to read-only share, invalid import no-op, read-only share guardrails, Agent share/import boundary, and release evidence gates.
+- P22 allowed work is limited to interaction clarity and responsive readability over accepted P21/P20/P19 flows.
+- P23 supersedes P22's interaction evidence for mobile share and readable governance/data-health paths; it does not add new product capability claims.
 
 Forbidden claims:
 
-- P18 introduced backend POI calibration, account sync, cloud sharing, or automatic correction of every wrong coordinate.
+- P19 introduced backend POI calibration, account sync, cloud sharing, or automatic correction of every wrong coordinate.
 - All uncertain real-world POIs can be finalized without user confirmation.
 - External realtime POI search is guaranteed without a configured provider or Agent-submitted evidence.
+- A future stage may claim new capabilities before its own PRD-derived plan, audit, implementation, real-data acceptance, and final report are complete.
+- A future stage is complete or accepted before its own evidence and final report exist.
+- P20-C adds backend sync, cloud governance, automatic merge/delete, automatic coordinate finalization, or Agent bulk mutation.
+- Claiming current P20 core as full original PRD completion before P20-C final acceptance exists.
+- P21 adds cloud sync, accounts, public permanent links, or editable restore from import.
+- Future stages treat P21 as a regression baseline before changing local share/import/export behavior.
+- P22 may not claim new cloud/public share capability, automatic data repair, or new external real-time POI search.
 
 ## Document Index
 
 - [Product Requirements Document](./product-requirements-document.md)
 - [Target Architecture](./target-architecture.md)
 - [Development And Acceptance Plan](./development-and-acceptance-plan.md)
+- [P19 Detailed Development And Acceptance Plan](./p19-detailed-development-and-acceptance-plan.md)
 - [Milestone Roadmap](./milestone-roadmap.md)
 - [Acceptance Gate](./acceptance-gate.md)
 - [Current vs Target Gap](./current-vs-target-gap.md)
@@ -42,6 +55,36 @@ Forbidden claims:
 - [Map Provider Contract](./map-provider-contract.md)
 - [E2E Test And Evidence Matrix](./e2e-test-and-evidence-matrix.md)
 - [Visual Acceptance Checklist](./visual-acceptance-checklist.md)
+- [P19 Stage Implementation Contract](./p19-stage-implementation-contract.md)
+- [P19-1 Preimplementation Audit](./p19-1-preimplementation-audit.md)
+- [P19-1 Acceptance Report](./p19-1-acceptance-report.md)
+- [P19-2 Development And Acceptance Plan](./p19-2-development-and-acceptance-plan.md)
+- [P19-2 Acceptance Report](./p19-2-acceptance-report.md)
+- [P19-3 Development And Acceptance Plan](./p19-3-development-and-acceptance-plan.md)
+- [P19-3 Acceptance Report](./p19-3-acceptance-report.md)
+- [P19-4 Development And Acceptance Plan](./p19-4-development-and-acceptance-plan.md)
+- [P19-4 Acceptance Report](./p19-4-acceptance-report.md)
+- [P19-5 Development And Acceptance Plan](./p19-5-development-and-acceptance-plan.md)
+- [P19-5 Acceptance Report](./p19-5-acceptance-report.md)
+- [P19-6 Documentation Sync Acceptance Report](./p19-6-acceptance-report.md)
+- [P19-7 Final Acceptance Plan](./p19-7-development-and-acceptance-plan.md)
+- [P19-7 Final Acceptance Report](./p19-7-final-acceptance-report.md)
+- [P19 Acceptance Environment](./p19-acceptance-environment.md)
+- [P20 Detailed Development And Acceptance Plan](./p20-detailed-development-and-acceptance-plan.md)
+- [P20-C Completion Development And Acceptance Plan](./p20-completion-development-and-acceptance-plan.md)
+- [P20 Stage Implementation Contract](./p20-stage-implementation-contract.md)
+- [P20 Preimplementation Audit](./p20-preimplementation-audit.md)
+- [P20-7 Final Acceptance Report](./p20-7-final-acceptance-report.md)
+- [P20-C Final Acceptance Report](./p20-c-final-acceptance-report.md)
+- [P21 Detailed Development And Acceptance Plan](./p21-detailed-development-and-acceptance-plan.md)
+- [P21 Preimplementation Audit](./p21-preimplementation-audit.md)
+- [P21 Stage Implementation Contract](./p21-stage-implementation-contract.md)
+- [P22 Detailed Development And Acceptance Plan](./p22-detailed-development-and-acceptance-plan.md)
+- [P22 Preimplementation Audit](./p22-preimplementation-audit.md)
+- [P22 Final Acceptance Report](./p22-final-acceptance-report.md)
+- [P23 UX Correction Plan](./p23-ux-correction-plan.md)
+- [P23 Preimplementation Audit](./p23-preimplementation-audit.md)
+- [P23 Final Acceptance Report](./p23-final-acceptance-report.md)
 - [P16 Final Acceptance Report](./p16-final-acceptance-report.md)
 - [P17 UX Trust Implementation Contract](./p17-ux-trust-implementation-contract.md)
 - [P16 2026-06-09 Regression Plan And Audit](./p16-2026-06-09-regression-plan-and-audit.md)
@@ -68,7 +111,7 @@ FoodMap delivers two first-class experiences:
 - Personal workspace: create, edit, filter, and manage food places, layers, photos, ratings, visit dates, tags, and notes.
 - Verified Wuhan recommendation overlay: show AMap scanlist restaurants as independently styled pins only after POI verification, with ranking, score, evidence, image, and confidence metadata. The overlay stays optional and must not pollute the user's empty personal map.
 
-The app also supports a local read-only share view and `.foodmap.json` import/export. P18 work must preserve the accepted P16/P17 local-first baseline while making candidate search, coordinate calibration, mobile detail viewing, filtering, and sharing more trustworthy for daily use.
+The app also supports a local read-only share view and `.foodmap.json` import/export. P21 work must preserve the accepted P16/P17/P18/P19 local-first baseline and P20-C governance completion while making local snapshot generation, export package completeness, clean profile import, read-only share viewing, invalid import no-op safety, Agent boundaries, and responsive release evidence complete against the original PRD.
 
 ## Current-Stage Rules
 
@@ -90,11 +133,27 @@ The app also supports a local read-only share view and `.foodmap.json` import/ex
 - Candidate selection cannot silently modify coordinates; coordinate changes require explicit user confirmation.
 - Manual pin move must show old/new coordinate meaning before saving.
 - Agent assistance cannot directly finalize coordinates, delete pending records, or hide uncertainty.
-- P18 acceptance must cover all six workstreams; candidate search passing alone cannot certify the stage.
+- P19 current-viewport poster mode must use real map bounds and must not silently fall back to current-filter export.
+- P19 data health must expose uncertainty and next actions without auto-marking records verified.
+- P19 acceptance must cover all six P19 workstreams; a single feature passing alone cannot certify the stage.
+- P20 governance workbench must preview affected records before low-risk batch writes.
+- P20-C must support at least three safe batch operation types before claiming full original P20 PRD completion.
+- P20-C duplicate suggestions must remain advisory until explicit user decision and support ignore, keep separate, and merge.
+- P20-C import conflict preview must support strategy selection and be cancelable without mutating local data.
+- P20-C governance report export must match the workbench, import, duplicate, and journal facts shown in the UI.
+- P20-C Agent actions must not bulk modify, delete, merge, import, hide risk, or finalize coordinates.
+- P21 share snapshots must clearly remain local and read-only.
+- P21 exported `.foodmap.json` must be importable in a clean profile and open a read-only `#/share/:snapshotId`.
+- P21 invalid imports must not partially write places, layers, photos, snapshots, or governance history.
+- P21 share pages must not expose create, edit, delete, upload, save, account, cloud, or public-link controls.
+- P23 mobile read-only share opens a selected-place summary first, then requires an explicit expand action for full detail.
+- P23 evidence supersedes stale P22 screenshots where interaction screenshots were unreadable, clipped, or obscured.
 
 ## ChatGPT Audit Document Set
 
 Use these documents for external PRD/architecture/acceptance audit:
+
+This audit set is intentionally below 20 documents. `docs/active/p19-7-final-acceptance-report.md` is included as the accepted P19 baseline. `docs/active/p20-7-final-acceptance-report.md` is P20 core regression evidence. `docs/active/p20-c-final-acceptance-report.md` is the accepted P20-C exit report. `docs/active/p21-final-acceptance-report.md` is the accepted local share/data portability baseline.
 
 1. `docs/active/product-requirements-document.md`
 2. `docs/active/target-architecture.md`
@@ -103,14 +162,13 @@ Use these documents for external PRD/architecture/acceptance audit:
 5. `docs/active/milestone-roadmap.md`
 6. `docs/active/current-vs-target-gap.md`
 7. `docs/active/current-vs-target-gap.drawio`
-8. `docs/active/p18-candidate-search-trust-contract.md`
-9. `docs/active/p17-ux-trust-implementation-contract.md`
-10. `docs/active/p16-real-place-linking-implementation-contract.md`
-11. `docs/active/data-schema-and-import-export-contract.md`
-12. `docs/active/repository-and-domain-api-contract.md`
-13. `docs/active/map-provider-contract.md`
-14. `docs/active/e2e-test-and-evidence-matrix.md`
-15. `docs/active/visual-acceptance-checklist.md`
-16. `docs/active/poi-verification-mechanism-v1.md`
-17. `docs/active/amap-scanlist-refresh-report.md`
-18. `docs/active/p17-7-final-acceptance-report.md`
+8. `docs/active/p21-detailed-development-and-acceptance-plan.md`
+9. `docs/active/p21-preimplementation-audit.md`
+10. `docs/active/p21-stage-implementation-contract.md`
+11. `docs/active/p20-c-final-acceptance-report.md`
+12. `docs/active/p20-7-final-acceptance-report.md`
+13. `docs/active/p19-7-final-acceptance-report.md`
+14. `docs/active/p18-candidate-search-trust-contract.md`
+15. `docs/active/data-schema-and-import-export-contract.md`
+16. `docs/active/repository-and-domain-api-contract.md`
+17. `docs/active/e2e-test-and-evidence-matrix.md`

@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FoodMap 原始 PRD 全量自动化验收报告 - 2026-06-25</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f7efe2;
+      --panel: #fffaf1;
+      --ink: #2f241c;
+      --muted: #756554;
+      --line: #d9c8aa;
+      --primary: #b85f2d;
+      --ok: #2f7d4f;
+      --warn: #9a6a12;
+      --bad: #a83f35;
+      --blue: #315f7d;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 15px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    }
+    header {
+      padding: 32px clamp(18px, 4vw, 56px) 20px;
+      border-bottom: 1px solid var(--line);
+      background: #fff6e8;
+    }
+    main {
+      width: min(1180px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 24px 0 48px;
+    }
+    h1, h2, h3 { line-height: 1.25; margin: 0; }
+    h1 { font-size: clamp(26px, 4vw, 42px); }
+    h2 { font-size: 24px; margin-top: 30px; }
+    h3 { font-size: 18px; margin-top: 20px; }
+    p { margin: 8px 0; }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel);
+      color: var(--muted);
+      padding: 5px 10px;
+      white-space: nowrap;
+    }
+    .verdict {
+      margin-top: 20px;
+      padding: 16px;
+      border: 1px solid #9cc7aa;
+      border-left: 6px solid var(--ok);
+      border-radius: 8px;
+      background: #f1fbf3;
+    }
+    .warn {
+      border-color: #e0c789;
+      border-left-color: var(--warn);
+      background: #fff7dc;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 14px;
+    }
+    .card h3 { margin-top: 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+    th { background: #f1e3ce; }
+    tr:last-child td { border-bottom: 0; }
+    code {
+      background: #f2e6d2;
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.93em;
+    }
+    .status-ok { color: var(--ok); font-weight: 700; }
+    .status-warn { color: var(--warn); font-weight: 700; }
+    .status-bad { color: var(--bad); font-weight: 700; }
+    .architecture {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+    }
+    .flow {
+      white-space: pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      background: #fff4df;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      overflow-x: auto;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+    figure {
+      margin: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      overflow: hidden;
+    }
+    figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+    figcaption { padding: 10px 12px; }
+    figcaption strong { display: block; }
+    ul { padding-left: 22px; }
+    footer {
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      padding: 18px clamp(18px, 4vw, 56px) 28px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>FoodMap 原始 PRD 全量自动化验收报告</h1>
+    <p>本报告记录 2026-06-25 对 FoodMap P23 基线执行的代码检视、文档审计、功能检查、端到端验收和截图证据。报告使用中文书写，截图来自 headless Playwright Chromium，不使用会抢占用户焦点的有头浏览器。</p>
+    <div class="meta">
+      <span class="pill">项目：纯前端、本地优先武汉美食地图</span>
+      <span class="pill">阶段：P23 交互纠偏与全量验收</span>
+      <span class="pill">证据目录：<code>docs/active/evidence/full-acceptance-2026-06-25/</code></span>
+      <span class="pill">报告日期：2026-06-25</span>
+    </div>
+    <div class="verdict">
+      <h2>验收结论</h2>
+      <p><strong class="status-ok">通过。</strong> 在当前仓库状态下，P18-P23 已实现路径通过 build、unit、真实 scanlist、targeted Playwright、full workspace Playwright 和自动化截图证据复核。P23 的目标是交互纠偏与证据补强，不代表新增云分享、后端同步、账号体系、自动修复或外部实时 POI 搜索完成。</p>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>执行摘要</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>真实数据验收</h3>
+          <p><code>npm run verify:scanlist</code> 通过：50 条扫街榜条目、50 条 overlay、38 个 admitted approximate pins，并保留刘聋子牛肉粉馆、万松小院·荷花垄、小骆川菜馆等 guardrail。</p>
+        </div>
+        <div class="card">
+          <h3>自动化端到端</h3>
+          <p>targeted Playwright 通过 13 个关键回归；full workspace Playwright 通过 75 个用例，45 个按项目矩阵跳过。</p>
+        </div>
+        <div class="card">
+          <h3>截图证据</h3>
+          <p>生成 16 张截图，覆盖工作台、导入导出、个人地图、详情、健康、治理、当前视野分享图、本地快照、只读分享、缺失快照、无效导入和移动端路径。</p>
+        </div>
+        <div class="card">
+          <h3>审计边界</h3>
+          <p>发现并修订文档概念漂移：P21 旧状态、PRD/目标架构/gap/视觉清单缺少 P23 描述。未把未实现能力写成已完成。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>目标架构与当前实现</h2>
+      <div class="architecture">
+        <div class="card">
+          <h3>目标架构</h3>
+          <div class="flow">Browser
+  -> React App Shell / Hash Router
+    -> #/map 本地个人工作台
+    -> #/share/:snapshotId 本地只读分享页
+    -> FoodMapAgentBridge 受控代理面
+
+Domain / Repository
+  -> 候选确认、手动挪动、健康派生、治理决策
+  -> IndexedDB 本地持久化
+  -> 导入导出与只读快照校验
+
+Acceptance
+  -> Vitest domain tests
+  -> Playwright E2E
+  -> 真实 scanlist 校验
+  -> 截图和 HTML 报告证据</div>
+        </div>
+        <div class="card">
+          <h3>当前实现</h3>
+          <p>当前代码实现仍是纯前端、本地优先的模块化单体。核心模块位于 <code>src/features/workspace</code>、<code>src/features/share</code>、<code>src/domain</code>、<code>src/persistence</code>、<code>src/map</code> 和 <code>src/agent</code>。</p>
+          <p>P19 覆盖当前视野分享图、个人数据健康和 Domain/Repository 收口；P20/P20-C 覆盖治理队列、批量预览、重复地点、导入冲突、维护历史和报告导出；P21 覆盖本地只读分享与 <code>.foodmap.json</code> 可携带；P22/P23 覆盖交互可读性、移动端只读分享、窄屏控制和全量证据。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>命令验收结果</h2>
+      <table>
+        <thead>
+          <tr><th>命令 / 场景</th><th>结果</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>npm ci</code></td><td class="status-ok">通过</td><td>依赖可安装；npm audit 提示 1 个 low severity vulnerability，未自动修复以避免引入无关变更。</td></tr>
+          <tr><td><code>npm run build</code></td><td class="status-ok">通过</td><td>生产构建成功。</td></tr>
+          <tr><td><code>npm test -- --run</code></td><td class="status-ok">通过</td><td>Vitest 46 个 domain/unit 测试通过。</td></tr>
+          <tr><td><code>npm run verify:scanlist</code></td><td class="status-ok">通过</td><td>真实扫街榜数据校验通过，未跳过真实数据验收。</td></tr>
+          <tr><td>P18/P19/P20/P21/P23 targeted Playwright</td><td class="status-ok">通过</td><td>13 个关键 targeted 回归通过，覆盖 P18 large deterministic、Agent negative、P19、P20-C、P21 responsive、P23。</td></tr>
+          <tr><td>Full workspace Playwright</td><td class="status-ok">通过</td><td>75 passed，45 skipped；skipped 项遵循现有 Playwright 项目矩阵。</td></tr>
+          <tr><td>Headless screenshot capture</td><td class="status-ok">通过</td><td>生成 16 张截图和 manifest；没有使用会抢占焦点的有头浏览器。</td></tr>
+          <tr><td><code>git diff --check</code></td><td class="status-ok">通过</td><td>未发现空白错误。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>PRD 功能覆盖审计</h2>
+      <table>
+        <thead>
+          <tr><th>PRD 能力</th><th>验收状态</th><th>证据</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>地图优先个人工作台</td><td class="status-ok">通过</td><td>工作台首屏、个人收藏地图、移动工作台截图；full E2E 工作台回归。</td></tr>
+          <tr><td>真实武汉推荐/参考数据</td><td class="status-ok">通过</td><td>scanlist 真实数据校验通过；参考层只读边界保留。</td></tr>
+          <tr><td>个人地点详情和本地记录</td><td class="status-ok">通过</td><td>地点详情截图展示标签、导航、复制地址和本地记录详情。</td></tr>
+          <tr><td>候选确认、手动挪动和信任边界</td><td class="status-ok">通过</td><td>P18 targeted large deterministic 与 Agent negative 回归通过；未发现绕过用户确认固化坐标。</td></tr>
+          <tr><td>当前视野分享图</td><td class="status-ok">通过</td><td>当前视野分享图截图和 P19 targeted 回归。</td></tr>
+          <tr><td>个人数据健康中心</td><td class="status-ok">通过</td><td>健康中心截图展示 verified、pending、high-risk、manual-adjusted、skipped 分组。</td></tr>
+          <tr><td>个人数据治理</td><td class="status-ok">通过</td><td>治理工作台截图展示队列、批处理预览入口和安全写入边界。</td></tr>
+          <tr><td>本地只读分享与数据包可携带</td><td class="status-ok">通过</td><td>分享快照生成、只读分享页、clean profile 导入、缺失快照恢复、无效导入错误截图。</td></tr>
+          <tr><td>响应式和移动端主路径</td><td class="status-ok">通过</td><td>移动工作台、移动只读分享摘要、移动只读分享完整详情截图；P21 responsive/P23 targeted 回归。</td></tr>
+          <tr><td>Agent 安全边界</td><td class="status-ok">通过</td><td>Agent negative targeted 回归通过；未发现公网分享、导入确认绕过或坐标直接固化能力。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>文档一致性审计</h2>
+      <table>
+        <thead>
+          <tr><th>检查项</th><th>结论</th><th>处理</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>PRD 是否覆盖 P23 用户体验</td><td class="status-ok">已覆盖</td><td>新增 P23 用户历程、范围、非目标和出门体验标准。</td></tr>
+          <tr><td>目标架构是否体现功能实体和关联</td><td class="status-ok">已覆盖</td><td>新增 P23 目标交互纠偏模块和写入边界。</td></tr>
+          <tr><td>gap 是否表达当前架构到目标架构差异</td><td class="status-ok">已覆盖</td><td>新增 P23 差异总览和 target state。</td></tr>
+          <tr><td>验收门槛是否有过期状态</td><td class="status-ok">已修正</td><td>将 P21 gate 从 planned 修正为 accepted，并声明为 P22/P23 回归基线。</td></tr>
+          <tr><td>视觉清单是否覆盖 P23 截图证据</td><td class="status-ok">已覆盖</td><td>新增 P23 视觉要求和 full acceptance evidence 路径。</td></tr>
+          <tr><td>概念是否过度承诺</td><td class="status-ok">未发现阻塞</td><td>文档继续禁止云分享、账号、后端、自动修复和外部实时 POI 完成声明。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>截图证据</h2>
+      <p>以下截图均来自 <code>docs/active/evidence/full-acceptance-2026-06-25/manifest.json</code> 记录的自动化路径。</p>
+      <div class="gallery">
+        <figure><img src="evidence/full-acceptance-2026-06-25/01-workspace-home.png" alt="工作台首屏"><figcaption><strong>01 工作台首屏</strong>空白本地工作台、地图、搜索、筛选和新增入口。</figcaption></figure>
+        <figure><img src="evidence/full-acceptance-2026-06-25/02-import-export-dialog.png" alt="数据包导入导出"><figcaption><strong>02 数据包导入导出</strong>本地数据包、个人收藏和只读快照入口。</figcaption></figure>
+        <figure><img src="evidence/full-acceptance-2026-06-25/03-personal-favorites-map.png" alt="个人收藏地图"><figcaption><strong>03 个人收藏地图</strong>导入 32 个武汉个人收藏后显示个人图钉和健康入口。</figcaption></figure>
+        <figure><img src="evidence/full-acceptance-2026-06-25/04-place-detail.png" alt="地点详情"><figcaption><strong>04 地点详情</strong>地点状态、标签、导航、复制地址和本地记录详情。</figcaption></figure>
+        <figure><img src="evidence/full-acceptance-2026-06-25/05-data-health-center.png" alt="个人数据健康中心"><figcaption><strong>05 个人数据健康中心</strong>已核验、待确认、高风险、手动校准和已跳过分组。</figcaption></figure>
+        <figure><img src="evidence/full-acceptance-2026-06-25/06-governance-workbench.png" alt="治理工作台"><figcaption><strong>06 治理工作台</strong>治理队列、批处理预览入口和安全写入边界。</figcaption></figure>
+        <figure><img src="evidence/full-acceptance-2026-06-25/07-share-poster-current-viewport.png" alt="当前视野分享图"><figcaption><strong>07 当前视野分享图</strong>分享图 composer 使用真实地图视野和当前筛选地点。</figcaption></figure>
+        <figure><img src="evidence/full-acceptance-2026-06-25/08-share-snapshot-summary.png" alt="分享快照生成前摘要"><figcaption><strong>08 快照生成前摘要</strong>生成本地只读快照前展示数量、范围和本地只读含义。</figcaption></figure>
+        <figure><img src="evidence/full-acceptance-2026-06-25/09-share-snapshot-generated.png" alt="分享快照生成后"><figcaption><strong>09 快照生成后</strong>展示本地链接和 .foodmap.json 导出入口。</figcaption></figure>
+        <figure><img src="evidence/full-acceptance-2026-06-25/10-readonly-share-generated.png" alt="生成后的只读分享页"><figcaption><strong>10 只读分享页</strong>本机快照打开只读分享页，保留地图、图层和详情。</figcaption></figure>
+        <figure><img src="evidence/full-acceptance-2026-06-25/11-clean-profile-readonly-import.png" alt="Clean profile 导入只读分享"><figcaption><strong>11 Clean profile 导入</strong>空 profile 导入 .foodmap.json 后进入只读分享页。</figcaption></figure>
+        <figure><img src="evidence/full-acceptance-2026-06-25/12-invalid-import-error.png" alt="无效导入错误"><figcaption><strong>12 无效导入错误</strong>错误导入显示明确错误并保持缺失快照恢复状态。</figcaption></figure>
+        <figure><img src="evidence/full-acceptance-2026-06-25/13-missing-share-fallback.png" alt="缺失分享快照恢复"><figcaption><strong>13 缺失快照恢复</strong>缺失 snapshot route 提供导入和返回工作台路径。</figcaption></figure>
+        <figure><img src="evidence/full-acceptance-2026-06-25/14-mobile-workspace.png" alt="移动端工作台"><figcaption><strong>14 移动端工作台</strong>390px 下展示搜索、快捷筛选、地图和底部操作。</figcaption></figure>
+        <figure><img src="evidence/full-acceptance-2026-06-25/15-mobile-readonly-share-summary.png" alt="移动只读分享摘要"><figcaption><strong>15 移动只读分享摘要</strong>点选标记后先显示地点摘要，保留地图上下文。</figcaption></figure>
+        <figure><img src="evidence/full-acceptance-2026-06-25/16-mobile-readonly-share-detail.png" alt="移动只读分享完整详情"><figcaption><strong>16 移动只读分享详情</strong>显式展开后显示完整只读详情，底部导航不遮挡。</figcaption></figure>
+      </div>
+    </section>
+
+    <section>
+      <h2>残余风险与不声明内容</h2>
+      <div class="verdict warn">
+        <p><strong class="status-warn">注意：</strong>本报告不把以下内容宣称为已完成。</p>
+        <ul>
+          <li>没有新增账号体系、云同步、永久公网分享链接或后端服务。</li>
+          <li>没有绕过用户确认固化坐标、批量修改治理结果或自动修复高风险数据。</li>
+          <li>外部实时 POI 搜索能力仍不能过度宣称为已完成；当前验收保留 P18/P19 的 trust boundary。</li>
+          <li><code>npm ci</code> 报告 1 个 low severity vulnerability，本轮未执行自动修复。</li>
+          <li>截图证明覆盖的是自动化抽样路径和指定视口，不等同于所有浏览器、所有设备和所有用户数据组合穷尽验证。</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Generated for FoodMap P23 acceptance. Evidence generated by headless Playwright Chromium on local dev server <code>http://127.0.0.1:5174</code>.</p>
+  </footer>
+</body>
+</html>

@@ -1,101 +1,273 @@
-# FoodMap P18 Development And Acceptance Plan
+# FoodMap P19/P20-C/P21/P22/P23 Development And Acceptance Plan
 
-## P18 Summary
+## P23 Summary
 
-P18 的当前阶段目标是把 P17 已完成的“可见、可处理、可移动端完成”的可信体验，继续推进到“更容易找到正确候选、更安全地校准坐标、更适合传播”的产品体验。
+P23 is accepted as the current interaction-quality correction after P22. It fixes P22 evidence and usability risks without expanding FoodMap's product boundary.
 
-P18 不引入账号、后端、云同步或公网永久分享链接。P16/P17 的真实地点候选、外部地图跳转、扫街榜 50 条、钉图易参考层、待确认工作台、详情页 IA、移动主路径、分享图预览和 Agent 安全边界均作为回归基线保留。
+P23 focuses on:
 
-## P18 Planning Baseline Decision
+1. Mobile read-only share opens a map-preserving selected-place summary before full detail.
+2. Share mobile panels are not covered by the bottom navigation.
+3. 320px workspace quick filters remain reachable without horizontal overflow.
+4. Data health and governance panels are readable and action text is not clipped.
+5. P21 responsive share regression is updated to the new summary-then-expand mobile path.
+6. Full workspace E2E proves P18-P22 accepted baselines still pass.
 
-Current audit decision: `Plan Ready for P18-2 development after document review`.
-
-Allowed claim:
-
-- P18 planning, architecture, implementation contract, and acceptance baseline are ready.
-
-Disallowed claim:
-
-- P18 implementation is complete.
-- FoodMap already guarantees external realtime POI search without configured provider or Agent evidence.
-- FoodMap can automatically correct every uncertain location without user confirmation.
-
-## P18 Workstream Orchestration
-
-P18 的开发不能只按单一线性任务理解。候选搜索是入口能力，其他体验目标必须同步编排到阶段计划、E2E 和出门门槛中。
-
-| Workstream | Development Goal | Planned Phases | Acceptance Focus | Blocking Risk |
-| --- | --- | --- | --- | --- |
-| W18-A 坐标准确性与候选校准 | 从不可信地点进入候选搜索、确认、跳过、手动挪动闭环 | P18-2, P18-3, P18-4 | 10+ 待确认地点端到端处理；确认前不改坐标；刷新后状态保留 | 错点继续上图且无可用纠错路径 |
-| W18-B 详情页和移动主路径 | 解决详情拥挤、截断、滚动、核心动作不可达 | P18-4, P18-5 | 390x844、430x932、768x900 截图；详情内标签、评分、校准、地图跳转可达 | 移动端看得到信息但完不成操作 |
-| W18-C 首页筛选与图层解释 | 解释当前可见点、筛选原因、图层状态和恢复路径 | P18-5, P18-8 | 地图、列表、详情、分享图点数一致；清空筛选可恢复 | 用户误以为数据丢失或筛选失效 |
-| W18-D 分享传播体验 | 分享图从导出能力升级为可编辑、可预览、可传播 | P18-6, P18-8 | 标题、模式、地点数、标签摘要、生成时间一致 | 传播图导出错集或空白 |
-| W18-E 数据健康与性能 | 真实个人收藏和大数据量下仍可诊断、筛选和查看 | P18-7, P18-8 | 真实数据 + 500/1000/3000 点 smoke；数据体检截图 | 只在小数据下可用 |
-| W18-F Agent 和验收治理 | Agent 可辅助候选和风险解释，但不能污染事实 | P18-3, P18-8 | negative E2E；PRD 规格检视；最终验收报告 | Agent 绕过用户确认改坐标 |
-
-每个子阶段开始前必须从上表选定关联工作流，并写明本阶段验收标准。若某个工作流验收失败，必须回到该工作流计划阶段修订，而不是用其他工作流通过结果抵消。
-
-## P18 Development And Acceptance Outline
+Detailed implementation and acceptance are defined in [P23 UX Correction Plan](./p23-ux-correction-plan.md).
 
 | Phase | Development Scope | Acceptance Evidence | Exit Condition |
 | --- | --- | --- | --- |
-| P18-1 | 文档冻结：PRD、目标架构、计划、里程碑、验收门槛、gap drawio、P18 contract 更新 | 文档审计、drawio XML 校验、审计路径清单 | 文档完整支撑 P18 开发与验收 |
-| P18-2 | 候选搜索入口和 provider fallback | 待确认详情/工作台 E2E、无 Key fallback E2E | 用户能搜索更多候选，且无 Key 时流程不中断 |
-| P18-3 | 候选证据模型和候选卡片重构 | 单测 + 详情/工作台 E2E | 候选展示来源、置信度、坐标精度、证据和风险理由 |
-| P18-4 | 手动挪动审计预览 | 移动/桌面挪动 E2E | 保存前展示新旧坐标、确认/取消、审计兜底 |
-| P18-5 | 移动详情渐进披露和首页筛选摘要 | 390x844、430x932、768x900 截图 | 首屏核心动作可见；筛选原因和可见点数可解释 |
-| P18-6 | 分享图 composer 升级 | PNG 非空、标题/模式/点数一致 E2E | 支持标题编辑、当前视野/当前筛选结果模式 |
-| P18-7 | 个人数据体检和大数据性能验收 | 真实数据 + 500/1000/3000 点 smoke | 数据体检可见；真实和模拟数据下性能可用 |
-| P18-8 | Agent 边界、总验收与 PRD 规格检视 | build/test/e2e/verify:scanlist + final report | 无 blocker，无重大规格偏差或虚假验收风险 |
+| P23-1 | UX evidence audit and correction plan | P23 plan/audit | No fatal or major unresolved spec risk |
+| P23-2 | Mobile share and workspace readability fixes | P23 targeted E2E/screenshots | Mobile share, quick filters, health/governance readable |
+| P23-3 | Regression and final acceptance | build/unit/scanlist/P21 responsive/full Playwright/final report | Accepted by `p23-final-acceptance-report.md` |
 
-## P18 Detailed Development And Acceptance Plan
+---
 
-| Subphase | Development Tasks | Acceptance Standard | Audit Focus |
+## P22 Summary
+
+P22 is accepted as an interaction experience refactor after accepted P21. P23 supersedes P22's interaction evidence for corrected mobile share and readable governance/data-health paths.
+
+P22 focuses on:
+
+1. Standalone read-only share layout.
+2. Direct missing snapshot `.foodmap.json` recovery.
+3. Wider desktop health/governance/pending panels.
+4. Compact mobile map controls.
+5. Clear action labels for data package, poster, and snapshot.
+6. Browser evidence proving P21/P20/P19 accepted baselines still work.
+
+Detailed implementation and acceptance are defined in [P22 Detailed Development And Acceptance Plan](./p22-detailed-development-and-acceptance-plan.md).
+
+| Phase | Development Scope | Acceptance Evidence | Exit Condition |
 | --- | --- | --- | --- |
-| P18-2A 搜索入口 | 在待确认工作台和详情页增加“搜索更多候选/复制搜索词/打开地图搜索/手动挪动”入口 | E2E 覆盖待确认地点发起搜索和 fallback | 无 provider 时不能中断流程 |
-| P18-2B Provider fallback | 高德 Web 服务 Key 仍本地保存；无 Key 展示复制和网页地图搜索 | E2E 覆盖有 Key mock、无 Key、搜索失败 | 不得伪装成实时 POI 搜索 |
-| P18-3A 候选证据模型 | 扩展候选字段：证据、风险、match signals、lastCheckedAt | 单测覆盖字段映射和默认值 | 候选必须可追溯 |
-| P18-3B 候选卡片 | 候选卡显示来源、置信度、坐标精度、风险理由和证据入口 | 桌面/移动截图 + E2E | 防止“只显示店名”的假候选 |
-| P18-4A 挪动预览 | 保存前展示原坐标、新坐标、方式、风险说明 | E2E 覆盖取消和确认 | 防止误触保存 |
-| P18-4B 审计持久化 | 保存后保留 `mapAccuracy`、标签或 notes 审计兜底 | 刷新后 E2E 检查 | 防止刷新后校准状态丢失 |
-| P18-5A 移动详情折叠 | 照片、长笔记、候选历史、高级搜索按需展开 | 390x844/430x932 截图 | 核心动作不能被折叠隐藏 |
-| P18-5B 筛选摘要 | 首页显示筛选原因、可见点数、待确认数、图层状态和清空入口 | 多尺寸 E2E | 用户必须知道为什么点变少 |
-| P18-6A 分享图 composer | 支持标题编辑、当前视野/当前筛选模式 | PNG 非空、点数和模式一致 | 防止传播图错集 |
-| P18-7A 数据体检 | 导入/历史个人收藏按可信状态生成摘要和下一步建议 | E2E + 报告截图 | 不可信地点不能被隐藏 |
-| P18-7B 大数据性能 | 500/1000/3000 点模拟数据验证缩放、筛选、详情、分享预览 | 性能 JSON 证据 | 防止只在小数据可用 |
-| P18-8A Agent 边界 | Agent 可提交候选和解释风险，不能固化坐标/删除/隐藏 | Negative E2E | 防止 Agent 污染地点事实 |
-| P18-8B 总验收 | 命令、截图、真实数据、PRD 规格检视、架构偏差检视 | 最终验收报告 | 无新增致命或重大风险 |
+| P22-1 | 文档与审计基线 | P22 plan/audit/docs/drawio updated | No fatal or major unresolved spec risk |
+| P22-2 | 只读分享页和缺失快照恢复 | P21 targeted E2E and screenshots | Share page and fallback are self-contained |
+| P22-3 | 工作台面板和移动 dock 可读性 | P22 targeted E2E | Health/governance readable; mobile dock compact |
+| P22-4 | 回归和证据 | build/unit/scanlist/core targeted/P22 targeted/final report | Accepted by `p22-final-acceptance-report.md` |
 
-## P18 Required Acceptance Scenarios
+---
 
-1. 清洁状态进入 `#/map`，P17 基线仍成立。
-2. 导入真实个人收藏后，待确认数量、详情和工作台仍可用。
-3. 在待确认详情中点击“搜索更多候选”，无高德 Key 时展示复制搜索词和打开外部地图搜索 fallback。
-4. 有 provider mock 时返回候选，候选卡展示来源、置信度、坐标精度、风险理由和证据。
-5. 用户确认候选前，地点坐标、`mapAccuracy` 和待确认状态不变。
-6. 用户确认候选后，地图、列表、详情、筛选摘要和分享图使用同一事实。
-7. 用户手动挪动图钉，保存前能看到新旧坐标和确认/取消。
-8. 移动端详情首屏展示状态、标签、核心动作和校准入口，长内容可展开。
-9. 首页筛选摘要解释当前可见点数和启用条件，一键清空可恢复。
-10. 分享图支持标题编辑和模式选择，导出与当前视野或当前筛选一致。
-11. 500、1000、3000 点模拟数据下缩放、筛选、详情打开和分享预览可用。
-12. Agent 直接固化坐标、删除地点、隐藏待确认状态会被拒绝。
-13. `npm run verify:scanlist` 仍证明 50 条扫街榜基线有效。
+## P19 Summary
 
-## P18 Required Commands
+P19 is accepted after the accepted P18 baseline. It keeps FoodMap pure frontend, local-first, and map-first, while turning the P18 accepted baseline into a more maintainable and reproducible product baseline.
+
+P19 does not redo P18 candidate search, manual pin move, detail IA, filter explanation, share poster composer, Agent boundary, or large-dataset acceptance. Those are accepted regression baselines. P19 focuses on five gaps left after handoff:
+
+1. Browser acceptance must be reproducible on the current development machine.
+2. Share poster `当前视野` mode must become real, backed by map viewport bounds.
+3. Personal data health must become a first-class workflow, not scattered status hints.
+4. Location-changing workflows should be consolidated into Domain/Persistence-oriented services instead of being mostly UI orchestration.
+5. Mobile, tablet, and narrow desktop regressions must remain controlled after the above changes.
+
+## P19 Stage Boundary
+
+Allowed claims:
+
+- P18 is accepted and is the regression baseline.
+- P19 is accepted and is now the latest regression baseline.
+- P19 improves poster viewport mode, data health, repository/domain contracts, and acceptance reproducibility within the pure-frontend boundary.
+
+Forbidden claims:
+
+- FoodMap has backend sync, accounts, cloud sharing, or permanent public links.
+- External realtime POI search works without a configured provider key or Agent-submitted evidence.
+- Coordinates can be finalized without user confirmation.
+- `当前视野` poster mode is complete before map bounds, preview count, export count, and E2E evidence are all aligned.
+
+## P19 Workstream Orchestration
+
+| Workstream | Development Goal | Planned Phases | Acceptance Focus | Blocking Risk |
+| --- | --- | --- | --- | --- |
+| W19-A 验收环境可复现 | Make build/unit/scanlist/targeted Playwright repeatable after restore | P19-1, P19-7 | Browser dependency note, targeted P18/P19 Playwright green | Browser tests cannot run, causing false acceptance risk |
+| W19-B 当前视野分享图 | Enable real viewport-bounded poster mode | P19-2, P19-7 | Current filter vs current viewport counts, preview, PNG non-empty | Poster exports wrong set or disabled promise remains |
+| W19-C 个人数据健康中心 | Make uncertain, high-risk, manual, skipped, and verified states visible with next actions | P19-3, P19-7 | Health summary, drill-in/filter actions, no hidden uncertainty | Users cannot find or resolve unhealthy data |
+| W19-D Domain/Repository 收口 | Move location status and coordinate updates toward a single domain path | P19-4, P19-7 | Unit tests, Agent/UI behavior consistency, no direct pending finalization | UI and Agent drift into different truth models |
+| W19-E 多尺寸回归 | Preserve map-first daily use across mobile/tablet/narrow desktop | P19-5, P19-7 | 390x844, 430x932, 768x900, 1280x820 screenshots/E2E | New panels crowd or clip the existing main path |
+| W19-F 文档和治理 | Keep active docs, drawio, contracts, and final report aligned | P19-1, P19-6, P19-7 | PRD/architecture/gap/gates/drawio consistency | P19 implementation outruns design docs |
+
+## P19 Detailed Development And Acceptance Plan
+
+Implementation-level tasks, interface shapes, test names, and evidence paths are specified in [P19 Detailed Development And Acceptance Plan](./p19-detailed-development-and-acceptance-plan.md). The table below is the stage-level gate summary; implementers must use the detailed plan when coding each phase.
+
+| Phase | Development Scope | Acceptance Evidence | Exit Condition |
+| --- | --- | --- | --- |
+| P19-1 | 文档冻结与验收环境基线：active docs 指向 P19，P18 标记为 accepted baseline；记录 Playwright 依赖和当前本机阻塞 | 文档审计、drawio XML 校验、build/test/scanlist 复核 | P19 可开发，验收环境缺口有明确处理路径 |
+| P19-2 | 分享海报 `当前视野`：从 Map Adapter/Workspace 读取 bounds，composer 启用当前视野模式 | Unit + Playwright：当前筛选/当前视野点数和导出一致，PNG 非空 | `当前视野` 不再是 disabled 占位 |
+| P19-3 | 个人数据健康中心：按 verified、pending、high-risk、manual-adjusted、skipped 分组展示，并提供筛选/详情/工作台入口 | E2E + 截图：健康摘要可见，不可信地点可进入处理路径 | 不确定性可见且可行动 |
+| P19-4 | Repository/Domain 收口：候选确认、手动挪动、pending 查询和状态派生收口到领域服务与 repository 边界 | Unit tests + Agent negative：UI/Agent 共享同一确认边界 | 关键坐标状态不再主要依赖分散 UI 逻辑 |
+| P19-5 | 移动/窄屏回归：详情、筛选摘要、数据健康、海报 composer 在多视口下不遮挡、不截断 | 390x844、430x932、768x900、1280x820 screenshots/E2E | 主路径仍可在多尺寸完成 |
+| P19-6 | 文档同步复检：PRD、架构、计划、门槛、gap、drawio、contracts 与实现对齐 | 文档审计清单、drawio 校验 | 不存在重大规格漂移 |
+| P19-7 | 总验收：回归 P18 baseline，执行 P19 targeted tests，创建 final acceptance report | build、unit、verify:scanlist、targeted Playwright、截图/JSON、final report | P19 可出门 |
+
+## P19 Required Acceptance Scenarios
+
+1. Clean restore 后 `npm ci`、`npm run build`、`npm test -- --run`、`npm run verify:scanlist` 可复核。
+2. Playwright 运行依赖可复现；若本机缺系统库，文档必须给出明确安装/替代执行方式。
+3. P18 large deterministic 和 Agent negative targeted tests 可运行并作为回归基线。
+4. Share poster composer 可在 `当前筛选` 与 `当前视野` 之间切换。
+5. `当前视野` 模式使用真实 map bounds，预览点数和导出点数一致。
+6. 当前视野为空时必须显示明确空态，不能导出误导性地点集。
+7. 数据健康中心展示 verified、pending、high-risk、manual-adjusted、skipped 分组及数量。
+8. 数据健康入口能跳转到筛选、详情或待确认工作台，不自动修改地点事实。
+9. 候选确认和手动挪动继续需要用户显式确认。
+10. Agent 直接固化坐标、删除 pending、隐藏不确定性仍被拒绝。
+11. 390x844、430x932、768x900、1280x820 下核心路径可用。
+12. 扫街榜 50 条和钉图易参考层仍是可显隐参考层，不污染个人记录。
+
+## P19 Required Commands
 
 ```bash
 npm run build
-npm test
-npx playwright test
+npm test -- --run
 npm run verify:scanlist
+npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P18 large deterministic"
+npx playwright test e2e/workspace.spec.ts --project=desktop --grep "agent bridge returns structured errors"
 ```
 
-## P18 Audit Opinion
+P19 implementation should add targeted Playwright grep labels for current-viewport poster, data health center, and responsive regression before final acceptance.
 
-- 审计状态：`Plan Ready`。P18 目标已从体验候选、详情移动、筛选图层、分享传播、数据性能、Agent 治理六条工作流拆成可开发、可验收、可审计的阶段目标。
-- 阶段判定：可进入 P18-2 开发，但不得声明 P18 已实现完成。
-- 编码前必须确认：PRD、目标架构、计划、里程碑、验收门槛、gap drawio 和 P18 contract 均描述同一范围。
-- P18 的高风险点是：无 provider 时伪装搜索成功、候选证据不足、候选点击静默改坐标、移动详情再次拥挤、筛选摘要与地图事实不一致、分享图模式和导出事实不一致、性能只用小数据验收、Agent 绕过确认。
+## P19 Go / No-Go Statement
 
-Historical P1-P17 plans and reports are archived or retained as completed baseline documents; this active plan describes the current P18 stage.
+Current documentation status: P19 accepted.
+
+This means the active PRD, target architecture, detailed development plan, acceptance gate, milestone roadmap, gap documents, drawio, contracts, E2E matrix, visual checklist, phase acceptance reports, and final report define the accepted P19 stage boundary, evidence path, and exit decision.
+
+## P19 Audit Opinion
+
+Current decision: `P19 accepted after final acceptance`.
+
+P19 remained a refinement and governance stage. It avoided broad UI reshuffling and did not change the pure-frontend product boundary. The highest-risk item was false acceptance caused by unavailable browser test dependencies; P19 closed that risk with a documented local library workaround, targeted browser tests, and final acceptance evidence.
+
+---
+
+# FoodMap P20 Development And Acceptance Plan
+
+## P20-C Summary
+
+P20 core was implemented after P19 and provides governance workbench, duplicate merge preview, import conflict preview, governance journal, Agent negative boundaries, responsive evidence, and passing full Playwright regression. A PRD-based audit on 2026-06-24 found that this was not yet the full original P20 governance experience.
+
+P20-C completed the implemented P20 core into the complete PRD target: at least three safe batch operation types, duplicate ignore/keep/merge decisions, import strategy selection for all conflict classes, stale-reference grouping, governance report export, and full PRD-targeted E2E coverage.
+
+P20-C must not become a backend admin system. It must preserve the map-first personal food journal experience, P18/P19 trust boundaries, and the no-backend/no-account/no-cloud product constraint.
+
+## P20 Stage Boundary
+
+Allowed claims:
+
+- P19 is accepted and remains the regression baseline.
+- P20 core is a regression baseline for currently implemented governance workbench, merge preview, import preview, history, Agent boundary, and responsive evidence.
+- P20-C may improve local personal data governance, duplicate handling, import conflict strategies, maintenance history, report export, and domain/repository write consistency.
+- P20-C may add advisory read models, safe batch previews, stale-reference grouping, and local governance report export.
+
+Forbidden claims:
+
+- FoodMap has backend governance, cloud sync, accounts, public permanent links, or automatic multi-device repair.
+- Duplicate suggestions are automatically merged.
+- Import conflict preview writes data before the user confirms a strategy.
+- Agent can execute bulk writes, delete, merge, finalize coordinates, or hide risk.
+- P20-C completes external realtime POI search without provider keys or Agent-submitted evidence.
+- Current P20 core can be described as full original PRD completion before P20-C gates pass.
+
+## P20 Workstream Orchestration
+
+| Workstream | Development Goal | Planned Phases | Acceptance Focus | Blocking Risk |
+| --- | --- | --- | --- | --- |
+| W20C-A 文档和审计基线 | Freeze P20-C completion scope from original PRD gaps | P20C-1 | PRD/architecture/gate readiness, no fatal audit findings | P20 core remains over-claimed as full completion |
+| W20C-B 治理工作台补齐 | Add stale-reference group and at least three safe batch operation previews | P20C-2 | Groups, batch preview/confirm/cancel, report-visible effects | Health UI mutates facts or batch types are under-scoped |
+| W20C-C 重复地点决策补齐 | Support ignore, keep separate, and merge decisions | P20C-3 | Evidence comparison, three decisions, history, no auto-delete | Auto-merge or delete without confirmation |
+| W20C-D 导入冲突策略补齐 | Classify and select strategies for new/update/duplicate/risk/skipped rows | P20C-4 | Dry-run plan, strategy selection, cancel no-op | Import writes before preview or ignores risk rows |
+| W20C-E 维护历史与报告导出 | Make governance actions auditable and exportable | P20C-5 | Journal entries, detail history, governance report export | History/report diverges from UI facts |
+| W20C-F Agent/响应式/回归补齐 | Preserve Agent boundaries and multi-size usability under completed flows | P20C-6 | Agent negative, 390/430/768/1280 screenshots/E2E | Agent bypass or mobile clipped flows |
+| W20C-G 总验收 | Prove original P20 PRD completion with command, browser, screenshot, real-data evidence | P20C-7 | Build/unit/scanlist/P18/P19/P20 regression/P20-C targeted/final report | False acceptance without browser evidence |
+
+## P20 Detailed Development And Acceptance Plan
+
+Implementation-level tasks, interface shapes, test names, and evidence paths are specified in [P20 Detailed Development And Acceptance Plan](./p20-detailed-development-and-acceptance-plan.md) and [P20-C Completion Development And Acceptance Plan](./p20-completion-development-and-acceptance-plan.md).
+
+| Phase | Development Scope | Acceptance Evidence | Exit Condition |
+| --- | --- | --- | --- |
+| P20C-1 | 文档冻结和补齐审计 | PRD/architecture/gate/gap/drawio review, fixture list, no fatal audit findings | P20-C 可开发 |
+| P20C-2 | 治理工作台和批量操作补齐 | Unit + Playwright: stale-reference group, 3 batch actions, preview/cancel/confirm | 用户能处理问题队列且无隐藏写入 |
+| P20C-3 | 重复地点决策补齐 | Unit + Playwright: duplicate candidates, evidence compare, ignore/keep/merge | 不自动合并，三类决策可追溯 |
+| P20C-4 | 导入冲突策略补齐 | Unit + Playwright: dry-run import plan, strategy selection, cancel no-op | 导入前不会污染本地数据 |
+| P20C-5 | 维护历史和报告导出 | Unit + E2E: journal entries, report export, legacy audit fallback | 关键动作可追溯且可导出 |
+| P20C-6 | Agent 和响应式回归 | Agent negative + multi-viewport screenshots | Agent 不越权，移动端可完成主路径 |
+| P20C-7 | 总验收 | build、unit、verify:scanlist、P18/P19/P20 regression、P20-C targeted、截图、final report | 原始 P20 PRD 治理闭环可出门 |
+
+## P20 Required Acceptance Scenarios
+
+1. P19 current viewport poster and data health targeted tests remain green.
+2. Data governance workbench opens from the P19 health entry.
+3. Pending/high-risk/manual/skipped/duplicate/import-conflict groups are visible when fixtures contain those states.
+4. At least three safe batch actions list affected records before writing and support cancel no-op.
+5. Duplicate suggestions show evidence and support ignore, keep separate, and merge decisions without automatic delete.
+6. Import conflict preview classifies new/update/duplicate/risk/skipped rows, supports strategy selection, and can be canceled without IndexedDB mutation.
+7. Confirmed governance actions append user-readable journal entries.
+8. Governance report export contains the same issue groups, decisions, import summaries, and history facts shown in the UI.
+9. Agent attempts to bulk modify, delete, merge, import, hide risk, or finalize coordinates are rejected.
+10. 390x844, 430x932, 768x900, 1280x820 keep governance workbench, duplicate compare, import preview, report export, and history reachable.
+11. `npm run verify:scanlist` continues to pass with the 50-entry real-data scanlist baseline.
+
+## P20 Audit Opinion
+
+Current decision: `P20-C accepted after final acceptance`.
+
+This decision means current code passes build, unit, scanlist, P18/P19/P20 regression, P20-C targeted Playwright, full Playwright, and final PRD/architecture review. P20-C can now be treated as the regression baseline for original P20 personal data governance completion.
+
+---
+
+# FoodMap P21 Development And Acceptance Plan
+
+## P21 Summary
+
+P21 is the local share and data portability release stage. It uses P20-C as the latest accepted implementation baseline and returns to the original V1.0 PRD requirements for local read-only share snapshots, `.foodmap.json` import/export, clean profile portability, invalid import safety, and release evidence.
+
+P21 does not add backend sync, accounts, cloud backup, public permanent links, editable import restore, or new POI search. It proves that FoodMap can be used as a local-first personal food map whose read-only snapshot can be exported, imported, and viewed safely.
+
+## P21 Stage Boundary
+
+Allowed claims:
+
+- P20-C is accepted and is the personal data governance regression baseline.
+- P21 may improve local snapshot generation, `.foodmap.json` validation, clean profile import, read-only share guardrails, invalid import no-op behavior, Agent share/import boundaries, and release evidence.
+- P21 may add tests, selectors, validation helpers, and copy needed to prove V1.0 share/import/export trust.
+
+Forbidden claims:
+
+- FoodMap has cloud sharing, account sync, backend backup, or public permanent links.
+- `#/share/:snapshotId` works across devices without importing the matching `.foodmap.json`.
+- P21 restores imported data into editable personal records.
+- Invalid import may partially write before validation.
+- Agent can bypass import confirmation or create public links.
+
+## P21 Workstream Orchestration
+
+| Workstream | Development Goal | Planned Phases | Acceptance Focus | Blocking Risk |
+| --- | --- | --- | --- | --- |
+| W21-A 发布计划与审计基线 | Freeze P21 scope from original PRD share/import/export gaps | P21-1 | PRD/architecture/gate/drawio readiness | P21 drifts into cloud sharing or editable restore |
+| W21-B 分享快照可信生成 | Make local/read-only snapshot content explicit before export/open | P21-2 | Title, counts, thumbnails, generated time, local-only copy | User mistakes local snapshot for public link |
+| W21-C 导出包完整性 | Prove `.foodmap.json` includes all facts needed by share view | P21-3 | Schema/version, metadata, places, layers, thumbnails | Exported file cannot reconstruct read-only share |
+| W21-D clean profile 导入与只读页 | Prove another local profile can view the snapshot safely | P21-4 | Clean IndexedDB import, share route, no edit controls | Import writes editable records or share leaks controls |
+| W21-E 失败安全与 Agent 边界 | Prevent data pollution and over-claiming | P21-5 | Invalid import no-op, missing snapshot copy, Agent negative | Partial writes or false public-share claims |
+| W21-F 多尺寸与证据包 | Prove release path across required viewports and real data | P21-6 | Screenshots, JSON evidence, scanlist, regression | Browser evidence skipped |
+| W21-G 总验收 | Prove P21 can become release-candidate baseline | P21-7 | Build/unit/scanlist/P18-P20C regression/P21 targeted/final report | False acceptance without final report |
+
+## P21 Detailed Development And Acceptance Plan
+
+Implementation-level tasks, interface shapes, test names, and evidence paths are specified in [P21 Detailed Development And Acceptance Plan](./p21-detailed-development-and-acceptance-plan.md).
+
+| Phase | Development Scope | Acceptance Evidence | Exit Condition |
+| --- | --- | --- | --- |
+| P21-1 | 文档冻结与审计基线 | PRD/architecture/gate/gap/drawio review, audit report | P21 可开发 |
+| P21-2 | 分享快照生成复核 | Unit + E2E: summary counts, local/read-only copy, snapshot metadata | 用户理解分享包事实 |
+| P21-3 | 导出包完整性 | Unit + E2E JSON inspection | `.foodmap.json` 可迁移查看 |
+| P21-4 | clean profile 导入与只读页 | Playwright clean profile import and share route | 只读分享可跨本地 profile 查看 |
+| P21-5 | 失败安全与 Agent 边界 | IndexedDB no-op diff, error UI, Agent negative | 无效输入不污染事实 |
+| P21-6 | 响应式与真实数据证据 | 390/430/768/1280 screenshots, scanlist, regression | 发布路径多尺寸可用 |
+| P21-7 | 总验收 | build、unit、verify:scanlist、P18/P19/P20-C regression、P21 targeted、final report | P21 可出门 |
+
+## P21 Audit Opinion
+
+Current decision: `P21 accepted after final acceptance`.
+
+The active documentation and final report now record P21 as the accepted local share and `.foodmap.json` portability release baseline. P22 builds on that accepted baseline as an interaction experience refactor.

@@ -1,0 +1,105 @@
+{
+  "generatedAt": "2026-06-25T00:00:00+08:00",
+  "language": "zh-CN",
+  "tool": "Playwright headless Chromium",
+  "baseURL": "http://127.0.0.1:5174",
+  "screenshotCount": 16,
+  "screenshots": [
+    {
+      "name": "01-workspace-home",
+      "title": "工作台首屏",
+      "description": "空白本地工作台、地图、搜索、筛选和新增入口。",
+      "path": "docs/active/evidence/full-acceptance-2026-06-25/01-workspace-home.png"
+    },
+    {
+      "name": "02-import-export-dialog",
+      "title": "数据包导入导出",
+      "description": "本地数据包、个人收藏和只读快照入口。",
+      "path": "docs/active/evidence/full-acceptance-2026-06-25/02-import-export-dialog.png"
+    },
+    {
+      "name": "03-personal-favorites-map",
+      "title": "个人收藏地图",
+      "description": "导入 32 个武汉个人收藏后，地图显示个人图钉和健康入口。",
+      "path": "docs/active/evidence/full-acceptance-2026-06-25/03-personal-favorites-map.png"
+    },
+    {
+      "name": "04-place-detail",
+      "title": "地点详情",
+      "description": "地点状态、标签、导航、复制地址和本地记录详情。",
+      "path": "docs/active/evidence/full-acceptance-2026-06-25/04-place-detail.png"
+    },
+    {
+      "name": "05-data-health-center",
+      "title": "个人数据健康中心",
+      "description": "已核验、待确认、高风险、手动校准和已跳过分组。",
+      "path": "docs/active/evidence/full-acceptance-2026-06-25/05-data-health-center.png"
+    },
+    {
+      "name": "06-governance-workbench",
+      "title": "治理工作台",
+      "description": "个人数据治理队列、批处理预览入口和安全写入边界。",
+      "path": "docs/active/evidence/full-acceptance-2026-06-25/06-governance-workbench.png"
+    },
+    {
+      "name": "07-share-poster-current-viewport",
+      "title": "当前视野分享图",
+      "description": "分享图 composer 使用真实地图视野和当前筛选地点。",
+      "path": "docs/active/evidence/full-acceptance-2026-06-25/07-share-poster-current-viewport.png"
+    },
+    {
+      "name": "08-share-snapshot-summary",
+      "title": "分享快照生成前摘要",
+      "description": "生成本地只读快照前展示数量、范围和本地只读含义。",
+      "path": "docs/active/evidence/full-acceptance-2026-06-25/08-share-snapshot-summary.png"
+    },
+    {
+      "name": "09-share-snapshot-generated",
+      "title": "分享快照生成后",
+      "description": "快照生成后展示本地链接和 .foodmap.json 导出入口。",
+      "path": "docs/active/evidence/full-acceptance-2026-06-25/09-share-snapshot-generated.png"
+    },
+    {
+      "name": "10-readonly-share-generated",
+      "title": "生成后的只读分享页",
+      "description": "本机生成快照后打开只读分享页，保留地图、图层和详情。",
+      "path": "docs/active/evidence/full-acceptance-2026-06-25/10-readonly-share-generated.png"
+    },
+    {
+      "name": "11-clean-profile-readonly-import",
+      "title": "Clean profile 导入只读分享",
+      "description": "空 profile 导入 .foodmap.json 后直接进入只读分享页。",
+      "path": "docs/active/evidence/full-acceptance-2026-06-25/11-clean-profile-readonly-import.png"
+    },
+    {
+      "name": "12-invalid-import-error",
+      "title": "无效导入错误",
+      "description": "无效分享包显示错误并保持缺失快照恢复状态。",
+      "path": "docs/active/evidence/full-acceptance-2026-06-25/12-invalid-import-error.png"
+    },
+    {
+      "name": "13-missing-share-fallback",
+      "title": "缺失分享快照恢复",
+      "description": "缺失 snapshot route 提供导入 .foodmap.json 和返回工作台路径。",
+      "path": "docs/active/evidence/full-acceptance-2026-06-25/13-missing-share-fallback.png"
+    },
+    {
+      "name": "14-mobile-workspace",
+      "title": "移动端工作台",
+      "description": "390px 移动工作台展示搜索、快捷筛选、地图和底部操作。",
+      "path": "docs/active/evidence/full-acceptance-2026-06-25/14-mobile-workspace.png"
+    },
+    {
+      "name": "15-mobile-readonly-share-summary",
+      "title": "移动只读分享摘要",
+      "description": "点选地图标记后先显示不遮挡地图上下文的地点摘要。",
+      "path": "docs/active/evidence/full-acceptance-2026-06-25/15-mobile-readonly-share-summary.png"
+    },
+    {
+      "name": "16-mobile-readonly-share-detail",
+      "title": "移动只读分享完整详情",
+      "description": "显式展开后显示完整只读详情，底部导航不遮挡。",
+      "path": "docs/active/evidence/full-acceptance-2026-06-25/16-mobile-readonly-share-detail.png"
+    }
+  ]
+}

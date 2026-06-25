@@ -1,8 +1,14 @@
-# FoodMap V1.0 + P17 Repository And Domain API Contract
+# FoodMap V1.0 + P19 Repository And Domain API Contract
 
 ## Summary
 
-This document defines the implementation-facing API contracts for domain helpers and IndexedDB repositories. UI components should call these APIs instead of touching IndexedDB directly. P17 extends this contract with pending-place, pin-move, rating-normalization, and Agent read-only context requirements.
+This document defines the implementation-facing API contracts for domain helpers and IndexedDB repositories. UI components should call these APIs instead of touching IndexedDB directly. P19 keeps the accepted P17/P18 pending-place, pin-move, candidate, and Agent boundaries, and adds a consolidation target for current-viewport poster, personal data health, and location workflow writes.
+
+Current implementation note:
+
+- The actual `placeRepository` currently exposes thin CRUD methods: `list`, `get`, `save`, `remove`.
+- P19 treats the richer repository API below as a staged target, not as a claim that all methods already exist.
+- New location-changing work should move toward these contracts rather than adding more UI-only persistence logic.
 
 ## Domain Helpers
 
@@ -115,7 +121,36 @@ Repository errors must map to user-facing states:
 | Pin move in progress | `请先确认或取消当前挪动。` |
 | Read-only pin | `参考图层不能直接挪动，请先保存到我的收藏。` |
 
-## P17 Agent API Contract
+## P19 Domain And Repository Consolidation Target
+
+P19 target helpers:
+
+```ts
+derivePersonalDataHealth(places: FoodPlace[]): PersonalDataHealthReport;
+filterPlacesByViewport(places: FoodPlace[], bounds: MapViewportBounds): FoodPlace[];
+buildPosterSourceSet(input: PosterSourceInput): PosterSourceResult;
+confirmPlaceCandidate(place: FoodPlace, candidate: PlaceCandidate): FoodPlace;
+previewManualPinMove(place: FoodPlace, point: GeoPoint): PinMovePreview;
+commitManualPinMove(place: FoodPlace, preview: PinMovePreview): FoodPlace;
+```
+
+P19 target repository methods, if implementation needs atomic write helpers:
+
+```ts
+listPendingPlaces(): Promise<FoodPlace[]>;
+savePlaceLocationUpdate(id: string, update: PlaceLocationUpdate): Promise<FoodPlace>;
+savePlaceWithAudit(place: FoodPlace): Promise<void>;
+```
+
+Rules:
+
+- `derivePersonalDataHealth` is read-only and must not mutate records.
+- `filterPlacesByViewport` must use the same coordinate-system normalization as map/poster rendering.
+- Poster source selection must return mode, count, and source ids so preview and export can be compared in tests.
+- Candidate confirmation and manual pin move must keep the P18 explicit-confirmation rule.
+- Any repository expansion must remain backward-compatible with schema version 1 IndexedDB records.
+
+## P19 Agent API Contract
 
 Agent Bridge may expose:
 
@@ -129,8 +164,55 @@ setFilter(filter: FoodFilterState): Promise<void>;
 
 Agent Bridge must not expose a direct coordinate finalization action that bypasses UI/Domain confirmation. If a future action is added for assisted confirmation, it must require the same validation and user-confirmed state transition as manual UI.
 
+P19 additionally requires Agent negative regression after domain/repository consolidation:
+
+- Direct coordinate finalization remains blocked.
+- Pending deletion remains blocked.
+- Hiding pending/high-risk uncertainty remains blocked.
+- Agent-submitted candidates remain suggestions requiring user confirmation.
+
 ## Acceptance
 
 - Unit tests cover validators, filters, default layers, repository CRUD, photo cascade delete, snapshot creation, import validation, and malformed package handling.
 - UI code does not import `db.ts` directly outside repository modules.
-- P17 tests cover `deriveLocationStatus`, `listPendingPlaces`, `normalizePercentScore`, `getUserFacingTags`, `applyManualPinMove`, candidate confirmation, and read-only Agent pending context.
+- P17/P18 tests cover `deriveLocationStatus`, `listPendingPlaces`, `normalizePercentScore`, `getUserFacingTags`, `applyManualPinMove`, candidate confirmation, and read-only Agent pending context.
+- P19 tests must cover current-viewport poster source selection, personal data health grouping, and Agent negative regression after any repository/domain refactor.
+
+## P20 Personal Data Governance Target
+
+P20 target helpers:
+
+```ts
+deriveGovernanceIssues(places: FoodPlace[]): GovernanceIssueReport;
+planGovernanceBatchAction(input: GovernanceBatchActionInput): GovernanceBatchActionPlan;
+applyGovernanceBatchAction(input: GovernanceBatchActionCommitInput): FoodPlace[];
+suggestDuplicatePlaces(places: FoodPlace[]): DuplicateSuggestion[];
+previewPlaceMerge(input: PlaceMergePreviewInput): PlaceMergePreview;
+commitPlaceMerge(input: PlaceMergeCommitInput): PlaceMergeResult;
+planImportConflicts(input: ImportConflictPlanInput): ImportConflictPlan;
+appendGovernanceJournalEntry(place: FoodPlace, entry: GovernanceJournalEntry): FoodPlace;
+deriveGovernanceHistory(place: FoodPlace): GovernanceHistoryEntry[];
+```
+
+P20 target repository methods, only if needed to avoid partial writes:
+
+```ts
+saveGovernanceBatch(plan: GovernanceBatchActionPlan): Promise<FoodPlace[]>;
+mergePlaces(plan: PlaceMergePreview): Promise<FoodPlace>;
+importWithConflictPlan(plan: ImportConflictPlan, decisions: ImportConflictDecision[]): Promise<ImportConflictCommitResult>;
+appendGovernanceJournal(placeId: string, entry: GovernanceJournalEntry): Promise<FoodPlace>;
+```
+
+P20 rules:
+
+- Governance issue reports are derived read models and must not mutate records.
+- Batch action planning must list every affected record before commit.
+- Batch actions may handle low-risk metadata such as tags, queue state, skipped status, or report export. Coordinate changes, verification changes, deletes, and merges are high-risk and require explicit review of each affected record.
+- Duplicate suggestions must be evidence-based and advisory. Name similarity alone cannot commit a merge.
+- Merge preview must show retained fields, discarded fields, coordinate source, tags, photos, notes, and journal entries before commit.
+- Import conflict planning must parse and compare first, then write only after user strategy confirmation.
+- Canceling an import preview must leave local IndexedDB unchanged.
+- Governance journal entries are append-only user-readable audit records. They explain actions but do not replace `FoodPlace` source fields.
+- Agent-facing governance APIs may read reports and submit suggestions, but must not expose direct bulk mutation, merge, delete, risk hiding, or coordinate finalization.
+
+P20 acceptance must include unit tests for governance issue derivation, batch planning, duplicate suggestions, merge preview, import conflict planning, and journal derivation.

@@ -1,4 +1,4 @@
-import type { CoordinateSystem, FoodPlace } from "../domain/types";
+import type { CoordinateSystem, FoodPlace, MapViewportBounds } from "../domain/types";
 
 export interface MapInitializeOptions {
   center: { longitude: number; latitude: number };
@@ -32,4 +32,5 @@ export interface MapProviderAdapter {
   onPlaceClick(callback: (placeId: string) => void): void;
   onMapClick(callback: (point: { longitude: number; latitude: number }) => void): void;
   onPlaceMove(callback: (placeId: string, point: { longitude: number; latitude: number }) => void): void;
+  onViewportChange?(callback: (bounds: MapViewportBounds) => void): void;
 }

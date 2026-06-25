@@ -34,6 +34,14 @@ export interface FoodPlace {
   mapAccuracy?: "exact" | "approximate";
 }
 
+export interface MapViewportBounds {
+  west: number;
+  south: number;
+  east: number;
+  north: number;
+  coordinateSystem?: CoordinateSystem;
+}
+
 export interface FoodLayer {
   id: string;
   name: string;
@@ -69,6 +77,48 @@ export interface ShareSnapshot {
   layers: FoodLayer[];
   photos: SnapshotPhoto[];
   exportedAt: string;
+}
+
+export interface SnapshotPortabilitySummary {
+  snapshotId: string;
+  title: string;
+  exportedAt: string;
+  placeCount: number;
+  layerCount: number;
+  thumbnailCount: number;
+  readonly: true;
+}
+
+export interface FoodMapPackageValidationResult {
+  ok: boolean;
+  schemaVersion?: number;
+  snapshotId?: string;
+  errors: string[];
+  summary?: SnapshotPortabilitySummary;
+}
+
+export type GovernanceJournalAction =
+  | "batch-tag"
+  | "batch-queued"
+  | "batch-skipped"
+  | "batch-reviewed"
+  | "duplicate-ignored"
+  | "duplicate-kept"
+  | "duplicate-merged"
+  | "import-created"
+  | "import-updated"
+  | "import-skipped"
+  | "candidate-confirmed"
+  | "manual-pin-moved";
+
+export interface GovernanceJournalEntry {
+  id: string;
+  placeIds: string[];
+  action: GovernanceJournalAction;
+  summary: string;
+  detail: string;
+  createdAt: string;
+  actor: "user" | "system";
 }
 
 export interface FoodFilterState {

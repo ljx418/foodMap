@@ -1,12 +1,10 @@
-# FoodMap P18 Visual Acceptance Checklist
+# FoodMap P19/P20/P21/P22/P23 Visual Acceptance Checklist
 
-Updated: 2026-06-17
-
-Historical H2/P8-P14 screenshots are archived under `docs/history/p8-p14/evidence/p8-p14/`. P17 remains the accepted visual baseline for pending-place confirmation, detail-page information architecture, mobile main path, stable pin visuals, compact filters, and share-poster polish. P18 visual acceptance extends that baseline across six workstreams: coordinate/candidate calibration, detail and mobile path, filter/layer explanation, share-poster communication, data health/performance, and Agent/acceptance governance.
+Updated: 2026-06-25
 
 ## Summary
 
-This checklist makes the Scheme 4 travel journal visual direction testable. Visual polish is accepted only when the app remains map-first, readable, and efficient.
+P19 preserves the accepted Scheme 4 travel-journal direction and P18 trust baseline. P20 extends that baseline with personal data governance. P21 extends release readiness with local read-only share and `.foodmap.json` portability. P22 improves interaction readability over those accepted flows. P23 corrects the remaining mobile/narrow-screen readability gaps and adds full PRD screenshot evidence. New UI must remain map-first, readable, local-first, and must not imply cloud or public sharing.
 
 ## Required Tokens
 
@@ -22,81 +20,103 @@ This checklist makes the Scheme 4 travel journal visual direction testable. Visu
 | `--color-gold` | `#D99A2B` | Rating stars |
 | `--color-danger` | `#B94A3A` | Destructive actions |
 
+## P19 Visual Requirements
+
+| Area | Requirement |
+| --- | --- |
+| Current viewport poster | Mode selector clearly distinguishes `当前筛选` and `当前视野`; source count and empty state are visible before export |
+| Poster preview | Title, mode, count, tag summary, generated time, and export action fit without clipping |
+| Data health center | Health groups are compact, readable, and action-oriented without looking like a generic admin table |
+| Health risk display | Pending/high-risk/manual/skipped states remain visually explicit; uncertainty must not be hidden |
+| Detail and pending flows | P18 candidate evidence, pin move audit, map fallback, and Agent suggestion states remain visually distinct |
+| Map-first layout | New panels do not demote the map or permanently cover primary map controls |
+| Responsive | 390x844, 430x932, 768x900, 1280x820 do not clip core buttons or text |
+
+## P20 Visual Requirements
+
+| Area | Requirement |
+| --- | --- |
+| Governance workbench | Issue groups, queue, progress, and next actions are scannable without demoting the map |
+| Batch preview | Affected records are listed before commit; confirm/cancel hierarchy is clear |
+| Duplicate comparison | Name, address, distance, tags, photos, rating, time, and retained/discarded fields are comparable without implying auto-merge |
+| Import conflict preview | New/update/duplicate/risk/skipped/invalid groups are visible before write; cancel no-op is clear |
+| Maintenance history | Journal entries read as audit history, not editable source facts |
+| Agent boundary states | Agent suggestions look advisory; prohibited writes show structured refusal or disabled state |
+| Responsive governance | 390x844, 430x932, 768x900, 1280x820 keep governance, duplicate compare, import preview, and history reachable |
+
+## P21 Visual Requirements
+
+| Area | Requirement |
+| --- | --- |
+| Snapshot generation | Local/read-only meaning, title, place count, layer count, thumbnail count, and generated time are visible before export/open |
+| Export/import dialog | Export and import actions are clear; import errors are visible and do not look like success |
+| Read-only share page | Share page displays title, snapshot time, layers, map pins, details, thumbnails, rating, visit date, tags, address, and notes |
+| Read-only guard | No create, edit, delete, upload, save, account, cloud, or public-link controls are visible |
+| Missing snapshot fallback | Copy explains the snapshot is local and requires importing the matching `.foodmap.json` |
+| Clean profile path | Import success leads to the share route without showing workspace edit controls |
+| Responsive portability | 390x844, 430x932, 768x900, 1280x820 keep export/import/share/fallback actions reachable |
+
+## P22 Visual Requirements
+
+| Area | Requirement |
+| --- | --- |
+| Standalone share shell | Desktop share page shows readonly notice, layer panel, map, and detail panel without editable workspace chrome |
+| Mobile share navigation | Mobile share page provides clear 图层/清单/详情 navigation and does not hide the map permanently |
+| Missing snapshot recovery | Missing snapshot page has a direct `.foodmap.json` import action and visible error copy |
+| Wide workspace panels | Data health and governance panels are wide enough for Chinese text and action buttons |
+| Compact mobile dock | Mobile top dock is short, opaque, and does not crowd bottom actions or map inspection |
+| Intent labels | `数据包`, `分享图`, and `快照` visually read as different actions |
+
+## P23 Visual Requirements
+
+| Area | Requirement |
+| --- | --- |
+| Mobile share summary | Selecting a shared place on mobile first shows a compact summary; full detail requires an explicit action |
+| Mobile share navigation | Bottom navigation remains reachable and must not cover the selected-place summary or full detail actions |
+| 320px workspace | Search, quick filters, map surface, and bottom actions fit without critical overlap or unreadable labels |
+| Health/governance readability | Tabs, queue rows, explanations, and action buttons wrap horizontally before turning into narrow vertical text |
+| Full acceptance report | HTML report includes screenshots for workspace, import/export, personal map, detail, health, governance, poster, share, missing snapshot, invalid import, and mobile paths |
+| False acceptance guard | Screenshots must match implemented UI and report must state residual limits instead of claiming unsupported cloud/backend/realtime POI features |
+
 ## Desktop Checklist
 
 Viewports: `2048x768`, `1440x900`, `1280x820`.
 
 - Map is the largest visible surface.
-- Left layer panel does not cover top search or right detail.
-- Right detail drawer remains fully visible; compact desktop may use narrower width if content remains readable.
+- Poster composer mode controls fit and cannot wrap into unreadable chips.
+- Data health center can open without covering all map context.
+- Governance workbench can open without turning the workspace into a full-screen admin table.
+- Duplicate comparison and import conflict preview show evidence in aligned, readable sections.
 - Detail drawer scrolls internally when content is long.
-- Search, add, filter, and layer controls are visible within 3 seconds.
-- Selected marker has stable color/outline state without flicker.
-- Decoration is limited to one subtle paper/tape/stamp element in the main view.
+- Filter summary, health summary, and poster source count agree with visible state.
+- Selected marker state remains stable during poster/health interactions.
 - Text does not overflow buttons, chips, drawers, or cards.
-- Homepage filter dock never shows half buttons or clipped action text.
-- Pending workbench cards show status, candidate, and action hierarchy without becoming an admin table.
+- P22 health/governance right panels do not collapse into narrow unreadable strips.
+
+## Tablet Checklist
+
+Viewport: `768x900`.
+
+- Map, detail, filter, health, and poster paths remain mutually understandable.
+- Side panels do not overlap into an unusable stack.
+- Poster preview and mode controls remain reachable.
+- Health groups remain scannable and actions are tappable.
+- Governance queue, duplicate compare, import preview, and history can be reached without panel stacking.
 
 ## Mobile Checklist
 
 Viewports: `390x844`, `430x932`.
 
 - Map remains the primary surface.
-- Top search does not cover critical markers.
-- Bottom action bar has four primary entries: 图层, 筛选, 清单, 新增.
-- Details, layer, and filter panels use bottom sheets.
-- Bottom sheet controls remain tappable and do not overlap system-safe areas.
-- Full-screen editor fields are large enough for touch.
-- Import/export is not forced into the main bottom action bar.
-- Detail, pending workbench, and pin-move confirmation controls remain reachable with one-handed scrolling.
-- Map does not scroll behind the detail sheet into blank space.
-
-## P16 Flow Checklist
-
-- Empty personal map is visually distinct from the optional scanlist reference layer.
-- Candidate cards are compact but readable: name, address, source, confidence, distance, and reasons do not wrap into an unusable block.
-- Candidate selection has a visible selected state and does not imply the place has already been saved.
-- Location permission denied/fallback copy is visible without alarming the user or blocking the editor.
-- External map handoff appears in the saved place detail, not in the unsaved candidate list.
-- Copy fallback is visible when coordinates are missing or link generation is disabled.
-- Poster export preview/action reflects the current filter and does not suggest hidden scanlist pins are personal places.
-- Mobile candidate list, detail drawer, filter sheet, and export flow remain mutually exclusive; no bottom bar or status bar persists over modal flows.
-
-## P17 Flow Checklist
-
-- Pending count is visible and opens a focused workbench, not an ambiguous layer panel.
-- Pending/high-risk locations are visually distinct from verified personal places.
-- Detail page prioritizes status, editable tags, core actions, photos, rating/time/address, calibration and notes in that order.
-- Tag chips support readable add/remove affordances and do not wrap into unusable columns.
-- Rating stars reflect normalized five-star value; raw percent score is shown as supporting information when available.
-- Manual pin move mode clearly indicates active state, cancel, and confirm.
-- External map/navigation is disabled or downgraded when the coordinate is not trustworthy.
-- Pin selected state uses color/outline only; no flash, shadow jump, or temporary wrong color.
-- Filter dock uses high-frequency switches and hides/relocates low-frequency actions before clipping.
-- Share-poster preview uses the current filtered places and shows title, count, tag summary and generated time.
-- Real-data visual review includes scanlist, reference layer, personal favorites and pending places together.
-
-## P18 Flow Checklist
-
-- W18-A candidate search entry is visible in pending detail and workbench without crowding the map; fallback actions are readable when no provider key exists.
-- W18-A candidate cards expose source, address, confidence, coordinate accuracy, evidence, and risk reasons without collapsing into unreadable text blocks.
-- W18-A manual pin move audit preview clearly separates old coordinate, new coordinate, cancel, and confirm.
-- W18-B detail first screen prioritizes status, name, editable tags, core actions, coordinate trust, and map fallback before long photos or notes.
-- W18-B mobile detail uses progressive disclosure; advanced candidate history, long notes, and photos are reachable but not forced into the first screen.
-- W18-C homepage filter summary explains visible count, active tags/status/source/layers, pending count, and clear-filter action without clipped chips.
-- W18-C layer/filter controls do not look like unrelated floating bubbles and do not obscure selected pin popups.
-- W18-D share-poster composer shows editable title, export mode, point count, tag summary, and preview before download.
-- W18-D current viewport and current filtered-result modes are visually distinct before export.
-- W18-E data health report makes verified, pending, high-risk, and manually adjusted places visible; it must not visually hide uncertainty.
-- W18-E 500/1000/3000 point smoke screenshots must still show usable map, filters, list/detail entry, and share preview entry.
-- W18-F Agent-submitted candidates must look like suggestions requiring confirmation, not system-approved facts.
-
-## Share View Checklist
-
-- Share page includes local read-only copy.
-- Share page is visually quieter than workspace.
-- It includes map, title, snapshot time, layers, and details.
-- It excludes create, edit, delete, upload, and save controls.
+- Bottom action bar and bottom sheets do not overlap system-safe areas.
+- Top filter dock remains compact and does not compete with the map as the primary surface.
+- On 320px and 390px widths, quick filters remain tappable and do not hide the map as the primary surface.
+- Poster composer can switch modes and show count/empty state.
+- Data health center can open and navigate to a record without hidden controls.
+- Governance workbench can preview a batch action and cancel without hidden controls.
+- Duplicate comparison and import conflict preview use bottom sheet or full-screen modal patterns without clipping actions.
+- Detail core actions, candidate search, manual move, map fallback, and share entry remain reachable.
+- Long names, long tags, and long addresses wrap cleanly.
 
 ## Negative Checks
 
@@ -109,47 +129,70 @@ Reject visual implementation if any of these appear:
 - Dark cyber or glassmorphism visual direction.
 - Mobile desktop sidebars.
 - Public link, login, cloud sync, or collaboration UI.
+- Current viewport mode that visually appears enabled but exports a different point set.
+- Data health UI that hides or softens pending/high-risk/manual states.
+- Governance UI that looks like a backend admin console.
+- Batch action UI that writes without an obvious preview and confirmation step.
+- Duplicate suggestion UI that visually implies automatic merge/delete.
+- Import UI that appears to write before conflict preview.
+- Share UI that implies a public permanent link or cloud share exists.
+- Share page exposing workspace edit, delete, upload, save, account, or cloud controls.
+- Import error that appears successful or hides whether data changed.
 
 ## Evidence
 
-Save P16 visual evidence to:
+Save P19 visual evidence to:
 
 ```text
-docs/active/evidence/p16/desktop-1440x900-workspace.png
-docs/active/evidence/p16/desktop-1440x900-place-editor-candidates.png
-docs/active/evidence/p16/desktop-1440x900-place-detail-map-link.png
-docs/active/evidence/p16/desktop-1440x900-poster-export.png
-docs/active/evidence/p16/mobile-390x844-workspace.png
-docs/active/evidence/p16/mobile-390x844-place-editor-candidates.png
-docs/active/evidence/p16/mobile-390x844-place-detail-map-link.png
-docs/active/evidence/p16/mobile-390x844-poster-export.png
+docs/active/evidence/p19/mobile-390-data-health.png
+docs/active/evidence/p19/mobile-390-poster.png
+docs/active/evidence/p19/mobile-430-data-health.png
+docs/active/evidence/p19/mobile-430-poster.png
+docs/active/evidence/p19/tablet-768-data-health.png
+docs/active/evidence/p19/tablet-768-poster.png
+docs/active/evidence/p19/desktop-1280-data-health.png
+docs/active/evidence/p19/desktop-1280-poster.png
 ```
 
-Save P17 visual evidence to:
+Historical P8-P18 visual evidence remains under `docs/history` or `docs/active/evidence/p16`, `docs/active/evidence/p17`, and `docs/active/evidence/p18`.
+
+Save P20 visual evidence to:
 
 ```text
-docs/active/evidence/p17/desktop-2048x768-filter-dock.png
-docs/active/evidence/p17/desktop-1440x900-pending-workbench.png
-docs/active/evidence/p17/desktop-1280x900-place-detail.png
-docs/active/evidence/p17/mobile-390x844-main-path.png
-docs/active/evidence/p17/mobile-430x932-pin-move.png
-docs/active/evidence/p17/tablet-768x900-filter-and-detail.png
-docs/active/evidence/p17/desktop-1440x900-share-poster-preview.png
+docs/active/evidence/p20/mobile-390-governance.png
+docs/active/evidence/p20/mobile-430-duplicate-compare.png
+docs/active/evidence/p20/tablet-768-import-conflict.png
+docs/active/evidence/p20/tablet-768-history.png
+docs/active/evidence/p20/desktop-1280-governance.png
+docs/active/evidence/p20/desktop-1280-import-conflict.png
 ```
 
-Save P18 visual evidence to:
+Save P21 visual evidence to:
 
 ```text
-docs/active/evidence/p18/desktop-1440x900-candidate-search-fallback.png
-docs/active/evidence/p18/desktop-1440x900-candidate-evidence-card.png
-docs/active/evidence/p18/desktop-1280x900-pin-move-audit-preview.png
-docs/active/evidence/p18/mobile-390x844-detail-progressive-disclosure.png
-docs/active/evidence/p18/mobile-430x932-candidate-search.png
-docs/active/evidence/p18/tablet-768x900-filter-summary.png
-docs/active/evidence/p18/desktop-2048x768-filter-layer-summary.png
-docs/active/evidence/p18/desktop-1440x900-share-poster-composer.png
-docs/active/evidence/p18/desktop-1440x900-data-health-report.png
-docs/active/evidence/p18/desktop-1440x900-large-dataset-smoke.png
+docs/active/evidence/p21/mobile-390-share-readonly.png
+docs/active/evidence/p21/mobile-430-import-fallback.png
+docs/active/evidence/p21/tablet-768-export-summary.png
+docs/active/evidence/p21/tablet-768-clean-import.png
+docs/active/evidence/p21/desktop-1280-share-readonly.png
+docs/active/evidence/p21/desktop-1280-invalid-import.png
 ```
 
-Historical P8-P14 visual evidence is archived under `docs/history/p8-p14/evidence/p8-p14/`.
+Save P22 visual evidence to:
+
+```text
+docs/active/evidence/p22/desktop-share-viewer.png
+docs/active/evidence/p22/mobile-share-navigation.png
+docs/active/evidence/p22/desktop-governance-readable.png
+docs/active/evidence/p22/mobile-workspace-compact.png
+```
+
+Save P23 correction and full acceptance evidence to:
+
+```text
+docs/active/evidence/p23/mobile-share-summary-first.png
+docs/active/evidence/p23/mobile-share-full-detail.png
+docs/active/evidence/p23/mobile-320-quick-filters.png
+docs/active/evidence/p23/desktop-health-governance-readable.png
+docs/active/evidence/full-acceptance-2026-06-25/
+```

@@ -1,4 +1,5 @@
 import type { FoodPlace } from "./types";
+import { assessCoordinateRisk } from "./coordinateRisk";
 
 const SYSTEM_TAGS = new Set([
   "我的收藏",
@@ -20,6 +21,15 @@ export type LocationStatus = "verified" | "pending" | "manual-adjusted" | "block
 export interface LocationStatusBadge {
   label: string;
   tone: LocationStatusTone;
+}
+
+export interface PersonalDataHealthReport {
+  total: number;
+  verified: FoodPlace[];
+  pending: FoodPlace[];
+  highRisk: FoodPlace[];
+  manualAdjusted: FoodPlace[];
+  skipped: FoodPlace[];
 }
 
 export function isSystemLocationTag(tag: string): boolean {
@@ -70,4 +80,43 @@ export function deriveLocationStatus(place: Pick<FoodPlace, "tags" | "mapAccurac
 
 export function isPendingLocationStatus(status: LocationStatus): boolean {
   return status === "pending" || status === "blocked" || status === "skipped";
+}
+
+export function derivePersonalDataHealthReport(places: FoodPlace[]): PersonalDataHealthReport {
+  const pending: FoodPlace[] = [];
+  const highRisk: FoodPlace[] = [];
+  const manualAdjusted: FoodPlace[] = [];
+  const skipped: FoodPlace[] = [];
+  const verified: FoodPlace[] = [];
+
+  for (const place of places) {
+    const tags = new Set(place.tags);
+    const status = deriveLocationStatus(place);
+    const risk = assessCoordinateRisk(place);
+    const isHighRisk = tags.has("位置高风险") || risk.level === "blocked";
+    const isSkipped = tags.has("暂时跳过") || /暂时跳过|跳过确认/.test(place.notes);
+    const isManualAdjusted = tags.has("手动校准") || /手动(拖动|挪动|校准)|原坐标/.test(place.notes);
+    const isPending = status === "pending"
+      || tags.has("位置待确认")
+      || tags.has("待校准")
+      || tags.has("近似坐标")
+      || place.mapAccuracy === "approximate";
+
+    if (isHighRisk) highRisk.push(place);
+    if (isSkipped) skipped.push(place);
+    if (isManualAdjusted) manualAdjusted.push(place);
+    if (isPending) pending.push(place);
+    if (!isHighRisk && !isSkipped && !isPending && (place.mapAccuracy === "exact" || tags.has("已核验") || tags.has("精确坐标") || status === "verified")) {
+      verified.push(place);
+    }
+  }
+
+  return {
+    total: places.length,
+    verified,
+    pending,
+    highRisk,
+    manualAdjusted,
+    skipped
+  };
 }

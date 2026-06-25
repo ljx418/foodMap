@@ -5,11 +5,11 @@ import { gcj02ToWgs84, toMapDisplayPoint, wgs84ToGcj02 } from "../domain/coordin
 import { assessCoordinateRisk, isLikelyWaterCoordinate } from "../domain/coordinateRisk";
 import { getExternalMapCandidatesForPlace } from "../domain/externalMapCandidates";
 import { buildExternalMapLink, buildExternalMapSearchFallback } from "../domain/externalMapLinks";
-import { deriveLocationStatus, getLocationStatusBadges, getUserFacingTags } from "../domain/locationStatus";
+import { deriveLocationStatus, derivePersonalDataHealthReport, getLocationStatusBadges, getUserFacingTags } from "../domain/locationStatus";
 import { searchAmapPlaceCandidates } from "../domain/liveMapSearch";
 import { applyManualPinMove, canManuallyMovePlace } from "../domain/manualPinMove";
-import { createMapPosterSvg } from "../domain/mapPoster";
-import { buildCalibrationCandidates, candidateSolidifiesPrecisePlace } from "../domain/placeCalibration";
+import { buildPosterSourceSet, createMapPosterSvg, filterPlacesByViewport } from "../domain/mapPoster";
+import { buildCalibrationCandidates, candidateSolidifiesPrecisePlace, confirmPlaceCandidate } from "../domain/placeCalibration";
 import { normalizeAgentCandidates, parsePlaceCandidatesFromText, rankPlaceCandidates } from "../domain/placeRecognition";
 import { searchPlaceCandidates } from "../domain/placeSearch";
 import { describeUserLocation, userLocationToPoint } from "../domain/userLocation";
@@ -22,7 +22,7 @@ import {
 import { groupsFromTags, tagsFromGroups } from "../domain/tagGroups";
 import { findDuplicatePlaceWarning } from "../domain/duplicates";
 import type { FoodPlace } from "../domain/types";
-import { decodeSnapshotFile, encodeSnapshot } from "../persistence/importExportCodec";
+import { decodeSnapshotFile, encodeSnapshot, summarizeSnapshot, validateSnapshotPackageText } from "../persistence/importExportCodec";
 import { AMAP_WUHAN_SCANLIST } from "../recommendations/amapWuhanScanlist";
 import { recommendationToFoodPlace, recommendationToMapPlace } from "../recommendations/recommendationUtils";
 import {
@@ -36,6 +36,17 @@ import { classifyRefreshDiff } from "../recommendations/refreshDiff";
 import { getImageEvidenceView } from "../recommendations/evidence";
 import { filterRecommendations } from "../recommendations/filters";
 import { getRecommendationFilterTags } from "../recommendations/tags";
+import {
+  deriveGovernanceIssueGroups,
+  deriveGovernanceReport,
+  journalEntryForImport,
+  previewDuplicateDecision,
+  planGovernanceBatchAction,
+  planImportConflicts,
+  previewPlaceMerge,
+  setImportConflictStrategy,
+  suggestDuplicatePlaces
+} from "../domain/governance";
 import {
   MAP_ADMITTED_PERSONAL_FAVORITE_PINS,
   MAP_READY_PERSONAL_FAVORITE_PINS,
@@ -222,6 +233,74 @@ describe("FoodMap domain", () => {
     expect(movedExact.mapAccuracy).toBe("exact");
   });
 
+  it("confirms precise place candidates through a shared domain transform", () => {
+    const pendingPlace: FoodPlace = {
+      ...place,
+      id: "candidate-confirm-pending",
+      name: "待确认候选店",
+      longitude: 114.2,
+      latitude: 30.5,
+      city: "武汉",
+      tags: ["待校准", "近似坐标", "位置待确认", "位置高风险"],
+      mapAccuracy: "approximate"
+    };
+    const next = confirmPlaceCandidate(pendingPlace, {
+      id: "candidate-exact",
+      name: "候选精确店",
+      address: "武汉市江汉区精确路 1 号",
+      city: "武汉",
+      longitude: 114.31,
+      latitude: 30.59,
+      coordinateSystem: "gcj02",
+      tags: ["湖北菜"],
+      source: "map-provider",
+      sourceLabel: "高德地图",
+      confidence: 0.88,
+      coordinateAccuracy: "exact",
+      reasons: ["地图候选"]
+    }, "2026-06-23T12:00:00.000+08:00");
+
+    expect(next.name).toBe("候选精确店");
+    expect(next.longitude).toBe(114.31);
+    expect(next.latitude).toBe(30.59);
+    expect(next.coordinateSystem).toBe("gcj02");
+    expect(next.mapAccuracy).toBe("exact");
+    expect(next.tags).toEqual(expect.arrayContaining(["已核验", "精确坐标", "湖北菜", "高德地图"]));
+    expect(next.tags).not.toEqual(expect.arrayContaining(["待校准", "近似坐标", "位置待确认", "位置高风险"]));
+    expect(next.notes).toContain("候选确认固化：候选精确店");
+  });
+
+  it("keeps approximate confirmed candidates pending instead of silently verifying them", () => {
+    const pendingPlace: FoodPlace = {
+      ...place,
+      id: "candidate-confirm-approx",
+      name: "待确认近似店",
+      longitude: 114.2,
+      latitude: 30.5,
+      city: "武汉",
+      tags: ["待校准", "近似坐标", "位置待确认"],
+      mapAccuracy: "approximate"
+    };
+    const next = confirmPlaceCandidate(pendingPlace, {
+      id: "candidate-approx",
+      name: "候选近似店",
+      city: "武汉",
+      longitude: 114.21,
+      latitude: 30.51,
+      tags: [],
+      source: "manual",
+      sourceLabel: "当前待校准图钉",
+      confidence: 0.64,
+      coordinateAccuracy: "approximate",
+      reasons: ["当前坐标仅作为上图占位"]
+    }, "2026-06-23T12:05:00.000+08:00");
+
+    expect(next.mapAccuracy).toBe("approximate");
+    expect(next.tags).toEqual(expect.arrayContaining(["待校准", "近似坐标", "当前待校准图钉"]));
+    expect(next.tags).not.toEqual(expect.arrayContaining(["已核验", "精确坐标"]));
+    expect(next.notes).toContain("仍需校准");
+  });
+
   it("filters by keyword, tag and rating", () => {
     const result = filterPlaces([place], DEFAULT_LAYERS, {
       ...EMPTY_FILTER,
@@ -245,6 +324,53 @@ describe("FoodMap domain", () => {
       { label: "高风险位置", tone: "danger" },
       { label: "近似坐标", tone: "neutral" }
     ]));
+  });
+
+  it("derives personal data health groups without mutating places", () => {
+    const verified: FoodPlace = {
+      ...place,
+      id: "health-verified",
+      tags: ["已核验", "精确坐标"],
+      mapAccuracy: "exact"
+    };
+    const pending: FoodPlace = {
+      ...place,
+      id: "health-pending",
+      tags: ["待校准", "近似坐标", "位置待确认"],
+      mapAccuracy: "approximate"
+    };
+    const highRisk: FoodPlace = {
+      ...place,
+      id: "health-high-risk",
+      longitude: 114.31,
+      latitude: 30.59,
+      tags: ["位置高风险", "待校准"],
+      mapAccuracy: "approximate"
+    };
+    const manualAdjusted: FoodPlace = {
+      ...place,
+      id: "health-manual",
+      tags: ["已核验", "精确坐标", "手动校准"],
+      mapAccuracy: "exact",
+      notes: "用户手动拖动图钉校准。原坐标 114.1,30.1"
+    };
+    const skipped: FoodPlace = {
+      ...place,
+      id: "health-skipped",
+      tags: ["暂时跳过", "位置待确认"],
+      mapAccuracy: "approximate",
+      notes: "待确认处理：用户暂时跳过。"
+    };
+    const original = JSON.stringify([verified, pending, highRisk, manualAdjusted, skipped]);
+    const report = derivePersonalDataHealthReport([verified, pending, highRisk, manualAdjusted, skipped]);
+
+    expect(report.total).toBe(5);
+    expect(report.verified.map((item) => item.id)).toEqual(["health-verified", "health-manual"]);
+    expect(report.pending.map((item) => item.id)).toEqual(expect.arrayContaining(["health-pending", "health-high-risk", "health-skipped"]));
+    expect(report.highRisk.map((item) => item.id)).toEqual(expect.arrayContaining(["health-high-risk"]));
+    expect(report.manualAdjusted.map((item) => item.id)).toEqual(["health-manual"]);
+    expect(report.skipped.map((item) => item.id)).toEqual(["health-skipped"]);
+    expect(JSON.stringify([verified, pending, highRisk, manualAdjusted, skipped])).toBe(original);
   });
 
   it("supports source and distance filters for personal places", () => {
@@ -480,6 +606,58 @@ describe("FoodMap domain", () => {
     expect(svg).toContain("85 个个人图钉");
   });
 
+  it("builds current viewport poster source from real bounds without falling back to current filter", () => {
+    const inside: FoodPlace = {
+      ...place,
+      id: "inside-wuhan",
+      longitude: 114.3,
+      latitude: 30.6,
+      coordinateSystem: "wgs84",
+      tags: ["海报验收"]
+    };
+    const outside: FoodPlace = {
+      ...place,
+      id: "outside-wuhan",
+      longitude: 113.2,
+      latitude: 29.8,
+      coordinateSystem: "wgs84",
+      tags: ["海报验收"]
+    };
+    const result = buildPosterSourceSet([inside, outside], "current-viewport", {
+      west: 114.2,
+      south: 30.5,
+      east: 114.4,
+      north: 30.7,
+      coordinateSystem: "wgs84"
+    });
+    expect(result.mode).toBe("current-viewport");
+    expect(result.count).toBe(1);
+    expect(result.places.map((item) => item.id)).toEqual(["inside-wuhan"]);
+    expect(result.emptyReason).toBeUndefined();
+  });
+
+  it("keeps current viewport poster unavailable without map bounds and excludes reference pins", () => {
+    const personal: FoodPlace = { ...place, id: "personal-visible", longitude: 114.3, latitude: 30.6 };
+    const recommendation: FoodPlace = { ...place, id: "recommendation:1", longitude: 114.3, latitude: 30.6 };
+    const dingtuyi: FoodPlace = { ...place, id: "dingtuyi-share:1", longitude: 114.3, latitude: 30.6 };
+
+    const currentFilter = buildPosterSourceSet([personal, recommendation, dingtuyi], "current-filter");
+    expect(currentFilter.count).toBe(1);
+    expect(currentFilter.places.map((item) => item.id)).toEqual(["personal-visible"]);
+
+    const unavailable = buildPosterSourceSet([personal], "current-viewport");
+    expect(unavailable.count).toBe(0);
+    expect(unavailable.unavailableReason).toContain("地图视野");
+  });
+
+  it("returns explicit empty viewport poster state", () => {
+    const outside: FoodPlace = { ...place, id: "outside-visible", longitude: 113.2, latitude: 29.8, coordinateSystem: "wgs84" };
+    expect(filterPlacesByViewport([outside], { west: 114.2, south: 30.5, east: 114.4, north: 30.7 })).toHaveLength(0);
+    const result = buildPosterSourceSet([outside], "current-viewport", { west: 114.2, south: 30.5, east: 114.4, north: 30.7 });
+    expect(result.count).toBe(0);
+    expect(result.emptyReason).toContain("当前地图视野内");
+  });
+
   it("warns before saving a near duplicate personal place", () => {
     const warning = findDuplicatePlaceWarning(
       { name: "南门面馆(分店)", longitude: 116.4002, latitude: 39.9002 },
@@ -502,6 +680,63 @@ describe("FoodMap domain", () => {
       exportedAt: "2026-06-01T00:00:00.000Z"
     });
     expect(decodeSnapshotFile(text).places[0].name).toBe("南门面馆");
+  });
+
+  it("summarizes and validates a portable readonly snapshot package", () => {
+    const snapshot = {
+      id: "portable-snapshot",
+      title: "可携带快照",
+      places: [{ ...place, photoIds: ["photo-1"] }],
+      layers: DEFAULT_LAYERS.slice(0, 2),
+      photos: [
+        {
+          id: "photo-1",
+          placeId: "p1",
+          fileName: "noodle.png",
+          mimeType: "image/png",
+          thumbnailDataUrl: "data:image/png;base64,abc",
+          createdAt: "2026-06-01T00:00:00.000Z"
+        }
+      ],
+      exportedAt: "2026-06-01T00:00:00.000Z"
+    };
+    const summary = summarizeSnapshot(snapshot);
+    expect(summary).toMatchObject({
+      snapshotId: "portable-snapshot",
+      placeCount: 1,
+      layerCount: 2,
+      thumbnailCount: 1,
+      readonly: true
+    });
+    const validation = validateSnapshotPackageText(encodeSnapshot(snapshot));
+    expect(validation.ok).toBe(true);
+    expect(validation.summary?.thumbnailCount).toBe(1);
+  });
+
+  it("rejects malformed portable snapshot packages before writes", () => {
+    const unsupported = validateSnapshotPackageText(JSON.stringify({ schema: "foodmap.share", version: 99, snapshot: {} }));
+    expect(unsupported.ok).toBe(false);
+    expect(unsupported.errors.join("；")).toContain("version 1");
+
+    const malformedThumbnail = validateSnapshotPackageText(encodeSnapshot({
+      id: "bad-thumbnail",
+      title: "坏缩略图",
+      places: [{ ...place, photoIds: ["photo-1"] }],
+      layers: DEFAULT_LAYERS.slice(0, 1),
+      photos: [
+        {
+          id: "photo-1",
+          placeId: "p1",
+          fileName: "bad.txt",
+          mimeType: "text/plain",
+          thumbnailDataUrl: "https://example.com/original.png",
+          createdAt: "2026-06-01T00:00:00.000Z"
+        }
+      ],
+      exportedAt: "2026-06-01T00:00:00.000Z"
+    }));
+    expect(malformedThumbnail.ok).toBe(false);
+    expect(malformedThumbnail.errors.join("；")).toContain("thumbnailDataUrl");
   });
 });
 
@@ -664,5 +899,165 @@ describe("recommendation verification", () => {
       expect(recommendation.coverImageUrl, recommendation.name).toBeTruthy();
       expect(recommendation.imageEvidence?.matched, recommendation.name).toBe(true);
     }
+  });
+
+  it("derives P20 governance groups and safe batch preview without mutating places", () => {
+    const pending: FoodPlace = {
+      id: "p20-pending",
+      name: "P20 待确认店",
+      longitude: 114.3,
+      latitude: 30.6,
+      city: "武汉",
+      layerId: DEFAULT_LAYERS[0].id,
+      tags: ["待校准", "近似坐标"],
+      rating: 4,
+      visitedAt: "2026-06-24",
+      notes: "",
+      photoIds: [],
+      createdAt: "2026-06-24T00:00:00.000Z",
+      updatedAt: "2026-06-24T00:00:00.000Z",
+      mapAccuracy: "approximate"
+    };
+    const highRisk = { ...pending, id: "p20-risk", name: "P20 高风险店", tags: ["位置高风险"], notes: "需要复核" };
+    const original = JSON.stringify([pending, highRisk]);
+    const groups = deriveGovernanceIssueGroups([pending, highRisk]);
+    expect(groups.map((group) => group.kind)).toEqual(expect.arrayContaining(["pending", "high-risk"]));
+
+    const pendingGroup = groups.find((group) => group.kind === "pending");
+    const plan = planGovernanceBatchAction("mark-reviewed", pendingGroup?.issues ?? []);
+    expect(plan.summary).toContain("确认前不会写入");
+    expect(plan.affectedPlaceIds).toContain("p20-pending");
+    expect(JSON.stringify([pending, highRisk])).toBe(original);
+  });
+
+  it("suggests duplicate places and builds explicit merge preview", () => {
+    const primary: FoodPlace = {
+      id: "p20-dup-a",
+      name: "万松小院荷花垄",
+      longitude: 114.266,
+      latitude: 30.59,
+      city: "武汉",
+      layerId: DEFAULT_LAYERS[0].id,
+      tags: ["湖北菜", "已核验"],
+      rating: 4,
+      visitedAt: "2026-06-24",
+      notes: "第一次记录",
+      photoIds: ["photo-a"],
+      createdAt: "2026-06-20T00:00:00.000Z",
+      updatedAt: "2026-06-24T00:00:00.000Z",
+      mapAccuracy: "exact"
+    };
+    const duplicate: FoodPlace = {
+      ...primary,
+      id: "p20-dup-b",
+      name: "万松小院（荷花垄店）",
+      longitude: 114.2662,
+      latitude: 30.5901,
+      tags: ["湖北菜", "想再去"],
+      rating: 5,
+      notes: "第二次记录",
+      photoIds: ["photo-b"],
+      updatedAt: "2026-06-23T00:00:00.000Z"
+    };
+    const suggestions = suggestDuplicatePlaces([primary, duplicate]);
+    expect(suggestions).toHaveLength(1);
+    expect(suggestions[0].evidence.join(" ")).toContain("距离");
+    const preview = previewPlaceMerge(suggestions[0]);
+    expect(preview.retained.id).toBe(primary.id);
+    expect(preview.removed.id).toBe(duplicate.id);
+    expect(preview.merged.photoIds).toEqual(expect.arrayContaining(["photo-a", "photo-b"]));
+    expect(preview.journalEntries[0].summary).toContain("合并重复地点");
+  });
+
+  it("plans import conflicts before writes and creates journal entries", () => {
+    const existing: FoodPlace = {
+      id: "p20-import-existing",
+      name: "P20 导入已有店",
+      longitude: 114.31,
+      latitude: 30.61,
+      city: "武汉",
+      layerId: DEFAULT_LAYERS[0].id,
+      tags: ["已核验"],
+      rating: 4,
+      visitedAt: "2026-06-24",
+      notes: "",
+      photoIds: [],
+      createdAt: "2026-06-20T00:00:00.000Z",
+      updatedAt: "2026-06-24T00:00:00.000Z",
+      mapAccuracy: "exact"
+    };
+    const snapshot = {
+      id: "snapshot-p20-import",
+      title: "P20 导入验收",
+      exportedAt: "2026-06-24T00:00:00.000Z",
+      layers: DEFAULT_LAYERS,
+      photos: [],
+      places: [
+        { ...existing, rating: 5 },
+        { ...existing, id: "p20-import-new", name: "P20 导入新店", longitude: 114.32 },
+        { ...existing, id: "p20-import-dup", name: "P20 导入已有店（分店）", longitude: 114.3101 }
+      ]
+    };
+    const plan = planImportConflicts(snapshot, [existing]);
+    expect(plan.counts.update).toBe(1);
+    expect(plan.counts.create).toBe(1);
+    expect(plan.counts.duplicate).toBe(1);
+    const entry = journalEntryForImport(plan.items[0]);
+    expect(entry.summary).toContain("导入处理");
+  });
+
+  it("covers P20-C stale-reference, three batch actions, duplicate decisions, import strategies, and report", () => {
+    const base: FoodPlace = {
+      id: "p20c-base",
+      name: "P20C 基准店",
+      longitude: 114.3036,
+      latitude: 30.6072,
+      city: "武汉",
+      layerId: DEFAULT_LAYERS[0].id,
+      tags: ["已核验"],
+      rating: 4,
+      visitedAt: "2026-06-24",
+      notes: "",
+      photoIds: [],
+      createdAt: "2026-06-24T00:00:00.000Z",
+      updatedAt: "2026-06-24T00:00:00.000Z",
+      mapAccuracy: "exact"
+    };
+    const stale = { ...base, id: "p20c-stale", name: "P20C 过期参考店", tags: ["过期参考"], notes: "stale-reference old evidence" };
+    const duplicateA = { ...base, id: "p20c-dup-a", name: "P20C 热干面", tags: ["热干面"] };
+    const duplicateB = { ...base, id: "p20c-dup-b", name: "P20C 热干面（江岸店）", longitude: 114.3037, latitude: 30.6073, tags: ["热干面", "想再去"] };
+    const groups = deriveGovernanceIssueGroups([stale, duplicateA, duplicateB]);
+    expect(groups.map((group) => group.kind)).toContain("stale-reference");
+    const staleIssues = groups.find((group) => group.kind === "stale-reference")?.issues ?? [];
+    expect(planGovernanceBatchAction("add-to-queue", staleIssues).title).toContain("处理队列");
+    expect(planGovernanceBatchAction("mark-skipped", staleIssues).title).toContain("暂时跳过");
+    expect(planGovernanceBatchAction("apply-tag", staleIssues).title).toContain("治理标签");
+
+    const suggestion = suggestDuplicatePlaces([duplicateA, duplicateB])[0];
+    expect(previewDuplicateDecision(suggestion, "ignore").journalEntries[0].action).toBe("duplicate-ignored");
+    expect(previewDuplicateDecision(suggestion, "keep").journalEntries[0].action).toBe("duplicate-kept");
+    expect(previewDuplicateDecision(suggestion, "merge").journalEntries[0].action).toBe("duplicate-merged");
+
+    const snapshot = {
+      id: "snapshot-p20c-import",
+      title: "P20C 导入策略",
+      exportedAt: "2026-06-24T00:00:00.000Z",
+      layers: DEFAULT_LAYERS,
+      photos: [],
+      places: [
+        { ...base, id: "p20c-import-new", name: "P20C 导入新店" },
+        { ...base, id: "p20c-import-skip", name: "P20C 导入跳过店", tags: ["暂时跳过"] }
+      ]
+    };
+    const plan = planImportConflicts(snapshot, [base]);
+    expect(plan.counts.create).toBe(1);
+    expect(plan.counts.skip).toBe(1);
+    const skipped = setImportConflictStrategy(plan, "p20c-import-new", "skip");
+    expect(skipped.items.find((item) => item.imported.id === "p20c-import-new")?.strategy).toBe("skip");
+
+    const report = deriveGovernanceReport(groups, [suggestion], [previewDuplicateDecision(suggestion, "keep").journalEntries[0]], plan);
+    expect(report.issueCount).toBeGreaterThan(0);
+    expect(report.duplicateSuggestions[0].primaryName).toContain("P20C");
+    expect(report.importSummary?.skip).toBe(1);
   });
 });

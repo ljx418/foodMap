@@ -1,7 +1,7 @@
 import L, { type DivIcon, type LeafletMouseEvent, type Map as LeafletMap, type Marker } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { gcj02ToWgs84, toGcj02Point, toMapDisplayPoint } from "../../domain/coordinates";
-import type { FoodPlace } from "../../domain/types";
+import type { FoodPlace, MapViewportBounds } from "../../domain/types";
 import { DINGTUYI_SHARE_LAYER_ID } from "../../externalShares/dingtuyiWuhanFoodShare";
 import { PERSONAL_FAVORITE_LAYER_ID } from "../../personalFavorites/wuhanPersonalFavorites";
 import type { MapInitializeOptions, MapProviderAdapter, MapSearchResult } from "../MapProviderAdapter";
@@ -23,6 +23,7 @@ export class LeafletProvider implements MapProviderAdapter {
   private placeClick?: (placeId: string) => void;
   private mapClick?: (point: { longitude: number; latitude: number }) => void;
   private placeMove?: (placeId: string, point: { longitude: number; latitude: number }) => void;
+  private viewportChange?: (bounds: MapViewportBounds) => void;
   private hiddenLayers = new Set<string>();
   private draggablePlaceIds = new Set<string>();
   private readonly = false;
@@ -80,9 +81,13 @@ export class LeafletProvider implements MapProviderAdapter {
     this.map.on("zoomstart", this.handleZoomStart);
     this.map.on("zoom", this.handleZoom);
     this.map.on("zoomend", this.handleZoomEnd);
-    this.map.on("zoomend moveend resize", this.scheduleMarkerIconUpdate);
+    this.map.on("zoomend moveend resize", this.handleViewportChanged);
     this.syncMarkers();
-    window.setTimeout(() => this.map?.invalidateSize(), 0);
+    window.setTimeout(() => {
+      this.map?.invalidateSize();
+      this.emitViewportBounds();
+    }, 0);
+    this.emitViewportBounds();
   }
 
   destroy(): void {
@@ -90,7 +95,7 @@ export class LeafletProvider implements MapProviderAdapter {
     this.map?.off("zoomstart", this.handleZoomStart);
     this.map?.off("zoom", this.handleZoom);
     this.map?.off("zoomend", this.handleZoomEnd);
-    this.map?.off("zoomend moveend resize", this.scheduleMarkerIconUpdate);
+    this.map?.off("zoomend moveend resize", this.handleViewportChanged);
     if (this.iconUpdateFrame !== undefined) {
       window.cancelAnimationFrame(this.iconUpdateFrame);
       this.iconUpdateFrame = undefined;
@@ -185,6 +190,11 @@ export class LeafletProvider implements MapProviderAdapter {
 
   onPlaceMove(callback: (placeId: string, point: { longitude: number; latitude: number }) => void): void {
     this.placeMove = callback;
+  }
+
+  onViewportChange(callback: (bounds: MapViewportBounds) => void): void {
+    this.viewportChange = callback;
+    this.emitViewportBounds();
   }
 
   private handleMapClick = (event: LeafletMouseEvent): void => {
@@ -310,6 +320,29 @@ export class LeafletProvider implements MapProviderAdapter {
       this.updateMarkerIcons();
     });
   };
+
+  private handleViewportChanged = (): void => {
+    this.scheduleMarkerIconUpdate();
+    this.emitViewportBounds();
+  };
+
+  private emitViewportBounds(): void {
+    if (!this.map || !this.viewportChange) return;
+    const bounds = this.map.getBounds();
+    const southWest = gcj02ToWgs84({ longitude: bounds.getWest(), latitude: bounds.getSouth() });
+    const northEast = gcj02ToWgs84({ longitude: bounds.getEast(), latitude: bounds.getNorth() });
+    const west = Math.min(southWest.longitude, northEast.longitude);
+    const east = Math.max(southWest.longitude, northEast.longitude);
+    const south = Math.min(southWest.latitude, northEast.latitude);
+    const north = Math.max(southWest.latitude, northEast.latitude);
+    this.viewportChange({
+      west: Number(west.toFixed(6)),
+      south: Number(south.toFixed(6)),
+      east: Number(east.toFixed(6)),
+      north: Number(north.toFixed(6)),
+      coordinateSystem: "wgs84"
+    });
+  }
 
   private applyMarkerSelectionState(record: MarkerRecord, placeId: string): void {
     const element = record.marker.getElement();

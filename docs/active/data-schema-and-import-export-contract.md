@@ -1,15 +1,16 @@
-# FoodMap V1.0 + P17 Data Schema And Import/Export Contract
+# FoodMap V1.0 + P19/P21 Data Schema And Import/Export Contract
 
 ## Summary
 
-This document makes the local data and `.foodmap.json` contracts implementation-ready for FoodMap V1.0 and the active P17 UX trust stage. FoodMap remains local-first, pure frontend, and does not depend on backend storage.
+This document makes the local data and `.foodmap.json` contracts implementation-ready for FoodMap V1.0, the accepted P19/P20-C baselines, and the active P21 local share portability stage. FoodMap remains local-first, pure frontend, and does not depend on backend storage.
 
 ## IndexedDB Contract
 
 Database:
 
 - Name: `foodmap-db`
-- Version: `1`
+- IndexedDB version: `2`
+- `.foodmap.json` package version: `1`
 
 Stores:
 
@@ -20,12 +21,14 @@ Stores:
 | `photos` | `id` | `placeId`, `createdAt` | Original photo blobs and thumbnails |
 | `snapshots` | `id` | `exportedAt` | Local read-only share snapshots |
 | `meta` | `key` | none | App metadata, schema version, first-run flags |
+| `governanceJournal` | `id` | `createdAt` | Local personal-data governance audit entries |
 
-First migration:
+Migration rules:
 
 - Create all stores if missing.
 - Insert default layers only when `layers` is empty.
-- Write `meta.schemaVersion = 1`.
+- IndexedDB version `2` adds `governanceJournal` for the accepted P20-C governance baseline.
+- `.foodmap.json` remains package version `1` for P21 portability; this is intentionally separate from IndexedDB `DB_VERSION`.
 
 Default layers:
 
@@ -118,6 +121,89 @@ Minimum compatibility rule for schema version 1:
 - If `pinMoveAudit` is not persisted, the app must still preserve a visible audit note in `notes` and mark the place as `mapAccuracy = "exact"` plus a visible `手动校准` or equivalent status tag after user confirmation.
 - Automatic candidate confirmation must never erase an existing manual audit without a visible user action.
 
+## P19 Personal Data Health Contract
+
+P19 data health is a derived read model over schema version 1 records. It must not require an IndexedDB migration to start.
+
+Minimum derived groups:
+
+| Group | Derivation Source | Mutation Rule |
+| --- | --- | --- |
+| `verified` | exact coordinates without pending/high-risk/manual/skipped risk markers | Read-only grouping |
+| `pending` | `mapAccuracy="approximate"`, `位置待确认`, candidate/pending risk helpers | Read-only grouping |
+| `high-risk` | `位置高风险`, coordinate risk, suspicious water/bridge/out-of-city flags | Read-only grouping |
+| `manual-adjusted` | `手动校准`, manual audit fallback in notes/tags/mapAccuracy | Read-only grouping |
+| `skipped` | skipped confirmation tags or notes | Read-only grouping |
+
+The health report may include counts, place ids, representative names, and recommended next actions. It must not auto-change `mapAccuracy`, tags, coordinates, or notes.
+
+## P19 Current Viewport Poster Contract
+
+Current viewport poster mode is a view/export selection rule, not a new persistent schema.
+
+Recommended runtime shape:
+
+```ts
+interface MapViewportBounds {
+  west: number;
+  south: number;
+  east: number;
+  north: number;
+  coordinateSystem?: "wgs84" | "gcj02";
+}
+
+interface PosterSourceResult {
+  mode: "current-filter" | "current-viewport";
+  placeIds: string[];
+  count: number;
+}
+```
+
+Rules:
+
+- `current-filter` uses the current filtered personal-place set.
+- `current-viewport` uses the current filtered personal-place set intersected with map bounds.
+- Exported PNG and preview must use the same `placeIds`.
+- Empty viewport state must not silently export a different place set.
+- No additional fields are required in `.foodmap.json` for P19.
+
+## P21 Local Share Portability Contract
+
+P21 treats `.foodmap.json` as the local package required to move a read-only share snapshot between browser profiles. It does not define account sync, cloud backup, public permanent links, or editable restore.
+
+Minimum package evidence:
+
+| Field | Requirement |
+| --- | --- |
+| `schema` + `version` | Must be `foodmap.share` version `1`; unsupported versions must be rejected before writes |
+| `snapshot.id` | Non-empty id used by `#/share/:snapshotId` after import |
+| `snapshot.title` | Non-empty title visible on the share page |
+| `snapshot.exportedAt` | Valid timestamp visible or inspectable as snapshot time |
+| `places` | Valid share-view place records with required `FoodPlace` fields |
+| `layers` | Valid share-view layer records referenced by places |
+| `photos` | Thumbnail-only share assets; original blobs are not required for P21 portability |
+
+P21 import rules:
+
+- Package parsing and validation must finish before any IndexedDB write.
+- Clean profile import writes only the local `ShareSnapshot` needed by `#/share/:snapshotId`.
+- P21 import must not silently restore editable `places`, `layers`, or `photos` into the personal workspace.
+- Invalid JSON, unsupported schema/version, missing required fields, invalid coordinates, invalid layer references, or malformed thumbnail data must leave existing `places`, `layers`, `photos`, `snapshots`, and governance journal state unchanged.
+- Missing snapshot route must explain that the snapshot is local and requires importing the matching `.foodmap.json`.
+
+Recommended runtime validation shape:
+
+```ts
+interface FoodMapPackageValidationResult {
+  ok: boolean;
+  schemaVersion?: number;
+  snapshotId?: string;
+  errors: string[];
+}
+```
+
+Equivalent shapes are acceptable if P21 unit and browser tests prove the same validation, no-op, and share-view behavior.
+
 `FoodLayer` required fields:
 
 - `id`, `name`: non-empty string
@@ -176,7 +262,7 @@ Rules:
 - `schema` must equal `foodmap.share`.
 - `version` must equal `1`.
 - Export includes snapshot metadata, places, layers, and photo thumbnails.
-- P17 export includes optional P17 fields when present; older packages without them remain valid.
+- P17/P18/P19 export includes optional compatibility fields when present; older packages without them remain valid.
 - Export does not include original photo blobs.
 - Imported snapshots receive a new local id if the incoming id already exists.
 - Import must validate the full payload before writing to IndexedDB.
@@ -200,4 +286,5 @@ foodmap-shanghai-cafe-2026.foodmap.json
 - Unit tests cover valid export, invalid schema, unsupported version, missing required fields, duplicate snapshot id, and malformed JSON.
 - Clean-profile import opens `#/share/:snapshotId`.
 - Invalid import leaves existing stores unchanged.
-- P17 tests cover percent-score normalization, system tag filtering, pending-state derivation, manual pin move audit preservation, and backward-compatible import of legacy schema version 1 packages.
+- P17/P18 tests cover percent-score normalization, system tag filtering, pending-state derivation, manual pin move audit preservation, and backward-compatible import of legacy schema version 1 packages.
+- P19 tests must cover derived health grouping and current-viewport poster source selection without requiring a schema migration.

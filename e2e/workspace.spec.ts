@@ -11,12 +11,12 @@ async function loadRecommendations(page: Page, projectName: string) {
 }
 
 async function importPersonalFavorites(page: Page) {
-  const directImport = page.getByRole("button", { name: "导入" }).first();
+  const directImport = page.getByTestId("workspace-import");
   if (await directImport.isVisible().catch(() => false)) {
     await directImport.click();
   } else {
     await page.getByRole("button", { name: "更多工具" }).click();
-    await page.getByRole("dialog", { name: "更多工具" }).getByRole("button", { name: "导入" }).click();
+    await page.getByRole("dialog", { name: "更多工具" }).getByRole("button", { name: "数据包" }).click();
   }
   await expect(page.getByTestId("import-export-dialog")).toBeVisible();
   await page.getByTestId("import-personal-favorites").click();
@@ -31,7 +31,7 @@ async function importPersonalFavorites(page: Page) {
 
 async function seedLargePersonalDataset(page: Page, size: number) {
   await page.evaluate(async (count) => {
-    const openRequest = indexedDB.open("foodmap-db", 1);
+    const openRequest = indexedDB.open("foodmap-db", 2);
     const db = await new Promise<IDBDatabase>((resolve, reject) => {
       openRequest.onerror = () => reject(openRequest.error);
       openRequest.onsuccess = () => resolve(openRequest.result);
@@ -69,6 +69,79 @@ async function seedLargePersonalDataset(page: Page, size: number) {
     });
     db.close();
   }, size);
+}
+
+async function readFoodMapStoreCounts(page: Page) {
+  return page.evaluate(async () => {
+    const openRequest = indexedDB.open("foodmap-db", 2);
+    const db = await new Promise<IDBDatabase>((resolve, reject) => {
+      openRequest.onerror = () => reject(openRequest.error);
+      openRequest.onsuccess = () => resolve(openRequest.result);
+    });
+    async function count(storeName: string) {
+      if (!db.objectStoreNames.contains(storeName)) return 0;
+      const tx = db.transaction(storeName, "readonly");
+      const request = tx.objectStore(storeName).count();
+      return new Promise<number>((resolve, reject) => {
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result);
+      });
+    }
+    const result = {
+      places: await count("places"),
+      layers: await count("layers"),
+      photos: await count("photos"),
+      snapshots: await count("snapshots"),
+      governanceJournal: await count("governanceJournal")
+    };
+    db.close();
+    return result;
+  });
+}
+
+function buildP21PortablePackage(snapshotId = `p21-share-${Date.now()}`) {
+  return {
+    schema: "foodmap.share",
+    version: 1,
+    exportedAt: "2026-06-24T00:00:00.000Z",
+    snapshot: {
+      id: snapshotId,
+      title: "P21 只读分享地图",
+      exportedAt: "2026-06-24T00:00:00.000Z",
+      layers: [
+        { id: "layer-p21-share", name: "P21 分享层", icon: "heart", color: "#2F8F6F", visible: true, sortOrder: 1 }
+      ],
+      places: [
+        {
+          id: "p21-share-place",
+          name: "P21 分享热干面",
+          longitude: 114.3036,
+          latitude: 30.6072,
+          city: "武汉",
+          address: "武汉市江岸区 P21 分享路 1 号",
+          layerId: "layer-p21-share",
+          tags: ["P21分享", "热干面"],
+          rating: 5,
+          visitedAt: "2026-06-24",
+          notes: "P21 clean profile readonly share fixture",
+          photoIds: ["p21-photo-1"],
+          createdAt: "2026-06-24T00:00:00.000Z",
+          updatedAt: "2026-06-24T00:00:00.000Z",
+          mapAccuracy: "exact"
+        }
+      ],
+      photos: [
+        {
+          id: "p21-photo-1",
+          placeId: "p21-share-place",
+          fileName: "p21-noodle.png",
+          mimeType: "image/png",
+          thumbnailDataUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=",
+          createdAt: "2026-06-24T00:00:00.000Z"
+        }
+      ]
+    }
+  };
 }
 
 test("workspace opens with core controls", async ({ page }, testInfo) => {
@@ -739,9 +812,9 @@ test("place editor recognizes intro text and share poster dialog opens separatel
   await expect(page.getByTestId("place-editor")).toHaveCount(0);
   if (testInfo.project.name === "mobile") {
     await page.getByRole("button", { name: "更多工具" }).click();
-    await page.getByRole("dialog", { name: "更多工具" }).getByRole("button", { name: "导出分享图" }).click();
+    await page.getByRole("dialog", { name: "更多工具" }).getByRole("button", { name: "分享图" }).click();
   } else {
-    await page.getByRole("button", { name: "导出" }).click();
+    await page.locator("header").getByRole("button", { name: "分享图" }).click();
   }
   await expect(page.getByTestId("map-poster-dialog")).toBeVisible();
   await expect(page.getByTestId("export-map-poster")).toBeVisible();
@@ -795,10 +868,10 @@ test("place can be created with a photo, protected during edit and deleted", asy
   await expect(page.getByTestId("place-list")).toContainText("还没有美食图钉");
 });
 
-test("imported foodmap file opens the imported readonly share snapshot", async ({ page }, testInfo) => {
+test("imported foodmap file previews conflicts then opens the imported readonly share snapshot", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop", "desktop validates import handoff");
   await page.goto("/#/map");
-  await page.getByRole("button", { name: "导入" }).click();
+  await page.getByTestId("workspace-import").click();
   await expect(page.getByTestId("import-export-dialog")).toBeVisible();
   const snapshotId = `snapshot-e2e-${Date.now()}`;
   const payload = {
@@ -812,8 +885,8 @@ test("imported foodmap file opens the imported readonly share snapshot", async (
         {
           id: "imported-place-1",
           name: "导入验收热干面",
-          longitude: 114.31,
-          latitude: 30.59,
+          longitude: 114.3036,
+          latitude: 30.6072,
           city: "武汉",
           layerId: "layer-personal-favorites",
           tags: ["导入验收"],
@@ -832,11 +905,14 @@ test("imported foodmap file opens the imported readonly share snapshot", async (
       exportedAt: "2026-06-11T00:00:00.000+08:00"
     }
   };
-  await page.locator('input[type="file"]').setInputFiles({
+  await page.getByTestId("import-governance-preview").click();
+  await page.locator('input[type="file"]').first().setInputFiles({
     name: "imported.foodmap.json",
     mimeType: "application/json",
     buffer: Buffer.from(JSON.stringify(payload), "utf-8")
   });
+  await expect(page.getByTestId("import-conflict-preview")).toContainText("新增 1");
+  await page.getByTestId("import-conflict-preview").getByRole("button", { name: "确认导入可写项" }).click();
   await expect(page).toHaveURL(new RegExp(`#/share/${snapshotId}`));
   await expect(page.getByTestId("share-view")).toContainText("导入验收地图");
   await expect(page.getByTestId("share-view")).toContainText("导入验收热干面");
@@ -861,7 +937,7 @@ test("map poster export downloads a png for the current filtered personal pins",
       }
     });
   });
-  await page.getByRole("button", { name: "导出" }).click();
+  await page.locator("header").getByRole("button", { name: "分享图" }).click();
   await expect(page.getByTestId("map-poster-dialog")).toContainText("当前筛选个人图钉");
   await expect(page.getByTestId("map-poster-dialog")).toContainText("#海报验收");
   await page.getByLabel("分享图标题").fill("海报导出验收图");
@@ -871,6 +947,224 @@ test("map poster export downloads a png for the current filtered personal pins",
   expect(download.suggestedFilename()).toMatch(/海报导出验收图\.png$/);
   const stream = await download.createReadStream();
   expect(stream).toBeTruthy();
+});
+
+test("P19 current viewport poster uses real map bounds and explicit empty state", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop validates viewport poster source and download");
+  await page.goto("/#/map");
+  await page.waitForFunction(() => Boolean((window as any).FoodMapAgentBridge));
+  await page.evaluate(async () => {
+    const bridge = (window as any).FoodMapAgentBridge;
+    await bridge.dispatch({
+      action: "savePlace",
+      payload: {
+        id: "p19-poster-inside",
+        name: "P19 视野内热干面",
+        longitude: 114.31,
+        latitude: 30.59,
+        city: "武汉",
+        rating: 5,
+        visitedAt: "2026-06-23",
+        tags: ["P19视野海报", "热干面"]
+      }
+    });
+    await bridge.dispatch({
+      action: "savePlace",
+      payload: {
+        id: "p19-poster-outside",
+        name: "P19 视野外小吃",
+        longitude: 116.4,
+        latitude: 39.9,
+        city: "北京",
+        rating: 4,
+        visitedAt: "2026-06-23",
+        tags: ["P19视野海报", "空视野验收"]
+      }
+    });
+    await bridge.dispatch({ action: "setFilter", payload: { tags: ["P19视野海报"], source: "personal" } });
+  });
+
+  await expect(page.getByTestId("home-filter-summary")).toContainText("2/2");
+  await page.locator("header").getByRole("button", { name: "分享图" }).click();
+  await expect(page.getByTestId("map-poster-dialog")).toBeVisible();
+  await expect(page.getByTestId("poster-source-count")).toContainText("2 个当前筛选个人图钉");
+  await page.getByTestId("poster-mode-current-viewport").click();
+  await expect(page.getByTestId("poster-source-count")).toContainText("1 个当前视野个人图钉");
+  await expect(page.getByTestId("map-poster-dialog")).toContainText("#热干面");
+  await page.getByLabel("分享图标题").fill("P19 当前视野海报");
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByTestId("export-map-poster").click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toMatch(/P19 当前视野海报\.png$/);
+  expect(await download.createReadStream()).toBeTruthy();
+
+  await page.evaluate(async () => {
+    const bridge = (window as any).FoodMapAgentBridge;
+    await bridge.dispatch({ action: "setFilter", payload: { tags: ["空视野验收"], source: "personal" } });
+  });
+  await page.locator("header").getByRole("button", { name: "分享图" }).click();
+  await page.getByTestId("poster-mode-current-viewport").click();
+  await expect(page.getByTestId("poster-source-count")).toContainText("0 个当前视野个人图钉");
+  await expect(page.getByTestId("poster-empty-viewport")).toBeVisible();
+  await expect(page.getByTestId("export-map-poster")).toBeDisabled();
+});
+
+test("P19 data health center groups places and actions do not mutate facts", async ({ page, browserName }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop" || browserName !== "chromium", "desktop validates data health center");
+  await page.goto("/#/map");
+  await page.waitForFunction(() => Boolean((window as any).FoodMapAgentBridge));
+  await page.evaluate(async () => {
+    const bridge = (window as any).FoodMapAgentBridge;
+    const fixtures = [
+      {
+        id: "p19-health-verified",
+        name: "P19 已核验店",
+        longitude: 114.31,
+        latitude: 30.59,
+        city: "武汉",
+        rating: 5,
+        visitedAt: "2026-06-23",
+        tags: ["已核验", "精确坐标"],
+        mapAccuracy: "exact"
+      },
+      {
+        id: "p19-health-pending",
+        name: "P19 待确认店",
+        longitude: 114.3036,
+        latitude: 30.6072,
+        city: "武汉",
+        rating: 4,
+        visitedAt: "2026-06-23",
+        tags: ["待校准", "近似坐标", "位置待确认"],
+        mapAccuracy: "approximate"
+      },
+      {
+        id: "p19-health-high-risk",
+        name: "P19 高风险店",
+        longitude: 114.31,
+        latitude: 30.59,
+        city: "武汉",
+        rating: 3,
+        visitedAt: "2026-06-23",
+        tags: ["位置高风险", "待校准", "近似坐标"],
+        mapAccuracy: "approximate"
+      },
+      {
+        id: "p19-health-manual",
+        name: "P19 手动校准店",
+        longitude: 114.32,
+        latitude: 30.61,
+        city: "武汉",
+        rating: 4,
+        visitedAt: "2026-06-23",
+        tags: ["已核验", "精确坐标", "手动校准"],
+        mapAccuracy: "exact",
+        notes: "用户手动拖动图钉校准。原坐标 114.1,30.1"
+      },
+      {
+        id: "p19-health-skipped",
+        name: "P19 已跳过店",
+        longitude: 114.33,
+        latitude: 30.62,
+        city: "武汉",
+        rating: 2,
+        visitedAt: "2026-06-23",
+        tags: ["暂时跳过", "位置待确认"],
+        mapAccuracy: "approximate",
+        notes: "待确认处理：用户暂时跳过。"
+      }
+    ];
+    for (const payload of fixtures) {
+      await bridge.dispatch({ action: "savePlace", payload });
+    }
+  });
+  const before = await page.evaluate(async () => {
+    const bridge = (window as any).FoodMapAgentBridge;
+    const result = await bridge.dispatch({ action: "listPlaces" });
+    return result.data;
+  });
+
+  await page.getByTestId("quick-data-health").click();
+  await expect(page.getByTestId("data-health-center")).toBeVisible();
+  await expect(page.getByTestId("data-health-center")).toContainText("已核验");
+  await expect(page.getByTestId("data-health-center")).toContainText("待确认");
+  await expect(page.getByTestId("data-health-center")).toContainText("高风险");
+  await expect(page.getByTestId("data-health-center")).toContainText("手动校准");
+  await expect(page.getByTestId("data-health-center")).toContainText("已跳过");
+  await expect(page.getByTestId("data-health-center")).toContainText("P19 高风险店");
+  const highRiskGroup = page.locator(".data-health-group").nth(2);
+  await highRiskGroup.getByRole("button", { name: /P19 高风险店/ }).click();
+  await expect(page.getByTestId("place-detail")).toContainText("P19 高风险店");
+
+  await page.getByLabel("收起详情").click();
+  await page.getByTestId("quick-data-health").click();
+  await page.locator(".data-health-group").nth(2).getByRole("button", { name: "筛选" }).click();
+  await expect(page.getByTestId("home-filter-summary")).toContainText("个人地点");
+
+  const after = await page.evaluate(async () => {
+    const bridge = (window as any).FoodMapAgentBridge;
+    const result = await bridge.dispatch({ action: "listPlaces" });
+    return result.data;
+  });
+  expect(after).toEqual(before);
+});
+
+test("P19 responsive keeps data health and poster controls reachable", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop project drives fixed viewport regression");
+  fs.mkdirSync("docs/active/evidence/p19", { recursive: true });
+  const viewports = [
+    { name: "mobile-390", width: 390, height: 844 },
+    { name: "mobile-430", width: 430, height: 932 },
+    { name: "tablet-768", width: 768, height: 900 },
+    { name: "desktop-1280", width: 1280, height: 820 }
+  ];
+
+  for (const viewport of viewports) {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.goto("/#/map");
+    await page.waitForFunction(() => Boolean((window as any).FoodMapAgentBridge));
+    await page.evaluate(async (name) => {
+      const bridge = (window as any).FoodMapAgentBridge;
+      await bridge.dispatch({
+        action: "savePlace",
+        payload: {
+          id: `p19-responsive-${name}`,
+          name: `P19 响应式验收 ${name}`,
+          longitude: 114.31,
+          latitude: 30.59,
+          city: "武汉",
+          rating: 5,
+          visitedAt: "2026-06-23",
+          tags: ["P19响应式", "已核验", "精确坐标"],
+          mapAccuracy: "exact"
+        }
+      });
+    }, viewport.name);
+
+    await expect(page.getByTestId("workspace-map")).toBeVisible();
+    await expect(page.getByTestId("quick-data-health")).toBeVisible();
+    await page.getByTestId("quick-data-health").click();
+    await expect(page.getByTestId("data-health-center").last()).toBeVisible();
+    await page.screenshot({ path: `docs/active/evidence/p19/${viewport.name}-data-health.png`, fullPage: true });
+    if (viewport.width <= 900) {
+      await page.getByRole("button", { name: "关闭" }).click();
+    } else {
+      await page.getByLabel("收起详情").click();
+    }
+    await expect(page.getByTestId("workspace-map")).toBeVisible();
+
+    if (viewport.width <= 900) {
+      await page.getByLabel("更多工具").click();
+      await page.getByRole("dialog", { name: "更多工具" }).getByRole("button", { name: "分享图" }).click();
+    } else {
+      await page.locator("header").getByRole("button", { name: "分享图" }).click();
+    }
+    await expect(page.getByTestId("map-poster-dialog")).toBeVisible();
+    await expect(page.getByTestId("poster-mode-current-filter")).toBeVisible();
+    await expect(page.getByTestId("poster-mode-current-viewport")).toBeVisible();
+    await page.screenshot({ path: `docs/active/evidence/p19/${viewport.name}-poster.png`, fullPage: true });
+    await page.getByRole("button", { name: "关闭" }).click();
+  }
 });
 
 test("place editor can use current location for P16 candidate ranking", async ({ page, context }, testInfo) => {
@@ -1545,3 +1839,711 @@ test("agent bridge returns structured errors, emits events and does not write in
   expect(result.events.some((event) => event.type === "command" && event.action === "exportSnapshot")).toBeTruthy();
   expect(result.events.some((event) => event.type === "result" && event.action === "savePlace" && event.errorCode === "INVALID_PAYLOAD")).toBeTruthy();
 });
+
+test("P20 governance workbench previews duplicate merge and writes journal only after confirmation", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop validates P20 governance workbench");
+  await page.goto("/#/map");
+  await page.waitForFunction(() => Boolean((window as any).FoodMapAgentBridge));
+  await page.evaluate(async () => {
+    const bridge = (window as any).FoodMapAgentBridge;
+    const base = {
+      longitude: 114.266,
+      latitude: 30.59,
+      city: "武汉",
+      layerId: "layer-personal-favorites",
+      rating: 4,
+      visitedAt: "2026-06-24",
+      photoIds: [],
+      createdAt: "2026-06-24T00:00:00.000Z",
+      updatedAt: "2026-06-24T00:00:00.000Z",
+      mapAccuracy: "exact"
+    };
+    await bridge.dispatch({ action: "savePlace", payload: { ...base, id: "p20-e2e-pending", name: "P20 治理待确认店", tags: ["待校准", "近似坐标"], notes: "P20 governance fixture", mapAccuracy: "approximate" } });
+    await bridge.dispatch({ action: "savePlace", payload: { ...base, id: "p20-e2e-dup-a", name: "P20 万松小院荷花垄", tags: ["湖北菜", "已核验"], notes: "重复 A" } });
+    await bridge.dispatch({ action: "savePlace", payload: { ...base, id: "p20-e2e-dup-b", name: "P20 万松小院（荷花垄店）", longitude: 114.2662, latitude: 30.5901, rating: 5, tags: ["湖北菜", "想再去"], notes: "重复 B" } });
+  });
+
+  await page.getByTestId("quick-data-health").click();
+  await expect(page.getByTestId("data-health-center")).toBeVisible();
+  await page.getByTestId("open-governance-workbench").click();
+  await expect(page.getByTestId("governance-workbench")).toBeVisible();
+  await expect(page.getByTestId("governance-workbench")).toContainText("P20 个人数据治理");
+  await page.getByRole("button", { name: /重复地点建议/ }).click();
+  await expect(page.getByTestId("governance-issue").filter({ hasText: "P20 万松小院" }).first()).toBeVisible();
+  await page.getByTestId("duplicate-merge-button").first().click();
+  await expect(page.getByTestId("duplicate-merge-preview")).toBeVisible();
+  await expect(page.getByTestId("duplicate-merge-preview")).toContainText("确认合并");
+
+  const before = await page.evaluate(async () => {
+    const bridge = (window as any).FoodMapAgentBridge;
+    const places = await bridge.dispatch({ action: "listPlaces" });
+    return places.data.filter((place: { id: string }) => place.id.startsWith("p20-e2e-dup")).length;
+  });
+  expect(before).toBe(2);
+  await page.getByTestId("duplicate-merge-preview").getByRole("button", { name: "确认合并" }).click();
+  await expect(page.getByTestId("governance-history-summary")).toContainText("合并重复地点");
+  const after = await page.evaluate(async () => {
+    const bridge = (window as any).FoodMapAgentBridge;
+    const places = await bridge.dispatch({ action: "listPlaces" });
+    const journal = await bridge.dispatch({ action: "listGovernanceJournal" });
+    return {
+      duplicateCount: places.data.filter((place: { id: string }) => place.id.startsWith("p20-e2e-dup")).length,
+      journalOk: journal.data.some((entry: { summary: string }) => entry.summary.includes("合并重复地点"))
+    };
+  });
+  expect(after.duplicateCount).toBe(1);
+  expect(after.journalOk).toBeTruthy();
+});
+
+test("P20 import conflict preview is shown before any import write", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop validates P20 import conflict preview");
+  await page.goto("/#/map");
+  await page.waitForFunction(() => Boolean((window as any).FoodMapAgentBridge));
+  const payload = {
+    schema: "foodmap.share",
+    version: 1,
+    exportedAt: "2026-06-24T00:00:00.000Z",
+    snapshot: {
+      id: "p20-import-snapshot",
+      title: "P20 导入冲突验收",
+      exportedAt: "2026-06-24T00:00:00.000Z",
+      layers: [],
+      photos: [],
+      places: [{
+        id: "p20-import-preview-place",
+        name: "P20 导入预览店",
+        longitude: 114.3036,
+        latitude: 30.6072,
+        city: "武汉",
+        layerId: "layer-personal-favorites",
+        tags: ["导入预览"],
+        rating: 4,
+        visitedAt: "2026-06-24",
+        notes: "P20 import preview fixture",
+        photoIds: [],
+        createdAt: "2026-06-24T00:00:00.000Z",
+        updatedAt: "2026-06-24T00:00:00.000Z",
+        mapAccuracy: "exact"
+      }]
+    }
+  };
+  await page.getByTestId("workspace-import").click();
+  await expect(page.getByTestId("import-export-dialog")).toBeVisible();
+  await page.setInputFiles("input[type=file]", {
+    name: "p20-import.foodmap.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(payload))
+  });
+  await expect(page.getByTestId("import-export-dialog")).toHaveCount(0);
+  await expect(page.getByTestId("governance-workbench")).toBeVisible();
+  await expect(page.getByTestId("import-conflict-preview")).toContainText("新增 1");
+  const before = await page.evaluate(async () => {
+    const bridge = (window as any).FoodMapAgentBridge;
+    const places = await bridge.dispatch({ action: "listPlaces" });
+    return places.data.some((place: { id: string }) => place.id === "p20-import-preview-place");
+  });
+  expect(before).toBe(false);
+  await page.getByTestId("import-conflict-preview").getByRole("button", { name: "确认导入可写项" }).click();
+  const after = await page.evaluate(async () => {
+    const bridge = (window as any).FoodMapAgentBridge;
+    const places = await bridge.dispatch({ action: "listPlaces" });
+    return places.data.some((place: { id: string }) => place.id === "p20-import-preview-place");
+  });
+  expect(after).toBe(true);
+});
+
+test("P20-C governance completion covers batch decisions import strategy and report export", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop validates P20-C completion paths");
+  await page.goto("/#/map");
+  await page.waitForFunction(() => Boolean((window as any).FoodMapAgentBridge));
+  await page.evaluate(async () => {
+    const bridge = (window as any).FoodMapAgentBridge;
+    const base = {
+      longitude: 114.3036,
+      latitude: 30.6072,
+      city: "武汉",
+      layerId: "layer-personal-favorites",
+      rating: 4,
+      visitedAt: "2026-06-24",
+      photoIds: [],
+      createdAt: "2026-06-24T00:00:00.000Z",
+      updatedAt: "2026-06-24T00:00:00.000Z",
+      mapAccuracy: "exact"
+    };
+    await bridge.dispatch({ action: "savePlace", payload: { ...base, id: "p20c-pending", name: "P20C 待确认店", tags: ["待校准", "近似坐标"], mapAccuracy: "approximate", notes: "P20-C pending" } });
+    await bridge.dispatch({ action: "savePlace", payload: { ...base, id: "p20c-stale", name: "P20C 过期参考店", tags: ["过期参考"], notes: "stale-reference old evidence" } });
+    await bridge.dispatch({ action: "savePlace", payload: { ...base, id: "p20c-dup-a", name: "P20C 热干面", tags: ["热干面"], notes: "重复 A" } });
+    await bridge.dispatch({ action: "savePlace", payload: { ...base, id: "p20c-dup-b", name: "P20C 热干面（江岸店）", longitude: 114.3037, latitude: 30.6073, tags: ["热干面", "想再去"], notes: "重复 B" } });
+  });
+
+  await page.getByTestId("quick-data-health").click();
+  await page.getByTestId("open-governance-workbench").click();
+  await expect(page.getByTestId("governance-workbench")).toBeVisible();
+  await expect(page.getByRole("button", { name: /过期参考/ })).toBeVisible();
+
+  await page.getByRole("button", { name: /待确认地点/ }).click();
+  await page.getByRole("button", { name: "加入处理队列" }).click();
+  await expect(page.getByTestId("governance-batch-preview")).toContainText("加入处理队列");
+  await page.getByTestId("governance-batch-preview").getByRole("button", { name: "取消，无写入" }).click();
+  await page.getByRole("button", { name: "标记暂时跳过" }).click();
+  await expect(page.getByTestId("governance-batch-preview")).toContainText("标记暂时跳过");
+  await page.getByTestId("governance-batch-preview").getByRole("button", { name: "取消，无写入" }).click();
+  await page.getByRole("button", { name: "应用治理标签" }).click();
+  await expect(page.getByTestId("governance-batch-preview")).toContainText("应用治理标签");
+  await page.getByTestId("governance-batch-preview").getByRole("button", { name: "确认写入" }).click();
+  await expect(page.getByTestId("governance-history-summary")).toContainText("应用治理标签");
+
+  await page.getByRole("button", { name: /重复地点建议/ }).click();
+  await page.getByTestId("duplicate-ignore-button").first().click();
+  await expect(page.getByTestId("duplicate-decision-preview")).toContainText("忽略重复建议");
+  await page.getByTestId("duplicate-decision-preview").getByRole("button", { name: "确认决策" }).click();
+  await expect(page.getByTestId("governance-history-summary")).toContainText("忽略重复建议");
+  await page.getByTestId("duplicate-keep-button").first().click();
+  await expect(page.getByTestId("duplicate-decision-preview")).toContainText("保留两条记录");
+  await page.getByTestId("duplicate-decision-preview").getByRole("button", { name: "确认决策" }).click();
+  await expect(page.getByTestId("governance-history-summary")).toContainText("保留两条记录");
+
+  const reportDownload = page.waitForEvent("download");
+  await page.getByTestId("governance-report-export").click();
+  expect((await reportDownload).suggestedFilename()).toMatch(/foodmap-governance-report-.*\.json/);
+
+  const payload = {
+    schema: "foodmap.share",
+    version: 1,
+    exportedAt: "2026-06-24T00:00:00.000Z",
+    snapshot: {
+      id: "p20c-import-snapshot",
+      title: "P20C 导入策略验收",
+      exportedAt: "2026-06-24T00:00:00.000Z",
+      layers: [],
+      photos: [],
+      places: [{
+        id: "p20c-import-strategy-new",
+        name: "P20C 导入策略新店",
+        longitude: 114.304,
+        latitude: 30.607,
+        city: "武汉",
+        layerId: "layer-personal-favorites",
+        tags: ["导入策略"],
+        rating: 4,
+        visitedAt: "2026-06-24",
+        notes: "P20-C import strategy",
+        photoIds: [],
+        createdAt: "2026-06-24T00:00:00.000Z",
+        updatedAt: "2026-06-24T00:00:00.000Z",
+        mapAccuracy: "exact"
+      }, {
+        id: "p20c-import-strategy-skip",
+        name: "P20C 导入策略跳过店",
+        longitude: 114.305,
+        latitude: 30.608,
+        city: "武汉",
+        layerId: "layer-personal-favorites",
+        tags: ["暂时跳过"],
+        rating: 4,
+        visitedAt: "2026-06-24",
+        notes: "P20-C import skipped",
+        photoIds: [],
+        createdAt: "2026-06-24T00:00:00.000Z",
+        updatedAt: "2026-06-24T00:00:00.000Z",
+        mapAccuracy: "exact"
+      }]
+    }
+  };
+  await page.getByTestId("governance-open-import").click();
+  await page.setInputFiles("input[type=file]", {
+    name: "p20c-import.foodmap.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(payload))
+  });
+  await expect(page.getByTestId("import-conflict-preview")).toContainText("跳过");
+  await page.getByLabel("P20C 导入策略新店 导入策略").selectOption("skip");
+  await page.getByTestId("import-conflict-preview").getByRole("button", { name: "确认导入可写项" }).click();
+  const importResult = await page.evaluate(async () => {
+    const db = await new Promise<IDBDatabase>((resolve, reject) => {
+      const request = indexedDB.open("foodmap-db");
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(request.result);
+    });
+    const places = await new Promise<Array<{ id: string }>>((resolve, reject) => {
+      const request = db.transaction("places", "readonly").objectStore("places").getAll();
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(request.result as Array<{ id: string }>);
+    });
+    db.close();
+    return places.some((place) => place.id === "p20c-import-strategy-new");
+  });
+  expect(importResult).toBe(false);
+});
+
+test("P20 agent governance APIs are read-only and reject unsafe writes", async ({ page }) => {
+  await page.goto("/#/map");
+  await page.waitForFunction(() => Boolean((window as any).FoodMapAgentBridge));
+  const result = await page.evaluate(async () => {
+    const bridge = (window as any).FoodMapAgentBridge;
+    await bridge.dispatch({
+      action: "savePlace",
+      payload: {
+        id: "p20-agent-governance",
+        name: "P20 Agent 治理只读店",
+        longitude: 114.3,
+        latitude: 30.6,
+        city: "武汉",
+        layerId: "layer-personal-favorites",
+        tags: ["待校准", "近似坐标"],
+        rating: 4,
+        visitedAt: "2026-06-24",
+        notes: "P20 agent governance fixture",
+        photoIds: [],
+        mapAccuracy: "approximate"
+      }
+    });
+    const summary = await bridge.dispatch({ action: "getGovernanceSummary" });
+    const duplicates = await bridge.dispatch({ action: "listDuplicateSuggestions" });
+    const journal = await bridge.dispatch({ action: "listGovernanceJournal" });
+    const blockedBatch = await bridge.dispatch({ action: "applyGovernanceBatch", payload: { placeIds: ["p20-agent-governance"] } });
+    const blockedMerge = await bridge.dispatch({ action: "mergePlaces", payload: { placeIds: ["a", "b"] } });
+    const blockedImport = await bridge.dispatch({ action: "commitImportPlan", payload: {} });
+    const blockedRisk = await bridge.dispatch({ action: "hideGovernanceRisk", payload: { placeId: "p20-agent-governance" } });
+    const blockedFinal = await bridge.dispatch({ action: "finalizeCoordinates", payload: { placeId: "p20-agent-governance" } });
+    return { summary, duplicates, journal, blockedBatch, blockedMerge, blockedImport, blockedRisk, blockedFinal };
+  });
+  expect(result.summary.ok).toBeTruthy();
+  expect(result.summary.data.note).toContain("Agent 只能读取");
+  expect(result.duplicates.ok).toBeTruthy();
+  expect(result.journal.ok).toBeTruthy();
+  for (const item of [result.blockedBatch, result.blockedMerge, result.blockedImport, result.blockedRisk, result.blockedFinal]) {
+    expect(item.ok).toBeFalsy();
+    expect(item.errorCode).toBe("GOVERNANCE_CONFIRMATION_REQUIRED");
+  }
+});
+
+const P20_RESPONSIVE_VIEWPORTS = [
+  { name: "mobile-390-governance", width: 390, height: 844, mode: "governance" },
+  { name: "mobile-430-duplicate-compare", width: 430, height: 932, mode: "duplicate" },
+  { name: "tablet-768-import-conflict", width: 768, height: 900, mode: "import" },
+  { name: "desktop-1280-governance", width: 1280, height: 820, mode: "governance" }
+] as const;
+
+for (const viewport of P20_RESPONSIVE_VIEWPORTS) {
+  test(`P20 responsive ${viewport.name}`, async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "desktop", "desktop project captures deterministic P20 responsive viewports");
+    fs.mkdirSync("docs/active/evidence/p20", { recursive: true });
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.goto("/#/map");
+    await seedP20ResponsivePlaces(page);
+    await openP20GovernanceWorkbench(page);
+    if (viewport.mode === "duplicate") {
+      await page.getByRole("button", { name: /重复地点建议/ }).last().click();
+      await page.getByTestId("duplicate-merge-button").last().click();
+      await expect(page.getByTestId("duplicate-merge-preview").last()).toBeVisible();
+    }
+    if (viewport.mode === "import") {
+      await openP20ImportPreview(page);
+      await expect(page.getByTestId("import-conflict-preview").last()).toBeVisible();
+    }
+    await page.screenshot({ path: `docs/active/evidence/p20/${viewport.name}.png`, fullPage: true });
+  });
+}
+
+async function seedP20ResponsivePlaces(page: Page) {
+  await page.waitForFunction(() => Boolean((window as any).FoodMapAgentBridge));
+  await page.evaluate(async () => {
+    const bridge = (window as any).FoodMapAgentBridge;
+    const base = {
+      longitude: 114.3036,
+      latitude: 30.6072,
+      city: "武汉",
+      layerId: "layer-personal-favorites",
+      rating: 4,
+      visitedAt: "2026-06-24",
+      photoIds: [],
+      createdAt: "2026-06-24T00:00:00.000Z",
+      updatedAt: "2026-06-24T00:00:00.000Z",
+      mapAccuracy: "exact"
+    };
+    await bridge.dispatch({ action: "savePlace", payload: { ...base, id: "p20-responsive-pending", name: "P20 响应式待确认店", tags: ["待校准", "近似坐标"], mapAccuracy: "approximate", notes: "P20 responsive fixture" } });
+    await bridge.dispatch({ action: "savePlace", payload: { ...base, id: "p20-responsive-dup-a", name: "P20 响应式热干面", tags: ["热干面", "已核验"], notes: "重复 A" } });
+    await bridge.dispatch({ action: "savePlace", payload: { ...base, id: "p20-responsive-dup-b", name: "P20 响应式热干面（江岸店）", longitude: 114.3037, latitude: 30.6073, tags: ["热干面", "想再去"], notes: "重复 B" } });
+  });
+}
+
+async function openP20GovernanceWorkbench(page: Page) {
+  if (await page.getByTestId("quick-data-health").isVisible().catch(() => false)) {
+    await page.getByTestId("quick-data-health").click();
+  } else {
+    await page.getByRole("button", { name: "更多工具" }).click();
+    await page.getByRole("dialog", { name: "更多工具" }).getByRole("button", { name: "数据健康" }).click();
+  }
+  await expect(page.getByTestId("data-health-center").last()).toBeVisible();
+  await page.getByTestId("open-governance-workbench").last().click();
+  await expect(page.getByTestId("governance-workbench").last()).toBeVisible();
+}
+
+async function openP20ImportPreview(page: Page) {
+  const payload = {
+    schema: "foodmap.share",
+    version: 1,
+    exportedAt: "2026-06-24T00:00:00.000Z",
+    snapshot: {
+      id: "p20-responsive-import",
+      title: "P20 响应式导入",
+      exportedAt: "2026-06-24T00:00:00.000Z",
+      layers: [],
+      photos: [],
+      places: [{
+        id: "p20-responsive-import-place",
+        name: "P20 响应式导入店",
+        longitude: 114.304,
+        latitude: 30.607,
+        city: "武汉",
+        layerId: "layer-personal-favorites",
+        tags: ["导入预览"],
+        rating: 4,
+        visitedAt: "2026-06-24",
+        notes: "P20 responsive import",
+        photoIds: [],
+        createdAt: "2026-06-24T00:00:00.000Z",
+        updatedAt: "2026-06-24T00:00:00.000Z",
+        mapAccuracy: "exact"
+      }]
+    }
+  };
+  await page.getByTestId("governance-open-import").last().click();
+  await page.setInputFiles("input[type=file]", {
+    name: "p20-responsive-import.foodmap.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(payload))
+  });
+}
+
+test("P21 share portability generates reviewed snapshot and export package", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop validates P21 share portability");
+  fs.mkdirSync("docs/active/evidence/p21", { recursive: true });
+  await page.goto("/#/map");
+  await importPersonalFavorites(page);
+  await page.evaluate(async () => {
+    const openRequest = indexedDB.open("foodmap-db", 2);
+    const db = await new Promise<IDBDatabase>((resolve, reject) => {
+      openRequest.onerror = () => reject(openRequest.error);
+      openRequest.onsuccess = () => resolve(openRequest.result);
+    });
+    const readTx = db.transaction("places", "readonly");
+    const places = await new Promise<any[]>((resolve, reject) => {
+      const request = readTx.objectStore("places").getAll();
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(request.result);
+    });
+    const target = places.find((place) => place.layerId === "layer-personal-favorites");
+    const writeTx = db.transaction(["places", "photos"], "readwrite");
+    writeTx.objectStore("photos").put({
+      id: "p21-export-photo",
+      placeId: target.id,
+      fileName: "p21-export.png",
+      mimeType: "image/png",
+      blob: new Blob(["p21"], { type: "image/png" }),
+      thumbnailDataUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=",
+      createdAt: "2026-06-24T00:00:00.000Z"
+    });
+    writeTx.objectStore("places").put({ ...target, photoIds: ["p21-export-photo"] });
+    await new Promise<void>((resolve, reject) => {
+      writeTx.oncomplete = () => resolve();
+      writeTx.onerror = () => reject(writeTx.error);
+      writeTx.onabort = () => reject(writeTx.error);
+    });
+    db.close();
+  });
+  await page.reload();
+  await page.getByRole("button", { name: "快照", exact: true }).click();
+  await expect(page.getByTestId("share-snapshot-dialog")).toBeVisible();
+  await page.getByLabel("快照标题").fill("P21 武汉分享包");
+  await expect(page.getByTestId("snapshot-portability-summary")).toContainText("32 个");
+  await expect(page.getByTestId("snapshot-portability-summary")).toContainText("1 张");
+  await page.getByRole("button", { name: "确认生成本地只读快照" }).click();
+  await expect(page.getByTestId("snapshot-portability-summary")).toContainText("已生成本地只读快照");
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByTestId("export-foodmap-json").click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toMatch(/P21 武汉分享包\.foodmap\.json$/);
+  const filePath = await download.path();
+  expect(filePath).toBeTruthy();
+  const exported = JSON.parse(fs.readFileSync(filePath!, "utf-8"));
+  expect(exported.schema).toBe("foodmap.share");
+  expect(exported.version).toBe(1);
+  expect(exported.snapshot.title).toBe("P21 武汉分享包");
+  expect(exported.snapshot.places).toHaveLength(32);
+  expect(exported.snapshot.photos).toHaveLength(1);
+  expect(exported.snapshot.photos[0].thumbnailDataUrl).toContain("data:image/png");
+  await page.screenshot({ path: "docs/active/evidence/p21/p21-share-portability.png", fullPage: true });
+});
+
+test("P21 import safety clean profile imports readonly snapshot without editable writes", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop validates P21 import safety");
+  fs.mkdirSync("docs/active/evidence/p21", { recursive: true });
+  await page.goto("/#/map");
+  const before = await readFoodMapStoreCounts(page);
+  expect(before.places).toBe(0);
+  const payload = buildP21PortablePackage("p21-clean-profile-snapshot");
+  await page.getByTestId("workspace-import").click();
+  await expect(page.getByTestId("import-export-dialog")).toBeVisible();
+  await page.getByTestId("import-readonly-snapshot").click();
+  await page.locator('input[type="file"]').nth(1).setInputFiles({
+    name: "p21-clean.foodmap.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(payload), "utf-8")
+  });
+  await expect(page).toHaveURL(/#\/share\/p21-clean-profile-snapshot/);
+  await expect(page.getByTestId("share-view")).toContainText("P21 只读分享地图");
+  await expect(page.getByTestId("layer-panel")).toBeVisible();
+  await expect(page.getByTestId("share-place-detail")).toBeVisible();
+  await expect(page.getByTestId("share-place-detail")).toContainText("P21 分享热干面");
+  await expect(page.getByTestId("share-place-detail")).toContainText("P21 clean profile readonly share fixture");
+  const after = await readFoodMapStoreCounts(page);
+  expect(after.places).toBe(0);
+  expect(after.photos).toBe(0);
+  expect(after.governanceJournal).toBe(0);
+  expect(after.snapshots).toBe(1);
+  await page.screenshot({ path: "docs/active/evidence/p21/p21-clean-profile-share.png", fullPage: true });
+});
+
+test("P21 read only share guard and invalid import no-op are enforced", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop validates P21 read only share");
+  fs.mkdirSync("docs/active/evidence/p21", { recursive: true });
+  await page.goto("/#/map");
+  const before = await readFoodMapStoreCounts(page);
+  await page.getByTestId("workspace-import").click();
+  await page.getByTestId("import-readonly-snapshot").click();
+  await page.locator('input[type="file"]').nth(1).setInputFiles({
+    name: "invalid.foodmap.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify({ schema: "foodmap.share", version: 99, snapshot: {} }), "utf-8")
+  });
+  await expect(page.getByTestId("import-error-message")).toContainText("version 1");
+  const afterInvalid = await readFoodMapStoreCounts(page);
+  expect(afterInvalid).toEqual(before);
+
+  const payload = buildP21PortablePackage("p21-readonly-guard-snapshot");
+  await page.locator('input[type="file"]').nth(1).setInputFiles({
+    name: "p21-readonly.foodmap.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(payload), "utf-8")
+  });
+  await expect(page).toHaveURL(/#\/share\/p21-readonly-guard-snapshot/);
+  await expect(page.getByTestId("share-readonly-notice")).toContainText("本地只读快照");
+  await expect(page.getByTestId("layer-panel")).toBeVisible();
+  await expect(page.getByTestId("share-layer-toggle").first()).toBeVisible();
+  await expect(page.getByTestId("share-place-detail")).toBeVisible();
+  await expect(page.getByTestId("share-place-detail")).toContainText("P21 分享热干面");
+  await expect(page.getByTestId("share-place-detail").locator(".detail-hero-photos img")).toHaveAttribute("alt", "p21-noodle.png");
+  await expect(page.getByTestId("share-view").getByRole("button", { name: "新增" })).toHaveCount(0);
+  await expect(page.getByTestId("share-view").getByRole("button", { name: "编辑" })).toHaveCount(0);
+  await expect(page.getByTestId("share-view").getByRole("button", { name: "删除" })).toHaveCount(0);
+  await expect(page.getByTestId("share-view").getByRole("button", { name: /保存|上传|账号|云|公网/ })).toHaveCount(0);
+  await page.getByTestId("share-layer-toggle").first().click();
+  const afterToggle = await readFoodMapStoreCounts(page);
+  expect(afterToggle.places).toBe(0);
+  expect(afterToggle.photos).toBe(0);
+  expect(afterToggle.governanceJournal).toBe(0);
+  await page.goto("/#/share/missing-p21-snapshot");
+  await expect(page.getByTestId("share-missing-snapshot")).toContainText(".foodmap.json");
+  await expect(page.getByTestId("share-missing-snapshot").getByRole("button", { name: /导入 .*foodmap\.json/ })).toBeVisible();
+  await page.screenshot({ path: "docs/active/evidence/p21/p21-readonly-and-fallback.png", fullPage: true });
+
+  await page.goto("/#/map");
+  await page.waitForFunction(() => Boolean((window as any).FoodMapAgentBridge));
+  const agentResult = await page.evaluate(async () => {
+    const bridge = (window as any).FoodMapAgentBridge;
+    const createSnapshot = await bridge.dispatch({ action: "createSnapshot" });
+    const exportSnapshot = await bridge.dispatch({ action: "exportSnapshot" });
+    return { createSnapshot, exportSnapshot };
+  });
+  expect(agentResult.createSnapshot.ok).toBeFalsy();
+  expect(agentResult.createSnapshot.errorCode).toBe("GOVERNANCE_CONFIRMATION_REQUIRED");
+  expect(agentResult.exportSnapshot.ok).toBeTruthy();
+  expect(JSON.parse(agentResult.exportSnapshot.data.text).schema).toBe("foodmap.share");
+});
+
+test("P22 workspace shell keeps governance and mobile controls readable", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop project validates deterministic responsive shell");
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/#/map");
+  await importPersonalFavorites(page);
+  await page.getByTestId("quick-data-health").click();
+  await expect(page.getByTestId("data-health-center")).toBeVisible();
+  await expect.poll(async () => {
+    return page.getByTestId("data-health-center").evaluate((element) => element.getBoundingClientRect().width);
+  }).toBeGreaterThanOrEqual(470);
+  await expect(page.getByTestId("data-health-center")).toContainText("待确认");
+
+  await page.getByTestId("data-health-center").getByRole("button", { name: /治理工作台|打开治理/ }).first().click();
+  await expect(page.getByTestId("governance-workbench")).toBeVisible();
+  await expect.poll(async () => {
+    return page.getByTestId("governance-workbench").evaluate((element) => element.getBoundingClientRect().width);
+  }).toBeGreaterThanOrEqual(470);
+  const hasVerticalActionText = await page.getByTestId("governance-workbench").evaluate((root) => {
+    return [...root.querySelectorAll("button")].some((button) => {
+      const rect = button.getBoundingClientRect();
+      const text = button.textContent?.trim() ?? "";
+      return text.length >= 4 && rect.height > rect.width * 1.8;
+    });
+  });
+  expect(hasVerticalActionText).toBeFalsy();
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#/map");
+  await expect(page.getByTestId("home-filter-dock")).toBeVisible();
+  const dockMetrics = await page.getByTestId("home-filter-dock").evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    const summary = element.querySelector<HTMLElement>("[data-testid='home-filter-summary']");
+    return {
+      height: rect.height,
+      bottom: rect.bottom,
+      summaryVisible: summary ? getComputedStyle(summary).display !== "none" : false
+    };
+  });
+  expect(dockMetrics.height).toBeLessThanOrEqual(54);
+  expect(dockMetrics.bottom).toBeLessThan(128);
+  expect(dockMetrics.summaryVisible).toBeFalsy();
+});
+
+test("P23 mobile readonly share opens map marker into unobstructed detail summary", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop project drives deterministic P23 mobile viewport");
+  fs.mkdirSync("docs/active/evidence/p23", { recursive: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#/map");
+  await page.getByRole("button", { name: "更多工具" }).click();
+  await page.getByRole("dialog", { name: "更多工具" }).getByRole("button", { name: "数据包" }).click();
+  await expect(page.getByTestId("import-export-dialog")).toBeVisible();
+  await page.getByTestId("import-readonly-snapshot").click();
+  await page.locator('input[type="file"]').nth(1).setInputFiles({
+    name: "p23-mobile-share.foodmap.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(buildP21PortablePackage("p23-mobile-share")), "utf-8")
+  });
+  await expect(page.getByTestId("share-view")).toContainText("P21 分享热干面");
+  await expect(page.locator(".food-leaflet-marker")).toBeVisible();
+  await page.locator(".food-leaflet-marker").first().click();
+  await expect(page.getByTestId("share-mobile-detail-summary")).toBeVisible();
+  await expect(page.getByTestId("share-mobile-detail-summary")).toContainText("P21 分享热干面");
+  await expect(page.getByRole("navigation", { name: "只读分享导航" })).toBeHidden();
+  const summaryMetrics = await page.getByTestId("share-mobile-panel").evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    return {
+      top: rect.top,
+      bottom: rect.bottom,
+      width: rect.width,
+      viewportHeight: window.innerHeight,
+      viewportWidth: window.innerWidth
+    };
+  });
+  expect(summaryMetrics.width).toBeGreaterThanOrEqual(360);
+  expect(summaryMetrics.bottom).toBeLessThanOrEqual(summaryMetrics.viewportHeight);
+  expect(summaryMetrics.top).toBeGreaterThan(300);
+  await page.screenshot({ path: "docs/active/evidence/p23/01-mobile-share-marker-summary.png", fullPage: true });
+
+  await page.getByTestId("share-mobile-detail-expand").click();
+  await expect(page.getByRole("dialog", { name: "地点详情" }).getByTestId("share-place-detail")).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "地点详情" }).getByTestId("share-place-detail")).toContainText("P21 clean profile readonly share fixture");
+  await expect(page.getByTestId("share-mobile-detail-collapse")).toBeVisible();
+  await page.screenshot({ path: "docs/active/evidence/p23/02-mobile-share-expanded-detail.png", fullPage: true });
+});
+
+test("P23 compact mobile workspace keeps quick filters and map actions readable at 320px", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop project drives deterministic P23 narrow viewport");
+  fs.mkdirSync("docs/active/evidence/p23", { recursive: true });
+  await page.setViewportSize({ width: 320, height: 740 });
+  await page.goto("/#/map");
+  await expect(page.getByTestId("home-filter-dock")).toBeVisible();
+  await expect(page.getByTestId("mobile-action-bar")).toBeVisible();
+  await page.getByTestId("home-filter-expand").click();
+  const sheet = page.getByTestId("quick-filter-sheet");
+  await expect(sheet).toBeVisible();
+  await sheet.getByRole("button", { name: "想吃" }).click();
+  await expect(sheet.getByRole("button", { name: "想吃" })).toHaveAttribute("aria-pressed", "true");
+  const overflow = await page.evaluate(() => {
+    const offenders = [...document.querySelectorAll<HTMLElement>("[data-testid='home-filter-dock'], [data-testid='quick-filter-sheet'], [data-testid='mobile-action-bar']")]
+      .filter((element) => {
+        const rect = element.getBoundingClientRect();
+        return rect.left < -1 || rect.right > window.innerWidth + 1;
+      })
+      .map((element) => element.dataset.testid ?? element.className);
+    return offenders;
+  });
+  expect(overflow).toEqual([]);
+  await page.screenshot({ path: "docs/active/evidence/p23/03-mobile-320-quick-filter.png", fullPage: true });
+});
+
+test("P23 health and governance panels are readable and action text is not clipped", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop project validates P23 panel readability");
+  fs.mkdirSync("docs/active/evidence/p23", { recursive: true });
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/#/map");
+  await importPersonalFavorites(page);
+  await page.getByTestId("quick-data-health").click();
+  await expect(page.getByTestId("data-health-center")).toBeVisible();
+  await expect.poll(async () => page.getByTestId("data-health-center").evaluate((element) => element.getBoundingClientRect().width)).toBeGreaterThanOrEqual(470);
+  await page.screenshot({ path: "docs/active/evidence/p23/04-data-health-readable.png", fullPage: true });
+  await page.getByTestId("data-health-center").getByRole("button", { name: /治理工作台|打开治理/ }).first().click();
+  await expect(page.getByTestId("governance-workbench")).toBeVisible();
+  await expect.poll(async () => page.getByTestId("governance-workbench").evaluate((element) => element.getBoundingClientRect().width)).toBeGreaterThanOrEqual(470);
+  const clippedButtons = await page.getByTestId("governance-workbench").evaluate((root) => {
+    return [...root.querySelectorAll("button")].map((button) => {
+      const rect = button.getBoundingClientRect();
+      return {
+        text: button.textContent?.trim() ?? "",
+        width: rect.width,
+        height: rect.height,
+        clipped: button.scrollWidth > button.clientWidth + 1 || button.scrollHeight > button.clientHeight + 1
+      };
+    }).filter((button) => button.text.length > 0 && (button.clipped || button.height > button.width * 1.8));
+  });
+  expect(clippedButtons).toEqual([]);
+  await page.screenshot({ path: "docs/active/evidence/p23/05-governance-readable.png", fullPage: true });
+});
+
+const P21_RESPONSIVE_VIEWPORTS = [
+  { name: "mobile-390", width: 390, height: 844 },
+  { name: "mobile-430", width: 430, height: 932 },
+  { name: "tablet-768", width: 768, height: 900 },
+  { name: "desktop-1280", width: 1280, height: 820 }
+] as const;
+
+for (const viewport of P21_RESPONSIVE_VIEWPORTS) {
+  test(`P21 responsive ${viewport.name} import share and fallback`, async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "desktop", "desktop project captures deterministic P21 responsive viewports");
+    fs.mkdirSync("docs/active/evidence/p21", { recursive: true });
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.goto("/#/map");
+    if (await page.getByTestId("workspace-import").isVisible().catch(() => false)) {
+      await page.getByTestId("workspace-import").click();
+    } else {
+      await page.getByRole("button", { name: "更多工具" }).click();
+      await page.getByRole("dialog", { name: "更多工具" }).getByRole("button", { name: "数据包" }).click();
+    }
+    await expect(page.getByTestId("import-export-dialog")).toBeVisible();
+    await page.getByTestId("import-readonly-snapshot").click();
+    await page.locator('input[type="file"]').nth(1).setInputFiles({
+      name: `${viewport.name}.foodmap.json`,
+      mimeType: "application/json",
+      buffer: Buffer.from(JSON.stringify(buildP21PortablePackage(`p21-${viewport.name}`)), "utf-8")
+    });
+    await expect(page.getByTestId("share-view")).toContainText("P21 分享热干面");
+    if (viewport.width <= 900) {
+      await expect(page.getByRole("navigation", { name: "只读分享导航" })).toBeVisible();
+      await page.getByRole("navigation", { name: "只读分享导航" }).getByRole("button", { name: "详情" }).click();
+      await expect(page.getByTestId("share-mobile-detail-summary")).toBeVisible();
+      await expect(page.getByTestId("share-mobile-detail-summary")).toContainText("P21 分享热干面");
+      await page.getByTestId("share-mobile-detail-expand").click();
+      await expect(page.getByRole("dialog", { name: "地点详情" }).getByTestId("share-place-detail")).toBeVisible();
+      await expect(page.getByRole("dialog", { name: "地点详情" }).getByTestId("share-place-detail")).toContainText("P21 分享热干面");
+    } else {
+      await expect(page.getByTestId("share-readonly-notice")).toBeVisible();
+      await expect(page.getByTestId("layer-panel")).toBeVisible();
+      await expect(page.getByTestId("share-place-detail")).toBeVisible();
+    }
+    await page.screenshot({ path: `docs/active/evidence/p21/p21-responsive-${viewport.name}-share.png`, fullPage: true });
+    await page.goto("/#/share/missing-p21-responsive");
+    await expect(page.getByTestId("share-missing-snapshot")).toContainText(".foodmap.json");
+    await page.screenshot({ path: `docs/active/evidence/p21/p21-responsive-${viewport.name}-missing.png`, fullPage: true });
+  });
+}

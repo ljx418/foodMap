@@ -1,5 +1,15 @@
 import { inferCoordinateSystem, toWgs84Point } from "./coordinates";
-import type { FoodPlace } from "./types";
+import type { FoodPlace, MapViewportBounds } from "./types";
+
+export type PosterMode = "current-filter" | "current-viewport";
+
+export interface PosterSourceResult {
+  mode: PosterMode;
+  places: FoodPlace[];
+  count: number;
+  unavailableReason?: string;
+  emptyReason?: string;
+}
 
 export interface MapPosterOptions {
   title: string;
@@ -38,6 +48,48 @@ export function createMapPosterSvg(places: FoodPlace[], options: MapPosterOption
     <text x="100" y="1255" font-size="25" fill="#6f7f47">${tagSummary || "暂无标签"}</text>
     <text x="100" y="1320" font-size="22" fill="#806b57">FoodMap 本地生成 · 个人记录默认导出 · 生成时间：${escapeXml(generatedAt)}</text>
   </svg>`;
+}
+
+export function buildPosterSourceSet(
+  places: FoodPlace[],
+  mode: PosterMode,
+  viewportBounds?: MapViewportBounds
+): PosterSourceResult {
+  if (mode === "current-filter") {
+    return {
+      mode,
+      places: excludeReferencePlaces(places),
+      count: excludeReferencePlaces(places).length
+    };
+  }
+
+  if (!viewportBounds) {
+    return {
+      mode,
+      places: [],
+      count: 0,
+      unavailableReason: "当前地图视野尚未就绪"
+    };
+  }
+
+  const viewportPlaces = filterPlacesByViewport(excludeReferencePlaces(places), viewportBounds);
+  return {
+    mode,
+    places: viewportPlaces,
+    count: viewportPlaces.length,
+    emptyReason: viewportPlaces.length === 0 ? "当前地图视野内没有符合筛选条件的个人图钉" : undefined
+  };
+}
+
+export function filterPlacesByViewport(places: FoodPlace[], bounds: MapViewportBounds): FoodPlace[] {
+  const wgs84Bounds = normalizeBounds(bounds);
+  return places.filter((place) => {
+    const point = toWgs84Point({ longitude: place.longitude, latitude: place.latitude }, inferCoordinateSystem(place));
+    return point.longitude >= wgs84Bounds.west
+      && point.longitude <= wgs84Bounds.east
+      && point.latitude >= wgs84Bounds.south
+      && point.latitude <= wgs84Bounds.north;
+  });
 }
 
 export function downloadMapPoster(places: FoodPlace[], options: MapPosterOptions): Promise<void> {
@@ -91,6 +143,18 @@ function getBounds(places: FoodPlace[]) {
     minLat: Math.min(...lats, 30.34),
     maxLat: Math.max(...lats, 30.86)
   };
+}
+
+function excludeReferencePlaces(places: FoodPlace[]): FoodPlace[] {
+  return places.filter((place) => !place.id.startsWith("recommendation:") && !place.id.startsWith("dingtuyi-share:"));
+}
+
+function normalizeBounds(bounds: MapViewportBounds): Required<Pick<MapViewportBounds, "west" | "south" | "east" | "north">> {
+  const west = Math.min(bounds.west, bounds.east);
+  const east = Math.max(bounds.west, bounds.east);
+  const south = Math.min(bounds.south, bounds.north);
+  const north = Math.max(bounds.south, bounds.north);
+  return { west, south, east, north };
 }
 
 function toPosterPoint(place: FoodPlace) {

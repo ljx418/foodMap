@@ -8,7 +8,7 @@ import { buildExternalMapLink, placeToExternalMapTarget } from "../../domain/ext
 import { getStoredAmapWebServiceKey, storeAmapWebServiceKey } from "../../domain/liveMapSearch";
 import { getLocationStatusBadges, getUserFacingTags } from "../../domain/locationStatus";
 import type { PlaceCandidate } from "../../domain/placeRecognition";
-import type { FoodLayer, FoodPlace, PhotoAsset } from "../../domain/types";
+import type { FoodLayer, FoodPlace, GovernanceJournalEntry, PhotoAsset } from "../../domain/types";
 import { normalizeTags } from "../../domain/validators";
 
 interface Props {
@@ -16,6 +16,7 @@ interface Props {
   layers: FoodLayer[];
   photos: PhotoAsset[];
   readonly?: boolean;
+  testId?: string;
   readonlyActions?: ReactNode;
   onEdit?: () => void;
   onDelete?: () => void;
@@ -30,6 +31,7 @@ interface Props {
   movingPin?: boolean;
   onStartMovePin?: () => void;
   onCancelMovePin?: () => void;
+  journalEntries?: GovernanceJournalEntry[];
 }
 
 export function PlaceDetailDrawer({
@@ -37,6 +39,7 @@ export function PlaceDetailDrawer({
   layers,
   photos,
   readonly,
+  testId,
   readonlyActions,
   onEdit,
   onDelete,
@@ -51,6 +54,7 @@ export function PlaceDetailDrawer({
   movingPin,
   onStartMovePin,
   onCancelMovePin
+  , journalEntries = []
 }: Props) {
   const [copyState, setCopyState] = useState("");
   const [tagText, setTagText] = useState("");
@@ -76,7 +80,7 @@ export function PlaceDetailDrawer({
   }, [place?.id]);
   if (!place) {
     return (
-      <aside className="detail-drawer" data-testid="place-detail">
+      <aside className="detail-drawer" data-testid={testId ?? "place-detail"}>
         <EmptyState
           title={readonly ? "还没有选中地点" : "选择图钉查看详情，或在武汉地图上新增记录。"}
           actions={!readonly && onAdd ? <button type="button" className="primary-button" onClick={onAdd}>新增地点</button> : undefined}
@@ -150,7 +154,7 @@ export function PlaceDetailDrawer({
   }
   const allCalibrationCandidates = [...liveCandidates, ...calibrationCandidates.filter((candidate) => !liveCandidates.some((live) => live.id === candidate.id))];
   return (
-    <aside className="detail-drawer" data-testid="place-detail">
+    <aside className="detail-drawer" data-testid={testId ?? "place-detail"}>
       <div className="detail-drawer__topbar">
         <div className="detail-drawer__nav">
           {onBack ? (
@@ -400,6 +404,22 @@ export function PlaceDetailDrawer({
       <details className="detail-disclosure detail-notes-disclosure" data-testid="detail-notes-disclosure">
         <summary>文字记录</summary>
         {place.notes ? <p className="notes">{place.notes}</p> : <p className="notes is-muted">还没有文字记录。</p>}
+      </details>
+      <details className="detail-disclosure" data-testid="governance-history-panel" open={journalEntries.length > 0}>
+        <summary>维护历史 · {journalEntries.length} 条</summary>
+        {journalEntries.length > 0 ? (
+          <ol className="governance-history-list">
+            {journalEntries.slice(0, 8).map((entry) => (
+              <li key={entry.id}>
+                <strong>{entry.summary}</strong>
+                <span>{entry.createdAt.slice(0, 19).replace("T", " ")}</span>
+                <p>{entry.detail}</p>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p className="notes is-muted">暂无维护历史。</p>
+        )}
       </details>
     </aside>
   );

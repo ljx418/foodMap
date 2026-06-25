@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { ChevronDown, Filter, ImageDown, RotateCcw } from "lucide-react";
+import { Activity, ChevronDown, Filter, ImageDown, RotateCcw } from "lucide-react";
+import { useIsMobileViewport } from "../../components/useIsMobileViewport";
 import type { FoodFilterState, VisitStatusTag } from "../../domain/types";
 import { CUISINE_TAG_PRESETS, REVIEW_TAG_PRESETS, VISIT_STATUS_LABELS } from "../../domain/tagGroups";
 import { RECOMMENDATION_CUISINE_FILTERS, RECOMMENDATION_REVIEW_FILTERS } from "../../recommendations/tags";
@@ -13,11 +14,13 @@ interface HomeMapControlDockProps {
   dingtuyiCount: number;
   pendingCount: number;
   highRiskCount: number;
+  healthIssueCount: number;
   filter: FoodFilterState;
   onFilterChange: (filter: FoodFilterState) => void;
   onScanlistVisibleChange: (visible: boolean) => void;
   onDingtuyiVisibleChange: (visible: boolean) => void;
   onOpenPendingPlaces: () => void;
+  onOpenDataHealth: () => void;
   onOpenFullFilter: () => void;
   onOpenSharePoster: () => void;
 }
@@ -35,16 +38,19 @@ export function HomeMapControlDock({
   dingtuyiCount,
   pendingCount,
   highRiskCount,
+  healthIssueCount,
   filter,
   onFilterChange,
   onScanlistVisibleChange,
   onDingtuyiVisibleChange,
   onOpenPendingPlaces,
+  onOpenDataHealth,
   onOpenFullFilter,
   onOpenSharePoster
 }: HomeMapControlDockProps) {
   const [expanded, setExpanded] = useState(false);
   const [quickSheetOpen, setQuickSheetOpen] = useState(false);
+  const isMobile = useIsMobileViewport();
   const activeLabels = useMemo(() => {
     const statusLabels = (filter.visitStatuses ?? []).map((status) => VISIT_STATUS_LABELS[status]);
     const verificationLabels = filter.verificationStatus === "pending" ? ["待确认"] : [];
@@ -92,7 +98,7 @@ export function HomeMapControlDock({
   }
 
   function toggleQuickFilters() {
-    if (isMobileViewport()) {
+    if (isMobile) {
       setQuickSheetOpen(true);
       return;
     }
@@ -155,21 +161,18 @@ export function HomeMapControlDock({
   }
 
   return (
-    <section
-      className={expanded ? "home-filter-dock is-expanded" : "home-filter-dock"}
-      data-testid="home-filter-dock"
-      aria-label="首页筛选和图层开关"
-      onKeyDown={(event) => {
-        if (event.key === "Escape" && quickSheetOpen) {
-          setQuickSheetOpen(false);
-          return;
-        }
-        if (event.key === "Escape" && expanded) {
-          setExpanded(false);
-        }
-      }}
-    >
-      <div className="home-filter-dock__main">
+    <>
+      <section
+        className={expanded ? "home-filter-dock is-expanded" : "home-filter-dock"}
+        data-testid="home-filter-dock"
+        aria-label="首页筛选和图层开关"
+        onKeyDown={(event) => {
+          if (event.key === "Escape" && expanded) {
+            setExpanded(false);
+          }
+        }}
+      >
+        <div className="home-filter-dock__main">
         <div className="home-filter-dock__title">
           <span>首页筛选</span>
           <small>
@@ -211,6 +214,19 @@ export function HomeMapControlDock({
             待确认
             <span>{pendingCount}</span>
             {highRiskCount > 0 ? <em>高风险 {highRiskCount}</em> : null}
+          </button>
+        ) : null}
+        {totalPlacesCount > 0 ? (
+          <button
+            type="button"
+            className={healthIssueCount > 0 ? "quick-switch quick-switch--health has-issues" : "quick-switch quick-switch--health"}
+            onClick={onOpenDataHealth}
+            data-testid="quick-data-health"
+            title={healthIssueCount > 0 ? `有 ${healthIssueCount} 个地点需要关注` : "查看个人数据健康"}
+          >
+            <Activity size={15} aria-hidden="true" />
+            健康
+            <span>{healthIssueCount}</span>
           </button>
         ) : null}
         {activeQuickFilterCount > 0 ? (
@@ -272,8 +288,15 @@ export function HomeMapControlDock({
           {renderQuickFilterControls()}
         </div>
       ) : null}
+      </section>
       {quickSheetOpen ? (
-        <div className="sheet-backdrop quick-filter-sheet-backdrop" onClick={() => setQuickSheetOpen(false)}>
+        <div
+          className="sheet-backdrop quick-filter-sheet-backdrop"
+          onClick={() => setQuickSheetOpen(false)}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") setQuickSheetOpen(false);
+          }}
+        >
           <div className="sheet quick-filter-sheet" data-testid="quick-filter-sheet" role="dialog" aria-modal="true" aria-labelledby="quick-filter-title" onClick={(event) => event.stopPropagation()}>
             <div className="sheet__header">
               <h2 id="quick-filter-title">快捷标签</h2>
@@ -290,12 +313,8 @@ export function HomeMapControlDock({
           </div>
         </div>
       ) : null}
-    </section>
+    </>
   );
-}
-
-function isMobileViewport(): boolean {
-  return typeof window !== "undefined" && window.matchMedia("(max-width: 900px)").matches;
 }
 
 function toggleArrayValue<T>(items: T[], value: T): T[] {

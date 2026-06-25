@@ -1,34 +1,42 @@
 import { Download } from "lucide-react";
 import { useMemo, useState } from "react";
-import type { FoodPlace } from "../../domain/types";
-import { downloadMapPoster } from "../../domain/mapPoster";
+import type { FoodPlace, MapViewportBounds } from "../../domain/types";
+import { buildPosterSourceSet, downloadMapPoster, type PosterMode } from "../../domain/mapPoster";
 
 interface Props {
   open: boolean;
   places: FoodPlace[];
+  viewportBounds?: MapViewportBounds;
   onClose: () => void;
   notify: (text: string) => void;
 }
 
-export function MapPosterDialog({ open, places, onClose, notify }: Props) {
+export function MapPosterDialog({ open, places, viewportBounds, onClose, notify }: Props) {
   const [title, setTitle] = useState("我的美食地图");
-  const tagSummary = useMemo(
-    () => Array.from(new Set(places.flatMap((place) => place.tags))).slice(0, 8),
-    [places]
+  const [mode, setMode] = useState<PosterMode>("current-filter");
+  const source = useMemo(
+    () => buildPosterSourceSet(places, mode, viewportBounds),
+    [mode, places, viewportBounds]
   );
+  const tagSummary = useMemo(
+    () => Array.from(new Set(source.places.flatMap((place) => place.tags))).slice(0, 8),
+    [source.places]
+  );
+  const sourceLabel = mode === "current-viewport" ? "当前视野个人图钉" : "当前筛选个人图钉";
+  const canExport = source.count > 0 && !source.unavailableReason && !source.emptyReason;
 
   if (!open) return null;
 
   async function exportPoster() {
-    if (places.length === 0) {
-      notify("当前筛选下没有可生成分享图的个人图钉");
+    if (!canExport) {
+      notify(source.unavailableReason ?? source.emptyReason ?? "当前没有可生成分享图的个人图钉");
       return;
     }
     const posterTitle = title.trim() || "我的美食地图";
     try {
-      await downloadMapPoster(places, {
+      await downloadMapPoster(source.places, {
         title: posterTitle,
-        subtitle: `${places.length} 个当前筛选个人图钉`,
+        subtitle: `${source.count} 个${sourceLabel}`,
         tagSummary: tagSummary.map((tag) => `#${tag}`).join(" ")
       });
       notify("已生成地图分享图");
@@ -56,15 +64,35 @@ export function MapPosterDialog({ open, places, onClose, notify }: Props) {
             />
           </label>
           <div className="poster-mode-row" aria-label="分享图模式">
-            <button type="button" className="quick-switch is-active" aria-pressed="true">当前筛选</button>
-            <button type="button" className="quick-switch" disabled title="当前版本未接入地图视野边界">当前视野</button>
+            <button
+              type="button"
+              className={mode === "current-filter" ? "quick-switch is-active" : "quick-switch"}
+              aria-pressed={mode === "current-filter"}
+              onClick={() => setMode("current-filter")}
+              data-testid="poster-mode-current-filter"
+            >
+              当前筛选
+            </button>
+            <button
+              type="button"
+              className={mode === "current-viewport" ? "quick-switch is-active" : "quick-switch"}
+              aria-pressed={mode === "current-viewport"}
+              disabled={!viewportBounds}
+              title={viewportBounds ? "使用当前地图视野内的个人图钉" : "当前地图视野尚未就绪"}
+              onClick={() => setMode("current-viewport")}
+              data-testid="poster-mode-current-viewport"
+            >
+              当前视野
+            </button>
           </div>
-          <strong>{places.length} 个当前筛选个人图钉</strong>
-          <span>分享图会使用当前筛选结果生成 PNG，适合保存后发朋友圈；榜单和参考图层不会混入个人图钉统计。</span>
+          <strong data-testid="poster-source-count">{source.count} 个{sourceLabel}</strong>
+          {source.unavailableReason ? <span>{source.unavailableReason}</span> : null}
+          {source.emptyReason ? <span data-testid="poster-empty-viewport">{source.emptyReason}</span> : null}
+          <span>分享图会使用{mode === "current-viewport" ? "当前地图视野" : "当前筛选结果"}生成 PNG，适合保存后发朋友圈；榜单和参考图层不会混入个人图钉统计。</span>
           <span>{tagSummary.length > 0 ? `标签摘要：${tagSummary.map((tag) => `#${tag}`).join(" ")}` : "标签摘要：暂无标签"}</span>
         </div>
         <div className="dialog-actions">
-          <button type="button" className="primary-button" onClick={exportPoster} disabled={places.length === 0} data-testid="export-map-poster">
+          <button type="button" className="primary-button" onClick={exportPoster} disabled={!canExport} data-testid="export-map-poster">
             <Download size={16} /> 生成地图分享图 PNG
           </button>
         </div>

@@ -1,14 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import { Download, Filter, List, PanelRightOpen, Plus, Share2, SlidersHorizontal, Sparkles, Upload, X } from "lucide-react";
 import { useFoodMapAgentBridge } from "../../agent/FoodMapAgentBridge";
+import { navigateToShare } from "../../app/router";
 import { EmptyState } from "../../components/EmptyState";
 import { EMPTY_FILTER, isPendingCalibrationPlace } from "../../domain/filters";
 import { getExternalMapCandidatesForPlace } from "../../domain/externalMapCandidates";
 import { searchAmapPlaceCandidates } from "../../domain/liveMapSearch";
 import { applyManualPinMove, canManuallyMovePlace } from "../../domain/manualPinMove";
-import { buildCalibrationCandidates, candidateSolidifiesPrecisePlace } from "../../domain/placeCalibration";
+import { buildCalibrationCandidates, candidateSolidifiesPrecisePlace, confirmPlaceCandidate } from "../../domain/placeCalibration";
+import { derivePersonalDataHealthReport } from "../../domain/locationStatus";
+import { deriveGovernanceIssueGroups, type DuplicateDecisionPreview, type GovernanceBatchPlan, type ImportConflictPlan, type MergePreview } from "../../domain/governance";
 import type { PlaceCandidate } from "../../domain/placeRecognition";
-import { DEFAULT_CENTER, type FoodPlace } from "../../domain/types";
+import { DEFAULT_CENTER, type FoodPlace, type MapViewportBounds } from "../../domain/types";
 import { normalizeTags, nowIso } from "../../domain/validators";
 import {
   DINGTUYI_SHARE_LAYER,
@@ -17,15 +20,19 @@ import {
   sourceIdFromDingtuyiMapId
 } from "../../externalShares/dingtuyiWuhanFoodShare";
 import { placeRepository } from "../../persistence/placeRepository";
+import { governanceRepository } from "../../persistence/governanceRepository";
+import { governanceJournalRepository } from "../../persistence/governanceJournalRepository";
 import { photoRepository } from "../../persistence/photoRepository";
 import { importPersonalFavoritePins } from "../../persistence/personalFavoriteSeed";
 import { FilterPanel } from "./FilterPanel";
+import { GovernanceWorkbench } from "./GovernanceWorkbench";
 import { HomeMapControlDock } from "./HomeMapControlDock";
 import { ImportExportDialog } from "./ImportExportDialog";
 import { LayerPanel } from "./LayerPanel";
 import { MapCanvas } from "./MapCanvas";
 import { MapPosterDialog } from "./MapPosterDialog";
 import { PendingPlaceWorkbench } from "./PendingPlaceWorkbench";
+import { PersonalDataHealthCenter, type PersonalDataHealthGroupKey } from "./PersonalDataHealthCenter";
 import { PlaceDetailDrawer } from "./PlaceDetailDrawer";
 import { PlaceList } from "./PlaceList";
 import { PlaceEditorModal } from "./PlaceEditorModal";
@@ -46,10 +53,10 @@ import {
 
 type MobilePanelMode = "layers" | "places" | "detail" | "tools";
 type WorkspaceUiMode = "idle" | "display" | "list" | "detail" | "recommendation" | "dingtuyi" | "tools" | "create" | "edit" | "filter" | "importExport" | "share" | "poster";
-type RightPanelView = "list" | "detail" | "recommendations" | "dingtuyi" | "pending";
+type RightPanelView = "list" | "detail" | "recommendations" | "dingtuyi" | "pending" | "health" | "governance";
 
 export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
-  const { places, layers, photos, filter, loading, visiblePlaces, setFilter, reload } = useFoodMapData();
+  const { places, layers, photos, journal, filter, loading, visiblePlaces, setFilter, reload } = useFoodMapData();
   const [selectedId, setSelectedId] = useState<string | undefined>();
   const [editingPlace, setEditingPlace] = useState<FoodPlace | undefined>();
   const [draftPoint, setDraftPoint] = useState<{ longitude: number; latitude: number } | undefined>();
@@ -69,6 +76,8 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
   const [selectedDingtuyiId, setSelectedDingtuyiId] = useState<string | undefined>();
   const [manualMovePlaceId, setManualMovePlaceId] = useState<string | undefined>();
   const [pendingManualMovePoint, setPendingManualMovePoint] = useState<{ longitude: number; latitude: number } | undefined>();
+  const [mapViewportBounds, setMapViewportBounds] = useState<MapViewportBounds | undefined>();
+  const [importConflictPlan, setImportConflictPlan] = useState<ImportConflictPlan | undefined>();
 
   const selectedPlace = useMemo(() => places.find((place) => place.id === selectedId), [places, selectedId]);
   const displayLayers = useMemo(() => [...layers, DINGTUYI_SHARE_LAYER], [layers]);
@@ -150,6 +159,9 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
   const pendingPlaceCount = useMemo(() => places.filter(isPendingCalibrationPlace).length, [places]);
   const pendingPlaces = useMemo(() => places.filter(isPendingCalibrationPlace), [places]);
   const highRiskPlaceCount = useMemo(() => places.filter((place) => place.tags.includes("位置高风险")).length, [places]);
+  const dataHealthReport = useMemo(() => derivePersonalDataHealthReport(places), [places]);
+  const governanceIssueGroups = useMemo(() => deriveGovernanceIssueGroups(places, importConflictPlan), [places, importConflictPlan]);
+  const dataHealthIssueCount = dataHealthReport.pending.length + dataHealthReport.highRisk.length + dataHealthReport.skipped.length;
   const selectedCanMovePin = canManuallyMovePlace(selectedPlace);
   const selectedDingtuyiCanSave = Boolean(selectedDingtuyiId && !places.some((place) => place.id === `personal-favorite:dingtuyi-${selectedDingtuyiId}`));
 
@@ -259,6 +271,32 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
     if (isMobileViewport()) setMobilePanel("places");
   }
 
+  function openDataHealth() {
+    setSelectedRecommendationId(undefined);
+    setRightPanelOpen(true);
+    setRightView("health");
+    if (isMobileViewport()) setMobilePanel("places");
+  }
+
+  function openGovernanceWorkbench() {
+    setSelectedRecommendationId(undefined);
+    setRightPanelOpen(true);
+    setRightView("governance");
+    if (isMobileViewport()) setMobilePanel("places");
+  }
+
+  function filterDataHealthGroup(group: PersonalDataHealthGroupKey) {
+    const base = { ...filter, source: "personal" as const };
+    if (group === "verified") setFilter({ ...base, verificationStatus: "verified" });
+    if (group === "pending") setFilter({ ...base, verificationStatus: "pending" });
+    if (group === "highRisk") setFilter({ ...base, verificationStatus: "conflict" });
+    if (group === "manualAdjusted") setFilter({ ...base, verificationStatus: "all", tags: ["手动校准"] });
+    if (group === "skipped") setFilter({ ...base, verificationStatus: "all", tags: ["暂时跳过"] });
+    setRightPanelOpen(true);
+    setRightView("list");
+    if (isMobileViewport()) setMobilePanel("places");
+  }
+
   function openMobileList() {
     if (recommendationsLoaded && recommendationLayerVisible && visibleRecommendations.length > 0) {
       setRightView("recommendations");
@@ -339,39 +377,17 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
 
   async function confirmCalibrationCandidateForPlace(place: FoodPlace, candidate: PlaceCandidate) {
     const precise = candidateSolidifiesPrecisePlace(candidate);
-    const staleCalibrationTags = new Set(["待校准", "近似坐标", "默认候选", "位置待确认", "位置高风险", "陆地点修正", "暂时跳过"]);
-    const baseTags = place.tags.filter((tag) => !staleCalibrationTags.has(tag));
-    const tags = normalizeTags([
-      ...baseTags,
-      ...candidate.tags.filter((tag) => !staleCalibrationTags.has(tag)),
-      precise ? "已核验" : "待校准",
-      precise ? "精确坐标" : "近似坐标",
-      candidate.sourceLabel
-    ]);
-    const notes = [
-      place.notes,
-      [
-        `候选确认固化：${candidate.name}`,
-        candidate.address ? `候选地址：${candidate.address}` : undefined,
-        `候选来源：${candidate.sourceLabel}`,
-        `候选置信度：${Math.round(candidate.confidence * 100)}%`,
-        precise ? "固化结果：已替换为精确坐标，可打开地图导航。" : "固化结果：仍需校准；候选仍非精确坐标，继续保留待校准状态。"
-      ].filter(Boolean).join("\n")
-    ].filter(Boolean).join("\n\n");
-    const next: FoodPlace = {
-      ...place,
-      name: candidate.name || place.name,
-      address: candidate.address ?? place.address,
-      city: candidate.city ?? place.city ?? "武汉",
-      longitude: typeof candidate.longitude === "number" ? candidate.longitude : place.longitude,
-      latitude: typeof candidate.latitude === "number" ? candidate.latitude : place.latitude,
-      coordinateSystem: candidate.coordinateSystem ?? place.coordinateSystem ?? "wgs84",
-      tags,
-      notes,
-      mapAccuracy: precise ? "exact" : "approximate",
-      updatedAt: nowIso()
-    };
+    const next = confirmPlaceCandidate(place, candidate, nowIso());
     await placeRepository.save(next);
+    await governanceJournalRepository.append({
+      id: `journal-candidate-${place.id}-${Date.now()}`,
+      placeIds: [place.id],
+      action: "candidate-confirmed",
+      summary: `候选确认：${place.name}`,
+      detail: `确认候选「${candidate.name}」，坐标精度：${candidate.coordinateAccuracy}。`,
+      createdAt: nowIso(),
+      actor: "user"
+    });
     await reload();
     setSelectedId(next.id);
     notify(precise ? "已固化为精确地点" : "已保存候选，仍需校准");
@@ -399,6 +415,15 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
       [`待确认处理：用户暂时跳过。`, `操作时间：${now}`, "该地点仍保留在待确认工作台，不作为精确导航依据。"].join("\n")
     ].filter(Boolean).join("\n\n");
     await placeRepository.save({ ...place, tags, notes, updatedAt: now, mapAccuracy: place.mapAccuracy ?? "approximate" });
+    await governanceJournalRepository.append({
+      id: `journal-skip-${place.id}-${Date.now()}`,
+      placeIds: [place.id],
+      action: "batch-tag",
+      summary: `暂时跳过：${place.name}`,
+      detail: "用户在待确认工作台选择暂时跳过，地点仍保留待确认状态。",
+      createdAt: now,
+      actor: "user"
+    });
     await reload();
     setSelectedId(placeId);
     notify("已暂时跳过，仍保留在待确认工作台");
@@ -447,6 +472,15 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
     }
     const next = applyManualPinMove(place, pendingManualMovePoint);
     await placeRepository.save(next);
+    await governanceJournalRepository.append({
+      id: `journal-move-${place.id}-${Date.now()}`,
+      placeIds: [place.id],
+      action: "manual-pin-moved",
+      summary: `手动校准：${place.name}`,
+      detail: `原坐标 ${place.latitude.toFixed(6)}, ${place.longitude.toFixed(6)}；新坐标 ${pendingManualMovePoint.latitude.toFixed(6)}, ${pendingManualMovePoint.longitude.toFixed(6)}。`,
+      createdAt: nowIso(),
+      actor: "user"
+    });
     await reload();
     setSelectedId(place.id);
     setManualMovePlaceId(undefined);
@@ -475,6 +509,34 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
     setDraftInitialText(initialText);
     setSelectedDingtuyiId(undefined);
     setDraftPoint(point);
+  }
+
+  async function commitGovernanceBatch(plan: GovernanceBatchPlan) {
+    await governanceRepository.saveGovernanceBatch(places, plan);
+    await reload();
+    notify("治理批处理已写入维护历史");
+  }
+
+  async function commitDuplicateMerge(preview: MergePreview) {
+    await governanceRepository.mergePlaces(preview);
+    await reload();
+    setSelectedId(preview.retained.id);
+    notify("已合并重复地点并记录维护历史");
+  }
+
+  async function commitDuplicateDecision(preview: DuplicateDecisionPreview) {
+    await governanceRepository.saveDuplicateDecision(preview);
+    await reload();
+    if (preview.retained) setSelectedId(preview.retained.id);
+    notify(preview.decision === "merge" ? "已合并重复地点并记录维护历史" : "已记录重复地点处理决策");
+  }
+
+  async function commitImportPlan(plan: ImportConflictPlan) {
+    await governanceRepository.importWithConflictPlan(plan);
+    setImportConflictPlan(undefined);
+    await reload();
+    notify("已按预览导入可写项并记录维护历史");
+    navigateToShare(plan.snapshot.id);
   }
 
   const bridgeOptions = useMemo(
@@ -552,7 +614,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
             ? "share"
             : mobilePanel === "layers" || leftPanelOpen
             ? "display"
-              : mobilePanel === "places" || (desktopRightPanelOpen && (rightView === "list" || rightView === "pending"))
+              : mobilePanel === "places" || (desktopRightPanelOpen && (rightView === "list" || rightView === "pending" || rightView === "health" || rightView === "governance"))
               ? "list"
               : mobilePanel === "tools"
                 ? "tools"
@@ -567,6 +629,11 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
   const filterSummaryVisible = desktopViewport && mapStatusVisible && (structuralFilterCount > 0 || hiddenLayerCount > 0);
   const mobileActionBarVisible = !manualMovePlaceId && ["idle", "display", "list"].includes(uiMode);
   const movingPlace = manualMovePlaceId ? places.find((place) => place.id === manualMovePlaceId) : undefined;
+  const rightPanelWidthClass = rightView === "health" || rightView === "governance" || rightView === "pending"
+    ? " is-wide-panel"
+    : rightView === "list" || rightView === "recommendations"
+      ? " is-medium-panel"
+      : "";
 
   function getCalibrationCandidatesForPlace(place: FoodPlace): PlaceCandidate[] {
     return buildCalibrationCandidates({
@@ -592,7 +659,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
         onImport={() => setImportOpen(true)}
         onMore={() => setMobilePanel((panel) => panel === "tools" ? undefined : "tools")}
       />
-      <div className={`workspace-body${leftPanelOpen ? " has-left-panel" : ""}${rightPanelOpen ? " has-right-panel" : ""}`}>
+      <div className={`workspace-body${leftPanelOpen ? " has-left-panel" : ""}${rightPanelOpen ? ` has-right-panel${rightPanelWidthClass}` : ""}`}>
         <div className="desktop-panel-slot">
           {leftPanelOpen ? (
             <div className="desktop-side-panel">
@@ -658,6 +725,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
               openCreateDraft(point);
             }}
             onPlaceMove={(placeId, point) => previewManualPinMove(placeId, point)}
+            onViewportChange={setMapViewportBounds}
             notify={notify}
           />
           {manualMovePlaceId ? (
@@ -691,6 +759,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
               dingtuyiCount={DINGTUYI_WUHAN_FOOD_MARKERS.length}
               pendingCount={pendingPlaceCount}
               highRiskCount={highRiskPlaceCount}
+              healthIssueCount={dataHealthIssueCount}
               filter={filter}
               onFilterChange={setFilter}
               onScanlistVisibleChange={(visible) => {
@@ -703,6 +772,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
                 notify(visible ? "已显示钉图易分享图层" : "已隐藏钉图易分享图层");
               }}
               onOpenPendingPlaces={openPendingPlaces}
+              onOpenDataHealth={openDataHealth}
               onOpenFullFilter={() => setFilterOpen(true)}
               onOpenSharePoster={() => setPosterOpen(true)}
             />
@@ -761,6 +831,27 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
                     setRightView("list");
                   }}
                 />
+              ) : rightView === "health" ? (
+                <PersonalDataHealthCenter
+                  report={dataHealthReport}
+                  onFocusPlace={selectPlace}
+                  onFilterGroup={filterDataHealthGroup}
+                  onOpenPendingWorkbench={openPendingPlaces}
+                  onOpenGovernanceWorkbench={openGovernanceWorkbench}
+                />
+              ) : rightView === "governance" ? (
+                <GovernanceWorkbench
+                  places={places}
+                  issueGroups={governanceIssueGroups}
+                  importPlan={importConflictPlan}
+                  journal={journal}
+                  onFocusPlace={selectPlace}
+                  onCommitBatch={commitGovernanceBatch}
+                  onDuplicateDecision={commitDuplicateDecision}
+                  onCommitImportPlan={commitImportPlan}
+                  onImportPlanChange={setImportConflictPlan}
+                  onOpenImport={() => setImportOpen(true)}
+                />
               ) : rightView === "detail" && selectedPlace ? (
                 <PlaceDetailDrawer
                   place={selectedPlace}
@@ -779,6 +870,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
                   movingPin={manualMovePlaceId === selectedPlace.id}
                   onStartMovePin={() => startManualMove(selectedPlace.id)}
                   onCancelMovePin={() => setManualMovePlaceId(undefined)}
+                  journalEntries={journal.filter((entry) => entry.placeIds.includes(selectedPlace.id))}
                 />
               ) : rightView === "dingtuyi" && selectedDingtuyiPlace ? (
                 <PlaceDetailDrawer
@@ -858,19 +950,22 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
         <div className="mobile-panel-backdrop" onClick={closeMobilePanel}>
           <section className="mobile-panel" role="dialog" aria-modal="true" aria-labelledby="mobile-panel-title" onClick={(event) => event.stopPropagation()}>
             <div className="mobile-panel__header">
-              <h2 id="mobile-panel-title">{mobilePanel === "layers" ? "地图显示" : mobilePanel === "places" ? (rightView === "recommendations" ? "扫街榜清单" : rightView === "pending" ? "待确认工作台" : "地点清单") : mobilePanel === "tools" ? "更多工具" : rightView === "dingtuyi" ? "钉图易地点" : "地点详情"}</h2>
+              <h2 id="mobile-panel-title">{mobilePanel === "layers" ? "地图显示" : mobilePanel === "places" ? (rightView === "recommendations" ? "扫街榜清单" : rightView === "pending" ? "待确认工作台" : rightView === "health" ? "数据健康" : rightView === "governance" ? "治理工作台" : "地点清单") : mobilePanel === "tools" ? "更多工具" : rightView === "dingtuyi" ? "钉图易地点" : "地点详情"}</h2>
               <button type="button" className="ghost-button" onClick={closeMobilePanel}>关闭</button>
             </div>
             {mobilePanel === "tools" ? (
               <div className="mobile-tools-grid">
                 <button type="button" className="tool-button" onClick={() => { setMobilePanel(undefined); setImportOpen(true); }}>
-                  <Upload size={18} /> 导入
+                  <Upload size={18} /> 数据包
                 </button>
                 <button type="button" className="tool-button" onClick={() => { setMobilePanel(undefined); setPosterOpen(true); }}>
-                  <Download size={18} /> 导出分享图
+                  <Download size={18} /> 分享图
                 </button>
                 <button type="button" className="tool-button" onClick={() => { setMobilePanel(undefined); setShareOpen(true); }}>
-                  <Share2 size={18} /> 分享
+                  <Share2 size={18} /> 快照
+                </button>
+                <button type="button" className="tool-button" onClick={() => { setMobilePanel(undefined); openDataHealth(); }}>
+                  <Filter size={18} /> 数据健康
                 </button>
                 <button type="button" className="tool-button" onClick={() => { setMobilePanel(undefined); loadRecommendations(); }}>
                   <Sparkles size={18} /> 扫街榜
@@ -918,6 +1013,27 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
                     setRightView("list");
                   }}
                 />
+              ) : rightView === "health" ? (
+                <PersonalDataHealthCenter
+                  report={dataHealthReport}
+                  onFocusPlace={selectPlace}
+                  onFilterGroup={filterDataHealthGroup}
+                  onOpenPendingWorkbench={openPendingPlaces}
+                  onOpenGovernanceWorkbench={openGovernanceWorkbench}
+                />
+              ) : rightView === "governance" ? (
+                <GovernanceWorkbench
+                  places={places}
+                  issueGroups={governanceIssueGroups}
+                  importPlan={importConflictPlan}
+                  journal={journal}
+                  onFocusPlace={selectPlace}
+                  onCommitBatch={commitGovernanceBatch}
+                  onDuplicateDecision={commitDuplicateDecision}
+                  onCommitImportPlan={commitImportPlan}
+                  onImportPlanChange={setImportConflictPlan}
+                  onOpenImport={() => setImportOpen(true)}
+                />
               ) : (
                 <PlaceList
                   places={visiblePlaces}
@@ -954,6 +1070,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
                 movingPin={rightView === "dingtuyi" ? false : selectedPlace ? manualMovePlaceId === selectedPlace.id : false}
                 onStartMovePin={() => rightView !== "dingtuyi" && selectedPlace ? startManualMove(selectedPlace.id) : undefined}
                 onCancelMovePin={() => setManualMovePlaceId(undefined)}
+                journalEntries={selectedPlace ? journal.filter((entry) => entry.placeIds.includes(selectedPlace.id)) : []}
                 readonlyActions={rightView === "dingtuyi" ? (
                   <button type="button" className="primary-button" onClick={() => void saveDingtuyiPlace()} disabled={!selectedDingtuyiCanSave}>
                     {selectedDingtuyiCanSave ? "加入我的收藏" : "已在我的收藏"}
@@ -984,7 +1101,7 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
       />
       <FilterPanel open={filterOpen} filter={filter} places={places} layers={displayLayers} onChange={setFilter} onClose={() => setFilterOpen(false)} />
       <ShareSnapshotDialog open={shareOpen} places={places} layers={layers} photos={photos} onClose={() => setShareOpen(false)} notify={notify} />
-      <MapPosterDialog open={posterOpen} places={visiblePlaces} onClose={() => setPosterOpen(false)} notify={notify} />
+      <MapPosterDialog open={posterOpen} places={visiblePlaces} viewportBounds={mapViewportBounds} onClose={() => setPosterOpen(false)} notify={notify} />
       <ImportExportDialog
         open={importOpen}
         places={places}
@@ -996,6 +1113,10 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
           const count = await importPersonalFavoritePins();
           await reload();
           return count;
+        }}
+        onImportPlan={(plan) => {
+          setImportConflictPlan(plan);
+          openGovernanceWorkbench();
         }}
       />
     </main>
