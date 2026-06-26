@@ -52,5 +52,5 @@ Audit opinion: no fatal or major unresolved specification risk remains before im
 npm run build
 npm test -- --run
 npm run verify:scanlist
-LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/extracted/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "agent bridge returns structured errors"
+LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/root/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "agent bridge returns structured errors"
 ```

@@ -45,7 +45,7 @@ P23 is not a new feature-expansion stage. It is a correction stage that makes P2
 Browser command used:
 
 ```bash
-LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/extracted/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts
+LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/root/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts
 ```
 
 ## Screenshot Evidence

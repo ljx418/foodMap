@@ -86,7 +86,11 @@ export function ImportExportDialog({ open, places, layers, photos, onClose, noti
             <button type="button" className="ghost-button" onClick={() => void importPersonalFavorites()} data-testid="import-personal-favorites">导入我的收藏清单</button>
           ) : null}
         </div>
-        <p className="help-text">先选择数据包意图：只读查看只写入本地 snapshots；合并到我的地图必须先进入冲突治理预览，确认前不会写入个人图钉。</p>
+        <div className="import-export-intent" data-testid="import-export-intent">
+          <p><strong>只读查看</strong>：只写入本地 snapshots，用来打开分享视图，不会改变个人地点。</p>
+          <p><strong>合并到我的地图</strong>：先进入冲突治理预览，确认前不会写入个人图钉、坐标或标签。</p>
+          <p><strong>导出数据包</strong>：生成 `.foodmap.json`，这是跨设备携带路线，不是云同步或永久公网分享。</p>
+        </div>
         {error ? <p className="inline-error" data-testid="import-error-message">{error}</p> : null}
         <input ref={governanceInputRef} hidden type="file" accept=".json,.foodmap.json,application/json" onChange={(event) => void previewGovernanceImport(event.target.files?.[0])} />
         <input ref={readonlyInputRef} hidden type="file" accept=".json,.foodmap.json,application/json" onChange={(event) => void importReadonlySnapshot(event.target.files?.[0])} />

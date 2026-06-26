@@ -1,4 +1,48 @@
-# FoodMap P19/P20-C/P21/P22/P23/P24/P25 E2E Test And Evidence Matrix
+# FoodMap P19/P20-C/P21/P22/P23/P24/P25/P26 E2E Test And Evidence Matrix
+
+## P26 Evidence Addendum
+
+P26 adds mobile release hardening, release-gate automation, Mate70 interaction polish, local data maintenance enhancement, and evidence governance over accepted P25. It must prove the fixed static WebApp remains usable and honest on Mate70 without claiming HarmonyOS native delivery, account sync, cloud backup, backend API, offline map tiles, automatic repair, realtime POI completion, collaboration, or permanent public social sharing.
+
+Required P26 command evidence:
+
+```bash
+npm run build
+npm test -- --run
+npm run verify:scanlist
+npm run verify:p24:webapp
+npm run build:pages
+npm run verify:p25:deployment
+npm run verify:p26:release
+FOODMAP_DEPLOY_URL=https://ljx418.github.io/foodMap/ npm run verify:p25:deployment
+LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/root/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop
+LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/root/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=mobile
+LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/root/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P26"
+FOODMAP_DEPLOY_URL=https://ljx418.github.io/foodMap/ LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/root/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P25 deployed"
+```
+
+The P26-specific release verifier writes `docs/active/evidence/p26/release-gate-manifest.json`. Final acceptance still requires Mate70 fixed-URL P26 build evidence; desktop/mobile viewport automation remains supporting evidence.
+
+Required P26 evidence:
+
+| Scenario | Required Assertion |
+| --- | --- |
+| Fixed URL release state | Mate70 opens `https://ljx418.github.io/foodMap/` and clearly shows browser/WebApp/source-down/tile-failure states without cloud/native/offline-map implication |
+| Release gate automation | Command bundle and evidence manifest prove build, unit, scanlist, static deployment, hash route, regression, and P26 targeted checks are repeatable |
+| Mate70 workspace polish | Search, quick filters, bottom actions, create entry, detail, keyboard states, and safe areas are readable and reachable |
+| Mate70 import/export | `.foodmap.json` import/export remains local-first and does not imply remote backup or sync |
+| Mate70 share polish | Valid read-only share and missing-share recovery remain clear, local, read-only, and refresh-safe |
+| Local maintenance | Health, governance, duplicate/conflict/import/skipped/pending flows are preview-first, cancelable, user-confirmed, and local-only |
+| Agent negative | Agent Bridge cannot finalize coordinates, delete, merge, import, hide risk, or bypass confirmation |
+| PRD consistency | Evidence and reports do not claim native HAP/AppGallery, backend, account/cloud, offline map, realtime POI completion, or public permanent sharing |
+
+P26 evidence output path:
+
+```text
+docs/active/evidence/p26/
+```
+
+P26 final report must distinguish Mate70 real-device fixed-URL evidence from desktop mobile viewport evidence and from any HDC-assisted development evidence.
 
 ## P25 Evidence Addendum
 

@@ -14,6 +14,7 @@ interface Props {
   onDuplicateDecision: (preview: DuplicateDecisionPreview) => Promise<void>;
   onCommitImportPlan: (plan: ImportConflictPlan) => Promise<void>;
   onImportPlanChange: (plan: ImportConflictPlan) => void;
+  onCancelImportPlan: () => void;
   onOpenImport: () => void;
 }
 
@@ -27,6 +28,7 @@ export function GovernanceWorkbench({
   onDuplicateDecision,
   onCommitImportPlan,
   onImportPlanChange,
+  onCancelImportPlan,
   onOpenImport
 }: Props) {
   const [selectedKind, setSelectedKind] = useState(issueGroups[0]?.kind ?? "pending");
@@ -37,6 +39,11 @@ export function GovernanceWorkbench({
   const activeGroup = issueGroups.find((group) => group.kind === selectedKind) ?? issueGroups[0];
   const progressCount = issueGroups.reduce((total, group) => total + group.issues.length, 0);
   const report = useMemo(() => deriveGovernanceReport(issueGroups, duplicates, journal, importPlan), [duplicates, importPlan, issueGroups, journal]);
+  const writableImportCount = useMemo(
+    () => importPlan?.items.filter((item) => item.strategy === "create" || item.strategy === "update").length ?? 0,
+    [importPlan]
+  );
+  const skippedImportCount = importPlan ? importPlan.items.length - writableImportCount : 0;
 
   async function commitBatch() {
     if (!batchPlan) return;
@@ -110,6 +117,7 @@ export function GovernanceWorkbench({
           <h3>{batchPlan.title}</h3>
           <p>{batchPlan.summary}</p>
           <p>风险：{batchPlan.risk === "high" ? "高，需要单项处理" : "低，可确认写入"}</p>
+          <p data-testid="governance-write-summary">确认后只写入维护标签和治理历史；取消会保持个人地点、图层、照片和 snapshots 不变。</p>
           <div className="dialog-actions">
             <button type="button" className="ghost-button" onClick={() => setBatchPlan(undefined)}>取消，无写入</button>
             <button type="button" className="primary-button" onClick={() => void commitBatch()} disabled={!batchPlan.canCommit || busy}>确认写入</button>
@@ -125,6 +133,11 @@ export function GovernanceWorkbench({
           {duplicatePreview.removed ? <p>{duplicatePreview.decision === "merge" ? "移除" : "另一条"}：{duplicatePreview.removed.name}</p> : null}
           {duplicatePreview.merged ? <p>合并后标签：{duplicatePreview.merged.tags.join("、")}</p> : null}
           {duplicatePreview.merged ? <p>照片：{duplicatePreview.merged.photoIds.length} 张；评分：{duplicatePreview.merged.rating}</p> : null}
+          <p data-testid="governance-write-summary">
+            {duplicatePreview.decision === "merge"
+              ? "确认后会保留一条合并记录、移除重复记录并写入维护历史；取消不会修改任何地点。"
+              : "确认后只记录处理决策，不会删除地点或改坐标；取消不会写入。"}
+          </p>
           <div className="dialog-actions">
             <button type="button" className="ghost-button" onClick={() => setDuplicatePreview(undefined)}>取消，无写入</button>
             <button type="button" className="primary-button" onClick={() => void commitDuplicateDecision()} disabled={busy}>{duplicatePreview.decision === "merge" ? "确认合并" : "确认决策"}</button>
@@ -136,6 +149,9 @@ export function GovernanceWorkbench({
         <section className="governance-preview" data-testid="import-conflict-preview">
           <h3>导入冲突预览：{importPlan.title}</h3>
           <p>新增 {importPlan.counts.create}，更新 {importPlan.counts.update}，重复 {importPlan.counts.duplicate}，风险 {importPlan.counts.risk}</p>
+          <p data-testid="import-write-summary">
+            当前策略将写入 {writableImportCount} 项，跳过 {skippedImportCount} 项；确认前不会写入个人图钉，取消会保持 IndexedDB 不变。
+          </p>
           <div className="governance-import-items">
             {importPlan.items.slice(0, 8).map((item) => (
               <label key={`${item.decision}-${item.imported.id}`}>
@@ -153,6 +169,7 @@ export function GovernanceWorkbench({
             ))}
           </div>
           <div className="dialog-actions">
+            <button type="button" className="ghost-button" onClick={onCancelImportPlan}>取消导入，无写入</button>
             <button type="button" className="ghost-button" onClick={onOpenImport}>重新选择文件</button>
             <button type="button" className="primary-button" onClick={() => void commitImport()} disabled={busy}>确认导入可写项</button>
           </div>

@@ -47,7 +47,7 @@ No major PRD deviation or false acceptance risk remains after the final regressi
 Browser command used the documented local dependency path:
 
 ```bash
-LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/extracted/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts
+LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/root/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts
 ```
 
 ## Evidence

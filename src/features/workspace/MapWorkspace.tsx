@@ -850,6 +850,10 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
                   onDuplicateDecision={commitDuplicateDecision}
                   onCommitImportPlan={commitImportPlan}
                   onImportPlanChange={setImportConflictPlan}
+                  onCancelImportPlan={() => {
+                    setImportConflictPlan(undefined);
+                    notify("已取消导入预览，未写入个人地图");
+                  }}
                   onOpenImport={() => setImportOpen(true)}
                 />
               ) : rightView === "detail" && selectedPlace ? (
@@ -1032,6 +1036,10 @@ export function MapWorkspace({ notify }: { notify: (text: string) => void }) {
                   onDuplicateDecision={commitDuplicateDecision}
                   onCommitImportPlan={commitImportPlan}
                   onImportPlanChange={setImportConflictPlan}
+                  onCancelImportPlan={() => {
+                    setImportConflictPlan(undefined);
+                    notify("已取消导入预览，未写入个人地图");
+                  }}
                   onOpenImport={() => setImportOpen(true)}
                 />
               ) : (

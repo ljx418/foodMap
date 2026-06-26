@@ -85,8 +85,8 @@ cd .tmp/playwright-libs
 apt-get download libnspr4 libnss3
 dpkg-deb -x libnspr4_2%3a4.35-1.1build1_amd64.deb extracted
 dpkg-deb -x libnss3_2%3a3.98-1ubuntu0.1_amd64.deb extracted
-LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/extracted/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P18 large deterministic"
-LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/extracted/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "agent bridge returns structured errors"
+LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/root/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "P18 large deterministic"
+LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/root/usr/lib/x86_64-linux-gnu npx playwright test e2e/workspace.spec.ts --project=desktop --grep "agent bridge returns structured errors"
 ```
 
 Both targeted browser regressions passed after clearing a wrong dev server that occupied port `5173`. Acceptance implication: P19-1 is complete, but future browser runs must either use the local `LD_LIBRARY_PATH` workaround or run on a machine with the Playwright system dependencies installed.

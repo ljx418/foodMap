@@ -2658,6 +2658,63 @@ test("P25 deployed GitHub Pages stable URL supports map, real data and readonly 
   await page.screenshot({ path: "docs/active/evidence/p25/hash-route-refresh.png", fullPage: true });
 });
 
+test("P26 mobile release diagnostics and missing share recovery stay honest", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop project drives deterministic P26 mobile viewport");
+  fs.mkdirSync("docs/active/evidence/p26", { recursive: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#/map");
+  await expect(page.getByTestId("workspace-map")).toBeVisible();
+  await expect(page.getByTestId("webapp-status")).toContainText("WebApp 模式");
+  await expect(page.getByTestId("webapp-release-target")).toContainText(/本地预览|固定 URL|静态站点/);
+  await expect(page.getByTestId("webapp-storage-status")).toContainText("IndexedDB");
+  await expect(page.getByTestId("webapp-service-worker-status")).toContainText(/离线壳|浏览器/);
+
+  await page.context().setOffline(true);
+  await page.evaluate(() => window.dispatchEvent(new Event("offline")));
+  await expect(page.getByTestId("webapp-offline-notice")).toContainText("不会同步或删除本地数据");
+  await page.screenshot({ path: "docs/active/evidence/p26/01-mobile-release-status.png", fullPage: true });
+  await page.context().setOffline(false);
+
+  await page.goto("/#/share/missing-p26-snapshot");
+  await expect(page.getByTestId("share-missing-snapshot")).toContainText(".foodmap.json");
+  await expect(page.getByTestId("share-missing-recovery")).toContainText("没有公网副本");
+  await expect(page.getByTestId("share-missing-recovery")).toContainText("不会同步云端");
+  await page.screenshot({ path: "docs/active/evidence/p26/02-missing-share-recovery.png", fullPage: true });
+});
+
+test("P26 local maintenance preview can cancel import without writing personal data", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop project drives deterministic P26 mobile maintenance path");
+  fs.mkdirSync("docs/active/evidence/p26", { recursive: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#/map");
+  await importPersonalFavorites(page);
+  const beforeCounts = await readFoodMapStoreCounts(page);
+
+  await page.getByRole("button", { name: "更多工具" }).click();
+  await page.getByRole("dialog", { name: "更多工具" }).getByRole("button", { name: "数据包" }).click();
+  await expect(page.getByTestId("import-export-dialog")).toBeVisible();
+  await expect(page.getByTestId("import-export-intent")).toContainText("确认前不会写入个人图钉");
+
+  await page.getByTestId("import-governance-preview").click();
+  await page.locator('input[type="file"]').first().setInputFiles({
+    name: "p26-import-preview.foodmap.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(buildP21PortablePackage("p26-import-preview")), "utf-8")
+  });
+  const governanceDialog = page.getByRole("dialog", { name: "治理工作台" });
+  await expect(governanceDialog).toBeVisible();
+  await expect(governanceDialog.getByTestId("import-conflict-preview")).toContainText("导入冲突预览");
+  await expect(governanceDialog.getByTestId("import-write-summary")).toContainText("确认前不会写入个人图钉");
+  await page.screenshot({ path: "docs/active/evidence/p26/03-local-maintenance-import-preview.png", fullPage: true });
+
+  await governanceDialog.getByTestId("import-conflict-preview").getByRole("button", { name: "取消导入，无写入" }).click();
+  await expect(governanceDialog.getByTestId("import-conflict-preview")).toHaveCount(0);
+  const afterCounts = await readFoodMapStoreCounts(page);
+  expect(afterCounts.places).toBe(beforeCounts.places);
+  expect(afterCounts.governanceJournal).toBe(beforeCounts.governanceJournal);
+  await page.screenshot({ path: "docs/active/evidence/p26/04-local-maintenance-cancelled.png", fullPage: true });
+});
+
 const P21_RESPONSIVE_VIEWPORTS = [
   { name: "mobile-390", width: 390, height: 844 },
   { name: "mobile-430", width: 430, height: 932 },

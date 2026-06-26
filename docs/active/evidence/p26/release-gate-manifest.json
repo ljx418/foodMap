@@ -1,0 +1,144 @@
+{
+  "generatedAt": "2026-06-26T02:32:53.646Z",
+  "scope": "P26 release gate automation",
+  "acceptedBaseline": "P25",
+  "checks": [
+    {
+      "name": "exists docs/active/product-requirements-document.md",
+      "status": "pass"
+    },
+    {
+      "name": "exists docs/active/target-architecture.md",
+      "status": "pass"
+    },
+    {
+      "name": "exists docs/active/development-and-acceptance-plan.md",
+      "status": "pass"
+    },
+    {
+      "name": "exists docs/active/acceptance-gate.md",
+      "status": "pass"
+    },
+    {
+      "name": "exists docs/active/current-vs-target-gap.md",
+      "status": "pass"
+    },
+    {
+      "name": "exists docs/active/current-vs-target-gap.drawio",
+      "status": "pass"
+    },
+    {
+      "name": "exists docs/active/milestone-roadmap.md",
+      "status": "pass"
+    },
+    {
+      "name": "exists docs/active/e2e-test-and-evidence-matrix.md",
+      "status": "pass"
+    },
+    {
+      "name": "exists docs/active/visual-acceptance-checklist.md",
+      "status": "pass"
+    },
+    {
+      "name": "exists docs/active/p26-detailed-development-and-acceptance-plan.md",
+      "status": "pass"
+    },
+    {
+      "name": "exists docs/active/p26-preimplementation-audit.md",
+      "status": "pass"
+    },
+    {
+      "name": "exists docs/active/p26-stage-implementation-contract.md",
+      "status": "pass"
+    },
+    {
+      "name": "exists docs/active/p26-1-acceptance-report.md",
+      "status": "pass"
+    },
+    {
+      "name": "PRD: contains \"4M. 本阶段目标：P26\"",
+      "status": "pass"
+    },
+    {
+      "name": "target architecture: contains \"0D. P26 Target Hardening Architecture\"",
+      "status": "pass"
+    },
+    {
+      "name": "package scripts: contains \"verify:p26:release\"",
+      "status": "pass"
+    },
+    {
+      "name": "WebAppStatus: contains \"webapp-release-target\"",
+      "status": "pass"
+    },
+    {
+      "name": "WebAppStatus: contains \"webapp-storage-status\"",
+      "status": "pass"
+    },
+    {
+      "name": "WebAppStatus: contains \"webapp-service-worker-status\"",
+      "status": "pass"
+    },
+    {
+      "name": "ShareView: contains \"share-missing-recovery\"",
+      "status": "pass"
+    },
+    {
+      "name": "GovernanceWorkbench: contains \"import-write-summary\"",
+      "status": "pass"
+    },
+    {
+      "name": "P26 E2E: contains \"P26 mobile release diagnostics\"",
+      "status": "pass"
+    },
+    {
+      "name": "P26 E2E: contains \"P26 local maintenance preview\"",
+      "status": "pass"
+    },
+    {
+      "name": "WebAppStatus: no prohibited wording",
+      "status": "pass"
+    },
+    {
+      "name": "ShareView: no prohibited wording",
+      "status": "pass"
+    },
+    {
+      "name": "GovernanceWorkbench: no prohibited wording",
+      "status": "pass"
+    },
+    {
+      "name": "service worker: no prohibited wording",
+      "status": "pass"
+    },
+    {
+      "name": "drawio page count 7",
+      "status": "pass"
+    },
+    {
+      "name": "drawio includes 目标体验",
+      "status": "pass"
+    },
+    {
+      "name": "drawio includes 代码实体",
+      "status": "pass"
+    },
+    {
+      "name": "drawio includes 开发及验收计划",
+      "status": "pass"
+    },
+    {
+      "name": "drawio includes 项目里程碑",
+      "status": "pass"
+    },
+    {
+      "name": "drawio includes 验收门槛",
+      "status": "pass"
+    }
+  ],
+  "result": "pass",
+  "notes": [
+    "This verifier proves static source and documentation release-gate readiness only.",
+    "It does not replace Playwright, real scanlist verification, deployed-origin checks, or Mate70 fixed-URL evidence."
+  ]
+}

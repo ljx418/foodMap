@@ -1,13 +1,13 @@
 # FoodMap Active Design Docs
 
-This directory is the active documentation baseline for FoodMap. It keeps the V1.0 PRD as the product foundation, records the accepted implementation baseline, and now records the P25 durable static deployment and release-governance stage after the accepted P24 WebApp/Mate70 baseline.
+This directory is the active documentation baseline for FoodMap. It keeps the V1.0 PRD as the product foundation, records the accepted implementation baseline, and now records the P26 mobile release hardening and local maintenance implementation evidence after the accepted P25 durable static deployment baseline.
 
 ## Current Version
 
-- Active baseline: V1.0 PRD plus accepted P1-P19 implementation scope, P20 core regression scope, accepted P20-C governance completion scope, accepted P21 local share/data portability release scope, accepted P22 interaction experience refactor scope, accepted P23 interaction-quality correction scope, accepted P24 WebApp/Mate70 implementation scope, and P25 durable static deployment implementation scope.
+- Active baseline: V1.0 PRD plus accepted P1-P19 implementation scope, P20 core regression scope, accepted P20-C governance completion scope, accepted P21 local share/data portability release scope, accepted P22 interaction experience refactor scope, accepted P23 interaction-quality correction scope, accepted P24 WebApp/Mate70 implementation scope, accepted P25 durable static deployment implementation scope, and accepted P26 mobile release hardening implementation scope.
 - Current project state: runnable Vite React TypeScript frontend with IndexedDB persistence, Leaflet/AMap-tile map, share/import/export, Agent Bridge, mobile filter controls, editable tags, manual pin move with audit preview, external map links, map-poster export, current-viewport poster mode, personal data health center, pending-place workbench, P17 detail IA, P18 candidate search and evidence, P19 acceptance evidence, P20 core personal data governance workbench, duplicate merge preview, import conflict preview, maintenance history, Agent governance boundary, responsive governance evidence, and 50 verified AMap Wuhan scanlist pins as a toggleable reference layer.
-- Current-stage focus: P25 implements durable static deployment and release governance: GitHub Pages static host profile, fixed URL entry on Mate70, hash-route recovery, source-down fallback, regression evidence, and final release reporting.
-- Current-stage acceptance status: P25 is accepted after GitHub Pages deployment, deployed-origin browser checks, automated regression, real scanlist verification, and Mate70 fixed-URL real-device evidence passed. P25 is now the latest accepted implementation baseline.
+- Current-stage focus: P26 implements mobile release experience hardening, release-gate automation, Mate70 interaction polish support, local data maintenance enhancement, and evidence governance over the accepted P25 fixed-URL WebApp baseline.
+- Current-stage acceptance status: P26 is accepted. P26 code, automated browser regression, fixed-URL deployment, remote verification, and Mate70 fixed-URL evidence passed; P26 is the latest accepted implementation baseline.
 - Primary constraint: pure frontend first, static-deployable, no backend dependency for user records or share snapshots.
 - Product direction: map-first personal food journal with a verified recommendation overlay, not a generic admin panel or public social product.
 
@@ -25,6 +25,7 @@ Allowed claims:
 - P23 supersedes P22's interaction evidence for mobile share and readable governance/data-health paths; it does not add new product capability claims.
 - P24 may claim accepted WebApp installability assets, mobile safe-area work, weak-network fallback, temporary public static smoke, and Mate70 real-device acceptance within the limits recorded by its final report.
 - P25 may implement durable static hosting, stable URL entry, hash-route recovery, fixed-URL Mate70 verification, release evidence, and final release governance.
+- P26 may claim accepted mobile release diagnostics, release gate automation, Mate70 fixed-URL evidence, and local maintenance preview clarity within the residual limits recorded in `p26-final-acceptance-report.md`.
 
 Forbidden claims:
 
@@ -41,6 +42,8 @@ Forbidden claims:
 - P24 may not claim HarmonyOS native HAP/AppGallery delivery, account login, cloud sync, remote backup, collaboration, or public permanent sharing.
 - P25 may claim durable static deployment acceptance only within the accepted `p25-final-acceptance-report.md` boundaries: stable GitHub Pages URL, Mate70 fixed-URL WebApp evidence, local-first data, and no native/cloud/backend over-claim.
 - P25 may not turn FoodMap into a native HAP/AppGallery release, account/cloud product, backend service, offline map product, or permanent public social sharing platform.
+- P26 may not turn FoodMap into a native HarmonyOS HAP/AppGallery release, account/cloud product, backend service, offline map product, realtime POI completion, automatic data repair tool, or permanent public social sharing platform.
+- Future P26 follow-up claims may not exceed the accepted `p26-final-acceptance-report.md` scope without a new PRD-derived plan, evidence, and final report.
 
 ## Document Index
 
@@ -105,6 +108,16 @@ Forbidden claims:
 - [P25-4 Acceptance Report](./p25-4-acceptance-report.md)
 - [P25-5 Acceptance Report](./p25-5-acceptance-report.md)
 - [P25 Final Acceptance Report](./p25-final-acceptance-report.md)
+- [P26 Detailed Development And Acceptance Plan](./p26-detailed-development-and-acceptance-plan.md)
+- [P26 Preimplementation Audit](./p26-preimplementation-audit.md)
+- [P26 Stage Implementation Contract](./p26-stage-implementation-contract.md)
+- [P26-1 Acceptance Report](./p26-1-acceptance-report.md)
+- [P26-2 Acceptance Report](./p26-2-acceptance-report.md)
+- [P26-3 Acceptance Report](./p26-3-acceptance-report.md)
+- [P26-4 Acceptance Report](./p26-4-acceptance-report.md)
+- [P26-5 Acceptance Report](./p26-5-acceptance-report.md)
+- [P26-6 Regression And PRD Review](./p26-6-regression-and-prd-review.md)
+- [P26 Final Acceptance Report](./p26-final-acceptance-report.md)
 - [P16 Final Acceptance Report](./p16-final-acceptance-report.md)
 - [P17 UX Trust Implementation Contract](./p17-ux-trust-implementation-contract.md)
 - [P16 2026-06-09 Regression Plan And Audit](./p16-2026-06-09-regression-plan-and-audit.md)
@@ -131,7 +144,7 @@ FoodMap delivers two first-class experiences:
 - Personal workspace: create, edit, filter, and manage food places, layers, photos, ratings, visit dates, tags, and notes.
 - Verified Wuhan recommendation overlay: show AMap scanlist restaurants as independently styled pins only after POI verification, with ranking, score, evidence, image, and confidence metadata. The overlay stays optional and must not pollute the user's empty personal map.
 
-The app also supports a local read-only share view and `.foodmap.json` import/export. P25 work preserves the accepted P16-P24 local-first baseline while turning the P24 temporary deployment proof into a stable static-host release profile with fixed-URL Mate70 evidence and honest fallback behavior.
+The app also supports a local read-only share view and `.foodmap.json` import/export. P25 preserves the accepted P16-P24 local-first baseline while turning the P24 temporary deployment proof into a stable static-host release profile with fixed-URL Mate70 evidence and honest fallback behavior. P26 now documents the next hardening target: make that fixed-URL mobile WebApp easier to release, verify, use on Mate70, and maintain locally without adding cloud or native delivery.
 
 ## Current-Stage Rules
 
@@ -174,12 +187,16 @@ The app also supports a local read-only share view and `.foodmap.json` import/ex
 - P25 direct `#/map` and generated `#/share/:snapshotId` routes must open and refresh correctly on the static host.
 - P25 must keep IndexedDB and `.foodmap.json` as the only user-data persistence and portability paths.
 - P25 final acceptance requires fixed-URL Mate70 evidence, P18-P24 regression evidence, and a final report.
+- P26 implementation followed the PRD-derived plan, audit, stage contract, drawio, milestone, and gate documents; final acceptance passed with Mate70 P26 fixed-URL evidence.
+- P26 mobile release evidence must separate Mate70 real-device screenshots or recordings from Playwright/mobile viewport evidence.
+- P26 release gates must keep P25 fixed URL, hash-route recovery, source-down fallback, P18-P25 regression, real scanlist verification, and Agent trust boundaries intact.
+- P26 local data maintenance must remain preview-first and user-confirmed; it cannot silently delete, merge, repair, finalize coordinates, or write cloud data.
 
 ## ChatGPT Audit Document Set
 
 Use these documents for external PRD/architecture/acceptance audit:
 
-This audit set is intentionally below 20 documents. `docs/active/p25-final-acceptance-report.md` is the latest accepted implementation baseline.
+This audit set is intentionally below 20 documents. `docs/active/p26-final-acceptance-report.md` is the latest accepted implementation baseline; P26 reports prove implementation, automated regression, fixed-URL deployment, Mate70 evidence, residual limits, and final acceptance.
 
 1. `docs/active/product-requirements-document.md`
 2. `docs/active/target-architecture.md`
@@ -189,14 +206,14 @@ This audit set is intentionally below 20 documents. `docs/active/p25-final-accep
 6. `docs/active/current-vs-target-gap.md`
 7. `docs/active/current-vs-target-gap.drawio`
 8. `docs/active/visual-acceptance-checklist.md`
-9. `docs/active/p25-detailed-development-and-acceptance-plan.md`
-10. `docs/active/p25-stage-implementation-contract.md`
-11. `docs/active/p25-static-deployment-profile.md`
-12. `docs/active/p25-final-acceptance-report.md`
-13. `docs/active/p24-final-acceptance-report.md`
-14. `docs/active/p21-final-acceptance-report.md`
-15. `docs/active/p20-c-final-acceptance-report.md`
-16. `docs/active/p18-candidate-search-trust-contract.md`
-17. `docs/active/data-schema-and-import-export-contract.md`
-18. `docs/active/e2e-test-and-evidence-matrix.md`
-19. `docs/active/p25-5-acceptance-report.md`
+9. `docs/active/p26-detailed-development-and-acceptance-plan.md`
+10. `docs/active/p26-preimplementation-audit.md`
+11. `docs/active/p26-stage-implementation-contract.md`
+12. `docs/active/p26-6-regression-and-prd-review.md`
+13. `docs/active/p26-final-acceptance-report.md`
+14. `docs/active/p25-static-deployment-profile.md`
+15. `docs/active/p25-final-acceptance-report.md`
+16. `docs/active/p24-final-acceptance-report.md`
+17. `docs/active/p21-final-acceptance-report.md`
+18. `docs/active/p20-c-final-acceptance-report.md`
+19. `docs/active/p18-candidate-search-trust-contract.md`

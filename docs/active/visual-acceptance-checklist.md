@@ -1,10 +1,10 @@
-# FoodMap P19/P20/P21/P22/P23/P24/P25 Visual Acceptance Checklist
+# FoodMap P19/P20/P21/P22/P23/P24/P25/P26 Visual Acceptance Checklist
 
 Updated: 2026-06-25
 
 ## Summary
 
-P19 preserves the accepted Scheme 4 travel-journal direction and P18 trust baseline. P20 extends that baseline with personal data governance. P21 extends release readiness with local read-only share and `.foodmap.json` portability. P22 improves interaction readability over those accepted flows. P23 corrects the remaining mobile/narrow-screen readability gaps and adds full PRD screenshot evidence. P24 accepted a mobile-friendly, app-like WebApp on Mate70. P25 targets durable static deployment and release-governance evidence. New UI must remain map-first, readable, local-first, and must not imply cloud, account, collaboration, public permanent sharing, backend services, or native app delivery.
+P19 preserves the accepted Scheme 4 travel-journal direction and P18 trust baseline. P20 extends that baseline with personal data governance. P21 extends release readiness with local read-only share and `.foodmap.json` portability. P22 improves interaction readability over those accepted flows. P23 corrects the remaining mobile/narrow-screen readability gaps and adds full PRD screenshot evidence. P24 accepted a mobile-friendly, app-like WebApp on Mate70. P25 accepted durable static deployment and release-governance evidence. P26 plans mobile release hardening, release gates, Mate70 interaction polish, and local data maintenance enhancement. New UI must remain map-first, readable, local-first, and must not imply cloud, account, collaboration, public permanent sharing, backend services, offline maps, realtime POI completion, automatic repair, or native app delivery.
 
 ## Required Tokens
 
@@ -99,6 +99,18 @@ P19 preserves the accepted Scheme 4 travel-journal direction and P18 trust basel
 | Local-first release copy | Import/export and persistence wording explain local browser data and `.foodmap.json` portability without implying cloud backup |
 | Failure fallback | Source-down, tile failure, missing snapshot, installability unavailable, and external-map failure states are concise and non-destructive |
 | Release report evidence | Screenshots in the report are tied to the stable URL, host profile, device, viewport, and pass/fail interpretation |
+
+## P26 Visual Requirements
+
+| Area | Requirement |
+| --- | --- |
+| Mobile release state | Fixed-URL Mate70 screens clearly distinguish normal WebApp, browser mode, source-down, tile failure, missing share, and refresh recovery |
+| Release evidence UI | Any report or in-app status used for release evidence labels URL, device, viewport, data source, and pass/fail meaning without stale screenshots |
+| Mate70 workspace polish | Search, quick filters, bottom actions, create/detail flows, and map inspection remain reachable under browser chrome, keyboard, and safe areas |
+| Mate70 data package | Import/export controls are touchable, readable, and explicitly local-first; no account, cloud, or remote backup wording appears |
+| Mate70 share polish | Read-only share, marker summary, full detail, missing snapshot recovery, and refresh state remain readable and do not expose edit controls |
+| Local maintenance clarity | Health, governance, duplicate compare, import conflict, skipped/pending queues, and history show previews and cancel/confirm hierarchy clearly |
+| Destructive-action restraint | Merge, delete, cleanup, coordinate, import, and repair-related controls never look automatic; confirmation state is visually stronger than suggestion state |
 
 ## Desktop Checklist
 

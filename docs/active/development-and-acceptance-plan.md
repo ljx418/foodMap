@@ -1,4 +1,32 @@
-# FoodMap P19/P20-C/P21/P22/P23/P24/P25 Development And Acceptance Plan
+# FoodMap P19/P20-C/P21/P22/P23/P24/P25/P26 Development And Acceptance Plan
+
+## P26 Summary
+
+P26 is the current implementation stage after accepted P25. It targets mobile release experience hardening, release-gate automation, Mate70 interaction polish support, local data maintenance enhancement, and evidence governance over the accepted fixed-URL WebApp baseline. P26 does not implement or claim HarmonyOS native HAP/AppGallery delivery, account login, cloud sync, backend API, offline map tiles, permanent public social sharing, automatic data repair, or external realtime POI completion.
+
+P26 focuses on:
+
+1. Making the fixed GitHub Pages URL feel like a stable mobile WebApp entry on Mate70, with honest browser/WebApp/source-down/map-failure states.
+2. Turning deployment, hash-route recovery, scanlist, P18-P25 regression, and Mate70 evidence into repeatable release gates.
+3. Reducing Mate70 real-device friction in workspace, create/detail/filter, import/export, and read-only share paths.
+4. Improving local data maintenance clarity for health, duplicates, import conflicts, skipped/pending records, and governance history without silent writes.
+5. Keeping PRD, target architecture, drawio, milestone, gate, E2E matrix, visual checklist, and final report aligned.
+
+Detailed implementation and acceptance are defined in [P26 Detailed Development And Acceptance Plan](./p26-detailed-development-and-acceptance-plan.md).
+
+## P26 Phase Plan
+
+| Phase | Goal | Main Output | Acceptance Gate |
+| --- | --- | --- | --- |
+| P26-1 | 文档审计与阶段边界冻结 | PRD、目标架构、计划、gate、roadmap、gap/drawio、contract、audit 同步 | No fatal or major unresolved spec risk |
+| P26-2 | 移动端发布体验硬化 | WebApp runtime diagnostics, source-down/offline copy, missing share recovery | Accepted with Mate70 fixed-URL evidence |
+| P26-3 | 发布门禁自动化 | `verify:p26:release`, evidence manifest, regression command bundle | build/unit/scanlist/static verifier/P18-P25/P26 targeted checks are reproducible |
+| P26-4 | Mate70 交互精修 | Mobile viewport support for release status, data package, share recovery, governance import cancel | Automated mobile viewport passed; Mate70 fixed-URL evidence closed in final report |
+| P26-5 | 本地数据维护增强 | Governance/import write summaries and cancel/no-op import preview | Real data or fixtures prove preview-first, user-confirmed, local-only writes |
+| P26-6 | 回归和证据包 | Screenshot/JSON evidence, PRD spec review, docs sync review | Automated gates passed; final real-device blocker recorded |
+| P26-7 | 总验收和 final report | P26 final acceptance report | Accepted |
+
+Current P26 status: accepted. Implementation, automated regression, fixed-URL deployment, remote verification, and Mate70 fixed-URL evidence passed. P26 is the latest accepted implementation baseline.
 
 ## P25 Summary
 

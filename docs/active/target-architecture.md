@@ -1,4 +1,4 @@
-# FoodMap P19/P20-C/P21/P22/P23/P24/P25 Target Architecture
+# FoodMap P19/P20-C/P21/P22/P23/P24/P25/P26 Target Architecture
 
 ## 1. Architecture Conclusion
 
@@ -13,7 +13,36 @@ P18 is accepted and becomes the regression baseline:
 - Share poster composer for current filtered personal places.
 - Agent negative boundaries and large deterministic performance smoke.
 
-P22 adds interaction-shell work over the accepted P19/P20-C/P21 baselines. P23 corrects the remaining interaction evidence gaps found during human review and full PRD regression. P24 implements mobile-friendly WebApp deployment readiness and Mate70 usability evidence over the accepted baseline. P25 implements and accepts durable static deployment and release governance over the accepted P24 WebApp baseline. No stage adds accounts, backend POI services, cloud sync, multiplayer collaboration, permanent public links, HarmonyOS native delivery, automatic coordinate correction, offline map tiles, or new external real-time POI claims.
+P22 adds interaction-shell work over the accepted P19/P20-C/P21 baselines. P23 corrects the remaining interaction evidence gaps found during human review and full PRD regression. P24 implements mobile-friendly WebApp deployment readiness and Mate70 usability evidence over the accepted baseline. P25 implements and accepts durable static deployment and release governance over the accepted P24 WebApp baseline. P26 implements and accepts browser-scope mobile release hardening, release gate automation, Mate70 interaction support, local data maintenance enhancement, and evidence governance. No stage adds accounts, backend POI services, cloud sync, multiplayer collaboration, permanent public links, HarmonyOS native delivery, automatic coordinate correction, offline map tiles, or new external real-time POI claims.
+
+## 0D. P26 Target Hardening Architecture
+
+P26 keeps FoodMap as a browser-delivered static WebApp and modular frontend monolith. The target architecture hardens the accepted P25 fixed URL release rather than replacing it with a native app or backend system.
+
+| Module | Responsibility | Concrete Entities | Status |
+| --- | --- | --- | --- |
+| `MobileReleaseEvidenceHarness` | Capture and classify fixed-URL Mate70 evidence, desktop mobile evidence, deployed-origin checks, screenshot names, and evidence manifest | `docs/active/evidence/p26/`, `p26-final-acceptance-report.md`, HDC/browser tooling notes | 已实现 |
+| `ReleaseGateAutomation` | Make release checks repeatable across build, unit, scanlist, static host, hash routes, P18-P25 regression, and P26 targeted checks | `package.json` `verify:p26:release`, `scripts/verify_p26_release.mjs`, `e2e/workspace.spec.ts`, `release-gate-manifest.json` | 已实现 |
+| `Mate70InteractionPolish` | Improve real-device workspace, create/detail/filter, import/export, keyboard, safe-area, bottom action, and share/detail usability | `MapWorkspace`, `HomeMapControlDock`, `ShareView`, `ImportExportDialog`, `src/styles/app.css` | 已实现 |
+| `LocalDataMaintenanceEnhancement` | Improve local health/governance/import/duplicate/conflict maintenance clarity while keeping all writes preview-first and user-confirmed | `GovernanceWorkbench`, `ImportExportDialog`, `MapWorkspace`, IndexedDB repositories, governance history | 已实现 |
+| `EvidenceGovernancePack` | Keep PRD review, audit closure, evidence paths, residual limits, and final acceptance report aligned | `p26-1` through `p26-6` reports, `p26-final-acceptance-report.md`, evidence manifest | 已实现 |
+| `P26RegressionGatePack` | Prove accepted P18-P25 flows are not broken by P26 hardening | Vitest, Playwright, `npm run verify:scanlist`, P25 deployment verifier, P26 targeted specs | 已实现 |
+
+P26 target runtime and evidence flow:
+
+```text
+Mate70 browser or desktop verification runner
+  -> fixed GitHub Pages URL (https://ljx418.github.io/foodMap/)
+  -> dist/index.html + manifest.webmanifest + sw.js
+  -> App hash router (#/map or #/share/:snapshotId)
+  -> MapWorkspace / ShareView / ImportExportDialog
+  -> Domain helpers and IndexedDB repositories
+  -> PersonalDataHealthCenter / GovernanceWorkbench for local maintenance
+  -> .foodmap.json import/export for portability
+  -> ReleaseGateAutomation + MobileReleaseEvidenceHarness for acceptance evidence
+```
+
+P26 write-path rule: P26 may modify mobile presentation, release verification scripts, evidence docs, static WebApp fallback copy, and local data maintenance UI/domain helpers only when the change preserves preview-first and user-confirmed local writes. P26 must not add account identity, cloud synchronization, backend APIs, remote backup, multiplayer editing, native HarmonyOS packaging, AppGallery delivery, offline map-tile promises, public permanent share URLs, or Agent powers that bypass P18-P25 trust boundaries.
 
 ## 0C. P25 Target Deployment Architecture
 
@@ -248,7 +277,7 @@ P19 is complete only when:
 - P18 accepted gates remain green.
 - P19 final acceptance report records command results, screenshots, known residual risks, and PRD/architecture deviation review.
 
-P19 acceptance status: completed on 2026-06-23. `docs/active/p19-7-final-acceptance-report.md` is the latest accepted stage baseline.
+P19 acceptance status: completed on 2026-06-23. `docs/active/p19-7-final-acceptance-report.md` remains the accepted P19 baseline; P26 is the latest accepted implementation baseline for current planning.
 
 ## 11. P20 Target Architecture Extension
 

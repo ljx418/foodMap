@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FoodMap P26 阶段性自动化验收报告</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1b2420;
+      --muted: #66726d;
+      --line: #d9e0dd;
+      --panel: #f7f9f8;
+      --ok: #16724a;
+      --warn: #a15c00;
+      --blue: #245c9a;
+      --bg: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.58;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 32px 20px 56px; }
+    header { border-bottom: 1px solid var(--line); padding-bottom: 22px; margin-bottom: 24px; }
+    h1 { margin: 0 0 10px; font-size: clamp(28px, 4vw, 42px); line-height: 1.16; letter-spacing: 0; }
+    h2 { margin: 34px 0 12px; font-size: 24px; letter-spacing: 0; }
+    h3 { margin: 22px 0 10px; font-size: 18px; letter-spacing: 0; }
+    p { margin: 8px 0; }
+    .meta { color: var(--muted); display: flex; flex-wrap: wrap; gap: 10px 18px; }
+    .verdict {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+      gap: 16px;
+      margin: 18px 0 4px;
+    }
+    .callout, .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 16px;
+    }
+    .callout strong { color: var(--ok); }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      font-size: 13px;
+    }
+    .pill.ok { border-color: #9fd0b6; color: var(--ok); background: #f2fbf6; }
+    .pill.warn { border-color: #e7c083; color: var(--warn); background: #fff8ed; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0 18px; overflow-wrap: anywhere; }
+    th, td { border: 1px solid var(--line); padding: 10px 12px; vertical-align: top; text-align: left; }
+    th { background: #eef3f1; font-weight: 700; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.92em; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .scenario-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    figure { margin: 0; border: 1px solid var(--line); border-radius: 8px; background: #fff; overflow: hidden; }
+    figure img { display: block; width: 100%; height: auto; background: #eef3f1; }
+    figcaption { padding: 10px 12px; font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); }
+    .architecture { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .architecture .card h3 { margin-top: 0; }
+    .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+    .done { background: var(--ok); }
+    .limited { background: var(--warn); }
+    .next { background: var(--blue); }
+    .footer-note { margin-top: 28px; color: var(--muted); font-size: 14px; }
+    @media (max-width: 780px) {
+      main { padding: 20px 14px 40px; }
+      .verdict, .grid, .scenario-grid, .architecture { grid-template-columns: 1fr; }
+      th, td { padding: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>FoodMap P26 阶段性自动化验收报告</h1>
+      <div class="meta">
+        <span>日期：2026-06-26</span>
+        <span>仓库：<code>/mnt/c/workspace/foodmap</code></span>
+        <span>固定 URL：<code>https://ljx418.github.io/foodMap/</code></span>
+      </div>
+      <div class="verdict">
+        <section class="callout">
+          <p><strong>结论：通过，带明确残余限制。</strong></p>
+          <p>P26 当前仍可作为最新已接受实现基线。代码、文档、真实数据 scanlist、自动化浏览器回归、线上固定 URL 验证和既有 Mate70 截图证据形成闭环。</p>
+        </section>
+        <section class="callout">
+          <p><strong>边界：</strong>本报告不声称 HarmonyOS 原生 HAP、AppGallery 发布、账号、云同步、后端服务、离线地图瓦片、永久公网分享链接或外部实时 POI 搜索完成。</p>
+        </section>
+      </div>
+      <div class="pill-row">
+        <span class="pill ok">build 通过</span>
+        <span class="pill ok">46 unit 通过</span>
+        <span class="pill ok">50 条真实 scanlist 通过</span>
+        <span class="pill ok">desktop 60 passed</span>
+        <span class="pill ok">mobile 20 passed</span>
+        <span class="pill ok">固定 URL 验证通过</span>
+        <span class="pill warn">实机文件选择器未自动化</span>
+      </div>
+    </header>
+
+    <section>
+      <h2>验收命令</h2>
+      <table>
+        <thead><tr><th>门禁</th><th>结果</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><code>npm run build</code></td><td>通过</td><td>生产构建完成，生成当前 P26 bundle。</td></tr>
+          <tr><td><code>npm test -- --run</code></td><td>通过</td><td>46 个 domain 单元测试通过。</td></tr>
+          <tr><td><code>npm run verify:scanlist</code></td><td>通过</td><td>50 条武汉 AMap 真实扫街榜数据通过基线校验。</td></tr>
+          <tr><td><code>npm run verify:p24:webapp</code></td><td>通过</td><td>Manifest、icon、service worker、WebApp metadata 检查通过。</td></tr>
+          <tr><td><code>npm run build:pages</code></td><td>通过</td><td>GitHub Pages profile 构建通过。</td></tr>
+          <tr><td><code>npm run verify:p25:deployment</code></td><td>通过</td><td>本地 <code>dist</code> 静态部署 profile 通过。</td></tr>
+          <tr><td><code>FOODMAP_DEPLOY_URL=... npm run verify:p25:deployment</code></td><td>通过</td><td>线上固定 URL 静态部署检查通过。</td></tr>
+          <tr><td><code>npm run verify:p26:release</code></td><td>通过</td><td>写入 P26 release manifest。</td></tr>
+          <tr><td><code>npx playwright test ... --project=desktop</code></td><td>通过</td><td>60 passed，6 skipped。</td></tr>
+          <tr><td><code>npx playwright test ... --project=mobile</code></td><td>通过</td><td>20 passed，46 skipped；跳过项按项目标签在 desktop 或 targeted 环境执行。</td></tr>
+          <tr><td><code>FOODMAP_DEPLOY_URL=... npx playwright test ... --grep "P25 deployed"</code></td><td>通过</td><td>线上固定 URL 的地图、真实数据和只读分享路径通过。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>当前架构与目标架构实现</h2>
+      <div class="architecture">
+        <article class="card">
+          <h3><span class="status-dot done"></span>当前实现</h3>
+          <p>Vite + React 纯前端模块化单体；地图、工作台、分享、治理、导入导出、Agent Bridge 和验收脚本在同一静态 WebApp 内运行。</p>
+          <p>本地数据源为 IndexedDB；跨设备携带依赖 <code>.foodmap.json</code>；GitHub Pages 是当前固定 URL 发布目标。</p>
+        </article>
+        <article class="card">
+          <h3><span class="status-dot done"></span>P26 目标架构达成</h3>
+          <p><code>WebAppStatus</code>、<code>ShareView</code>、<code>ImportExportDialog</code>、<code>GovernanceWorkbench</code>、<code>MapWorkspace</code>、<code>verify_p26_release.mjs</code> 和 Playwright 用例已接入目标架构。</p>
+          <p>用户可以看到发布状态、本地 IndexedDB 状态、缺失分享恢复说明、数据包意图、治理预览和取消无写入路径。</p>
+        </article>
+        <article class="card">
+          <h3><span class="status-dot limited"></span>明确不实现</h3>
+          <p>本阶段不做账号、云同步、多人协作、永久公网分享链接、FoodMap 业务后端、原生 HAP/AppGallery、离线地图瓦片、自动数据修复或实时 POI 搜索完成声明。</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>用户场景截图证据</h2>
+      <div class="scenario-grid">
+        <figure>
+          <img src="evidence/p26/01-mobile-release-status.png" alt="P26 移动发布状态和离线提示截图" />
+          <figcaption>移动 WebApp 状态：固定/本地发布目标、IndexedDB、本地数据不会同步或删除。</figcaption>
+        </figure>
+        <figure>
+          <img src="evidence/p26/02-missing-share-recovery.png" alt="P26 缺失分享恢复截图" />
+          <figcaption>缺失分享恢复：说明分享链接只定位本地 snapshot，需要导入对应 .foodmap.json。</figcaption>
+        </figure>
+        <figure>
+          <img src="evidence/p26/03-local-maintenance-import-preview.png" alt="P26 导入治理预览截图" />
+          <figcaption>本地维护：导入先进入冲突治理预览，确认前不写入个人图钉。</figcaption>
+        </figure>
+        <figure>
+          <img src="evidence/p26/04-local-maintenance-cancelled.png" alt="P26 取消导入无写入截图" />
+          <figcaption>取消导入：Playwright 验证 places 和 governanceJournal 计数不变。</figcaption>
+        </figure>
+      </div>
+
+      <h3>Mate70 固定 URL 证据</h3>
+      <div class="scenario-grid">
+        <figure>
+          <img src="evidence/p26/mate70-fixed-url/01-fixed-url-map.jpeg" alt="Mate70 固定 URL 地图首页截图" />
+          <figcaption>Mate70 打开固定 URL：地图、搜索、快捷筛选和 P26 状态芯片可见。</figcaption>
+        </figure>
+        <figure>
+          <img src="evidence/p26/mate70-fixed-url/02-missing-share-recovery.jpeg" alt="Mate70 缺失分享恢复截图" />
+          <figcaption>Mate70 缺失分享恢复：本地 snapshot 和 .foodmap.json 说明可读。</figcaption>
+        </figure>
+        <figure>
+          <img src="evidence/p26/mate70-fixed-url/03-data-health.jpeg" alt="Mate70 数据健康截图" />
+          <figcaption>Mate70 数据健康：可查看需要关注的本地点位，不静默修改地点事实。</figcaption>
+        </figure>
+        <figure>
+          <img src="evidence/p26/mate70-fixed-url/04-governance-workbench.jpeg" alt="Mate70 治理工作台截图" />
+          <figcaption>Mate70 治理工作台：预览优先和无写入边界可见。</figcaption>
+        </figure>
+        <figure>
+          <img src="evidence/p26/mate70-fixed-url/06-data-package.jpeg" alt="Mate70 数据包截图" />
+          <figcaption>Mate70 数据包：导出、只读查看、合并到我的地图和本地优先文案可见。</figcaption>
+        </figure>
+        <figure>
+          <img src="evidence/p26/mate70-fixed-url/10-refresh-recovery.jpeg" alt="Mate70 刷新恢复截图" />
+          <figcaption>Mate70 刷新恢复：固定 URL 刷新后返回工作台并保留 P26 状态芯片。</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <h2>代码与文档审计</h2>
+      <table>
+        <thead><tr><th>审计项</th><th>结论</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>功能完整性</td><td>通过</td><td>P26 计划内的发布状态、缺失分享恢复、数据包意图、治理导入预览、取消无写入和 release gate 均已实现并验收。</td></tr>
+          <tr><td>测试覆盖</td><td>通过</td><td>单元测试、真实 scanlist、P18-P26 desktop 回归、mobile 回归、线上固定 URL E2E 和 P26 targeted 截图覆盖核心风险点。</td></tr>
+          <tr><td>文档概念一致性</td><td>通过</td><td>已修订 P26 子阶段报告、README、目标架构、验收门槛和开发计划中的历史阻塞状态。</td></tr>
+          <tr><td>虚假验收风险</td><td>可控</td><td>报告明确区分 headless/mobile viewport、线上固定 URL 和 Mate70 截图证据；未把未自动化的 HarmonyOS 文件选择器说成已通过。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>残余限制</h2>
+      <div class="card">
+        <p>Mate70 证据覆盖固定 URL、WebApp 状态、缺失分享恢复、数据健康、治理工作台、数据包、创建、筛选、详情和刷新恢复。</p>
+        <p>HarmonyOS 系统文件选择器的 .foodmap.json 选择流程没有在实体 Mate70 上自动化；导入预览和取消无写入由 targeted Playwright 证明，并由 Mate70 数据包/治理入口截图证明实机可达。</p>
+      </div>
+    </section>
+
+    <p class="footer-note">本报告由本地自动化验收和既有 Mate70 证据生成。截图证据保存在 <code>docs/active/evidence/</code> 下；完整审计记录见 <code>docs/active/p26-stage-audit-2026-06-26.md</code>。</p>
+  </main>
+</body>
+</html>

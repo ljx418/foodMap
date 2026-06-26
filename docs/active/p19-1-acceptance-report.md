@@ -73,7 +73,7 @@ dpkg-deb -x libnss3_2%3a3.98-1ubuntu0.1_amd64.deb extracted
 Browser acceptance commands then ran with:
 
 ```bash
-LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/extracted/usr/lib/x86_64-linux-gnu npx playwright test ...
+LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/root/usr/lib/x86_64-linux-gnu npx playwright test ...
 ```
 
 One additional environment issue was found: port `5173` was occupied by another project's Vite dev server, so Playwright reused the wrong app because `reuseExistingServer` is enabled. After stopping that unrelated dev server, Playwright started FoodMap correctly and both P18 targeted browser regressions passed.

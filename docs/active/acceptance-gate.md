@@ -1,10 +1,31 @@
-# FoodMap P19/P20-C/P21/P22/P23/P24/P25 Acceptance Gate
+# FoodMap P19/P20-C/P21/P22/P23/P24/P25/P26 Acceptance Gate
+
+## P26 Gate Status
+
+P26 is accepted after the accepted P25 fixed-URL baseline. P26 is now the latest accepted implementation baseline. P26 browser-scope implementation, automated regression, deployed fixed-URL checks, and Mate70 fixed-URL P26 evidence passed as recorded in `p26-final-acceptance-report.md`.
+
+P26 must preserve FoodMap's pure frontend, local-first, static WebApp architecture. It must not be described as a HarmonyOS native app, AppGallery release, account system, cloud sync, backend service, offline map product, public permanent social share platform, automatic data repair product, or external realtime POI search completion.
+
+## P26 必过门槛
+
+| Gate | Pass Criteria | Fail Criteria |
+| --- | --- | --- |
+| 文档与审计 | PRD、目标架构、计划、gate、roadmap、gap/drawio、E2E matrix、visual checklist define the same P26 scope and non-goals | Docs conflict, over-promise native/cloud/backend/offline/realtime/public-share capability, or omit user-visible acceptance |
+| Drawio 架构 | Drawio <= 8 pages, Chinese, with concrete code entities, interaction/layer relationships, module status colors, plan, milestone, gate, and exit conditions | Diagram stays abstract, duplicates/conflicts content, or cannot support architecture assessment |
+| P25 回归基线 | P25 fixed URL, hash-route recovery, source-down fallback, real scanlist, P18-P25 accepted flows, and Agent boundaries remain green | P26 breaks accepted deployment, share/import/export, governance, candidate trust, or Agent constraints |
+| 移动端发布体验 | Mate70 user sees clear fixed-URL entry, WebApp/browser mode, source-down, tile failure, missing share, and refresh behavior | Evidence is desktop-only, HDC-only, stale, or implies cloud/native/offline behavior |
+| 发布门禁自动化 | Release verifier and evidence manifest make build/unit/scanlist/static deployment/hash route/regression checks repeatable | Gate relies on manual memory, temporary URL, untracked screenshots, or unrepeatable commands |
+| Mate70 交互 | Real-device screenshots or recording prove create/detail/filter/import/export/share paths are readable, reachable, and not blocked by keyboard/safe-area/browser chrome | Key actions are hidden, clipped, overlapped, or only proven in desktop emulation |
+| 本地数据维护 | Real data or fixtures prove health/governance/import/duplicate/conflict flows are preview-first, cancelable, user-confirmed, and local-only | Silent delete/merge/repair/finalize occurs, or cloud/account/backend writes are introduced |
+| 证据与报告 | P26 final report records commands, screenshots/JSON, Mate70 evidence, PRD review, blockers, residual limits, and non-goals | P26 is claimed accepted without final report or with false/stale evidence |
+
+Current P26 gate result: accepted. Mate70 fixed-URL P26 evidence exists for release state, missing share recovery, data health, governance workbench, data package, create, filter, detail, and refresh recovery. Import preview/cancel no-write is covered by P26 targeted Playwright evidence plus Mate70 data package/governance reachability screenshots.
 
 ## P25 Gate Status
 
 Current status: `Accepted`.
 
-P25 is the accepted durable static deployment and release-governance stage after accepted P24. P25 is the latest accepted implementation baseline.
+P25 is the accepted durable static deployment and release-governance stage after accepted P24. P25 was the latest accepted implementation baseline until P26 acceptance; P26 is now the current latest baseline.
 
 P25 was not accepted from HDC-only testing, local `vite preview`, a temporary tunnel, or desktop mobile emulation alone. It passed with a stable GitHub Pages URL, direct hash-route recovery, real Mate70 fixed-URL evidence, P18-P24 regression, and an accepted final report. The implemented URL target is GitHub Pages for `ljx418/foodMap`: `https://ljx418.github.io/foodMap/`.
 

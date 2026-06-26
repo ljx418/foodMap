@@ -1,4 +1,38 @@
-# FoodMap P19/P20-C/P21/P22/P23/P24/P25 Current vs Target Gap
+# FoodMap P19/P20-C/P21/P22/P23/P24/P25/P26 Current vs Target Gap
+
+## P26 差异总览
+
+P25 accepted the durable static deployment baseline: GitHub Pages fixed URL, deployed-origin browser checks, hash-route recovery, real scanlist verification, automated regression, and Mate70 fixed-URL evidence. P26 targets the next gap: hardening the mobile release experience, release gates, Mate70 interaction, and local data maintenance without changing FoodMap into a native app, cloud product, backend service, offline map product, realtime POI product, or public social platform.
+
+| 维度 | 当前 P25 已具备 | P26 目标 | 缺口处理 |
+| --- | --- | --- | --- |
+| 固定 URL 入口 | `https://ljx418.github.io/foodMap/` passes P25 deployed-origin and Mate70 evidence | Mate70 user sees clearer WebApp/browser/source-down/tile-failure/missing-share states around the same fixed URL | `MobileReleaseExperienceHardening` |
+| 发布验收 | P25 deployment verifier and final report exist | Release checks become repeatable gates with command bundle, evidence manifest, and failure classification | `ReleaseGateAutomation` |
+| Mate70 交互 | Main paths are proven reachable on fixed URL | Real-device create/detail/filter/import/export/share paths reduce overlap, hidden actions, and mis-taps | `Mate70InteractionPolish` |
+| 本地数据维护 | P19/P20-C data health and governance workbench exist | Maintenance flows expose duplicates, conflicts, pending/skipped, import problems, and history more clearly while staying preview-first | `LocalDataMaintenanceEnhancement` |
+| 证据治理 | P25 final report accepted | Every P26 substage records plan, PRD review, real-data/Mate70 evidence, blockers, and final report | `EvidenceGovernancePack` |
+
+## P26 架构评估实体关系
+
+P26 架构评估必须落到具体代码实体、文档实体、部署实体和证据实体。不能只用“移动端友好”“跨端部署”“App 能力”这类抽象词判断完成度。
+
+| 分层 | 当前实体 | P26 目标实体 | 关联关系与评估重点 |
+| --- | --- | --- | --- |
+| 静态发布层 | `vite.config.ts`、`gh-pages`、`dist/`、GitHub Pages URL、`scripts/verify_p25_deployment.mjs` | `ReleaseGateAutomation`、P26 release verifier/evidence manifest | 固定 URL、base path、hash route、source-down fallback must be checked by repeatable commands |
+| WebApp 壳层 | `index.html`、`manifest.webmanifest`、`public/sw.js`、`src/registerServiceWorker.ts`、`WebAppStatus` | `MobileReleaseExperienceHardening` | Browser/WebApp/offline/source-down copy must be honest and not imply native/cloud/offline map capability |
+| 工作台交互层 | `MapWorkspace`、`HomeMapControlDock`、`MapCanvas`、detail/filter/create/import/export controls | `Mate70InteractionPolish` | Mate70 screenshots must prove primary controls remain reachable under browser chrome, keyboard, and safe areas |
+| 分享与携带层 | `ShareView`、`ImportExportDialog`、snapshot codec、`.foodmap.json` codec | P26 share/import mobile refinements | Share remains local read-only; import/export remains local portability, not public permanent sharing |
+| 本地数据维护层 | `PersonalDataHealthCenter`、`GovernanceWorkbench`、`importExportCodec`、IndexedDB repositories、governance history | `LocalDataMaintenanceEnhancement` | Duplicate/conflict/pending/skipped handling must be preview-first, cancelable, explicit, and local-only |
+| Agent 与信任边界 | `window.FoodMapAgentBridge`、P18/P20-C negative gates | P26 regression boundary | Agent must not finalize coordinates, delete, merge, import, hide risk, or bypass confirmation |
+| 验收证据层 | `e2e/workspace.spec.ts`、P25 screenshots、`p25-final-acceptance-report.md` | `MobileReleaseEvidenceHarness`、`docs/active/evidence/p26/`、`p26-final-acceptance-report.md` | Evidence must distinguish true Mate70 fixed-URL proof from desktop emulation and stale screenshots |
+
+## P26 Target State
+
+1. Mate70 用户通过 P25 固定 URL 进入 FoodMap 后，可以清楚理解浏览器/WebApp 状态、源站不可用、地图瓦片失败、缺失分享和刷新恢复行为。
+2. 发布者可以运行一组门禁命令，复验 build、unit、真实 scanlist、静态部署、hash route、P18-P25 回归和 P26 targeted checks。
+3. Mate70 上的工作台、创建、详情、筛选、导入导出、只读分享和刷新持久化路径更易触达，不被键盘、安全区、浏览器栏或底部操作遮挡。
+4. 数据健康、治理、导入冲突、重复地点、待确认和跳过记录能让用户看清问题和下一步；所有写入仍需预览和显式确认。
+5. P26 final report 只能在实现、真实数据/Mate70 证据和回归 gate 完成后创建；文档阶段不能提前宣称 P26 accepted。
 
 ## P25 差异总览
 

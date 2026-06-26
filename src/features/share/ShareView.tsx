@@ -91,6 +91,10 @@ export function ShareView({ snapshotId, notify }: { snapshotId: string; notify: 
               </>
             )}
           />
+          <div className="share-missing-recovery" data-testid="share-missing-recovery">
+            <strong>本地只读快照没有公网副本</strong>
+            <p>分享链接只定位当前浏览器里的本地 snapshot；换手机、清缓存或刷新到缺失快照时，需要导入对应 `.foodmap.json`。导入只写入本地只读 snapshots，不会同步云端，也不会修改你的个人图钉。</p>
+          </div>
           {importError ? <p className="inline-error" data-testid="import-error-message">{importError}</p> : null}
         </div>
       </main>

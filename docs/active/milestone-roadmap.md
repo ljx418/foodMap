@@ -1,4 +1,28 @@
-# FoodMap P19/P20-C/P21/P22/P23/P24/P25 Milestone Roadmap
+# FoodMap P19/P20-C/P21/P22/P23/P24/P25/P26 Milestone Roadmap
+
+## P26 里程碑
+
+P26 is the current implementation stage after accepted P25. It turns the fixed-URL WebApp baseline into mobile release hardening, release-gate automation, Mate70 interaction support, local data maintenance enhancement, and evidence governance. It does not implement or claim native HarmonyOS delivery, AppGallery release, account/cloud sync, backend API, offline map tiles, realtime POI completion, automatic data repair, or permanent public social sharing.
+
+| Milestone | Outcome | Evidence |
+| --- | --- | --- |
+| M26-1 文档与审计基线 | PRD、目标架构、计划、gate、roadmap、gap/drawio、contract、audit all define P26 scope consistently | Completed: `p26-1-acceptance-report.md` |
+| M26-2 移动端发布体验硬化 | User can understand WebApp/browser mode, local storage, offline state, and missing share recovery | Completed: `p26-2-acceptance-report.md`, Mate70 fixed-URL evidence |
+| M26-3 发布门禁自动化 | Release verifier and evidence manifest make build/unit/scanlist/static deployment/hash route/regression checks reproducible | Completed: `verify:p26:release`, `release-gate-manifest.json` |
+| M26-4 Mate70 交互精修 | Mobile viewport paths avoid hidden actions and unreadable panels in targeted release/data maintenance flows | Completed: `p26-4-acceptance-report.md`, Mate70 fixed-URL evidence |
+| M26-5 本地数据维护增强 | Health/governance/import/duplicate/conflict flows are clearer and still preview-first/user-confirmed/local-only | Completed: `p26-5-acceptance-report.md` |
+| M26-6 回归和证据包 | P18-P25 accepted baselines remain green and P26 targeted gates pass | Completed: `p26-6-regression-and-prd-review.md` |
+| M26-7 总验收 | Final report records implementation scope, fixed URL, Mate70 evidence, commands, blockers, residual limits, and non-goals | Accepted: `p26-final-acceptance-report.md` |
+
+## P26 出门条件
+
+- P26 implementation follows the accepted docs and does not expand into native HAP/AppGallery, cloud sync, backend services, offline map tiles, realtime POI completion, automatic data repair, or permanent public sharing.
+- Mate70 real-device evidence proves fixed-URL mobile release experience and interaction refinements; desktop mobile viewport evidence is only supporting evidence.
+- Release gates are repeatable and cover build, unit, real scanlist, static deployment verifier, hash-route recovery, P18-P25 regression, P26 targeted E2E, and docs consistency.
+- Local data maintenance enhancements use real data or fixtures and remain preview-first, cancelable, user-confirmed, and local-only.
+- P26 final acceptance report exists before the stage is called accepted.
+
+P26 acceptance status: accepted. Implementation, automated regression, fixed-URL deployment, remote verification, and Mate70 fixed-URL evidence passed. The final report records the residual limit that HarmonyOS file-picker import preview was not automated on device; import preview/cancel no-write remains covered by targeted browser E2E and Mate70 data package/governance reachability evidence.
 
 ## P25 里程碑
 

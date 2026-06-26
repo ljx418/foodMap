@@ -3235,6 +3235,24 @@ label,
   background: rgba(255, 248, 234, 0.96);
 }
 
+.webapp-status__meta {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+  margin-left: 8px;
+  color: var(--color-muted);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.webapp-status__meta span {
+  padding: 2px 6px;
+  border: 1px solid rgba(76, 52, 31, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 253, 247, 0.72);
+}
+
 .workspace:has(.modal-backdrop) + .toast-stack,
 .workspace:has(.mobile-panel-backdrop) + .toast-stack,
 .workspace:has(.sheet-backdrop) + .toast-stack,
@@ -3266,6 +3284,31 @@ label,
 
 .share-missing-panel .empty-state__actions {
   justify-content: center;
+}
+
+.share-missing-recovery,
+.import-export-intent {
+  width: min(100%, 560px);
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid rgba(47, 125, 140, 0.18);
+  border-radius: 14px;
+  color: var(--color-muted);
+  background: rgba(47, 125, 140, 0.07);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.share-missing-recovery strong,
+.import-export-intent strong {
+  color: var(--color-ink);
+}
+
+.share-missing-recovery p,
+.import-export-intent p {
+  margin: 0;
 }
 
 .share-header {

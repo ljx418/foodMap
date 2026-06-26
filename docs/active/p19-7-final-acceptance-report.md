@@ -37,7 +37,7 @@ P19 did not add backend services, accounts, cloud sync, public permanent share l
 Local Playwright launch originally required Linux NSS/NSPR libraries. P19 acceptance used the documented local extraction workaround:
 
 ```bash
-LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/extracted/usr/lib/x86_64-linux-gnu npx playwright test ...
+LD_LIBRARY_PATH=/mnt/c/workspace/foodmap/.tmp/playwright-libs/root/usr/lib/x86_64-linux-gnu npx playwright test ...
 ```
 
 The libraries present for acceptance were:
