@@ -34,10 +34,11 @@ GitHub Pages is accepted as the P25/P26 fixed URL evidence baseline, but it is n
 
 | Phase | Goal | Main Output | Acceptance Gate |
 | --- | --- | --- | --- |
-| CN-1 | 大陆部署路线冻结 | `mainland-deployment-profile.md` records Tencent COS/CDN and Alibaba OSS/CDN routes, ICP/HTTPS/domain requirements, cache policy, and non-goals | No claim that GitHub Pages is mainland production-ready |
-| CN-2 | 构建 profile | `npm run build:mainland`, configurable `FOODMAP_MAINLAND_BASE_PATH` | Built `dist/` uses mainland custom-domain base, not `/foodMap/` GitHub Pages base |
+| CN-1 | 大陆部署路线冻结 | `mainland-deployment-profile.md` records EdgeOne Pages, Tencent COS/CDN, Alibaba OSS/CDN routes, ICP/HTTPS/domain requirements, cache policy, and non-goals | No claim that GitHub Pages is mainland production-ready |
+| CN-2 | 构建 profile | `npm run build:mainland`, `npm run build:edgeone`, configurable `FOODMAP_MAINLAND_BASE_PATH` | Built `dist/` uses mainland custom-domain base, not `/foodMap/` GitHub Pages base |
 | CN-3 | 验证门禁 | `npm run verify:mainland:deployment`, optional `FOODMAP_MAINLAND_DEPLOY_URL` remote check | Local and remote static host checks pass |
-| CN-4 | 云端发布 | Upload `dist/` to COS/OSS/static server after domain, ICP, HTTPS, and credentials are available | Mainland URL opens `#/map`, refreshes, serves manifest/sw/icons/assets, and passes Mate70 smoke |
+| CN-4 | 免费优先发布适配 | `npm run deploy:edgeone` wraps EdgeOne CLI deployment with token/project guards | Dry run works without token; real deployment requires EdgeOne API token |
+| CN-5 | 云端发布 | Upload `dist/` to EdgeOne/COS/OSS/static server after required credentials are available; custom mainland domain requires ICP/HTTPS | Mainland URL opens `#/map`, refreshes, serves manifest/sw/icons/assets, and passes Mate70 smoke |
 
 This addendum is implementation support for a future mainland production release. It cannot complete actual mainland public deployment without external account credentials, domain ownership, ICP filing status, HTTPS certificate configuration, and provider console access.
 

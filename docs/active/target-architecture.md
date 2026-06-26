@@ -22,12 +22,13 @@ Mainland user browser or Mate70
 
 | Module | Responsibility | Concrete Entities | Status |
 | --- | --- | --- | --- |
-| `MainlandStaticHostProfile` | Define domestic static hosting route, ICP/HTTPS/domain requirements, cache policy, and provider options | `docs/active/mainland-deployment-profile.md` | 新增 |
+| `MainlandStaticHostProfile` | Define EdgeOne Pages, COS/CDN, OSS/CDN routes, ICP/HTTPS/domain requirements, cache policy, and provider options | `docs/active/mainland-deployment-profile.md` | 新增 |
 | `MainlandBuildProfile` | Build static assets for a custom-domain root path or configured subpath | `vite.config.ts`, `npm run build:mainland`, `FOODMAP_MAINLAND_BASE_PATH` | 新增 |
 | `MainlandDeploymentVerifier` | Verify local `dist/` and deployed mainland URL without GitHub Pages `/foodMap/` assumptions | `scripts/verify_mainland_deployment.mjs`, `npm run verify:mainland:deployment`, `FOODMAP_MAINLAND_DEPLOY_URL` | 新增 |
+| `EdgeOneDeployAdapter` | Deploy the verified mainland `dist/` package through EdgeOne CLI when API token is available | `scripts/deploy_edgeone_pages.mjs`, `npm run deploy:edgeone`, `EDGEONE_API_TOKEN`, `EDGEONE_PROJECT_NAME` | 新增 |
 | `LocalDataBoundary` | Preserve local IndexedDB and `.foodmap.json` portability; hosting must not imply cloud sync | IndexedDB repositories, import/export codec, PRD non-goals | 已实现 |
 
-The mainland host may be Tencent Cloud COS/CDN, Alibaba Cloud OSS/CDN, or a domestic Nginx static server. Cloudflare Pages, Netlify, Vercel, GitHub Pages, and similar overseas hosts are acceptable only as development or overseas fallback routes, not as the mainland production baseline.
+The mainland host may be EdgeOne Pages for a free-first trial, Tencent Cloud COS/CDN, Alibaba Cloud OSS/CDN, or a domestic Nginx static server. Cloudflare Pages, Netlify, Vercel, GitHub Pages, and similar overseas hosts are acceptable only as development or overseas fallback routes, not as the mainland production baseline.
 
 P18 is accepted and becomes the regression baseline:
 

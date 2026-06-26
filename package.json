@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "build:pages": "tsc -b && vite build --mode pages",
     "build:mainland": "tsc -b && vite build --mode mainland",
+    "build:edgeone": "npm run build:mainland",
     "test": "vitest run",
     "e2e": "playwright test",
     "preview": "vite preview --host 0.0.0.0",
@@ -15,6 +16,7 @@
     "verify:p25:deployment": "node scripts/verify_p25_deployment.mjs",
     "verify:p26:release": "node scripts/verify_p26_release.mjs",
     "verify:mainland:deployment": "node scripts/verify_mainland_deployment.mjs",
+    "deploy:edgeone": "node scripts/deploy_edgeone_pages.mjs",
     "refresh:amap": "node scripts/refresh_amap_scanlist.mjs",
     "verify:scanlist": "node scripts/verify_scanlist_baseline.mjs"
   },
