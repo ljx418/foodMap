@@ -4,6 +4,31 @@
 
 FoodMap remains a **pure frontend, local-first, static-deployable modular monolith**. User places, layers, photos, snapshots, and governance history remain in browser IndexedDB. AMap scanlist and Dingtuyi data remain optional reference layers. Agent access remains limited to the controlled `window.FoodMapAgentBridge` surface.
 
+Mainland China service note: GitHub Pages is the accepted overseas/developer fixed URL baseline, but it is not the target production entry for mainland China users. Mainland-facing production should use the same static WebApp architecture on a domestic static host, with an ICP-filed custom domain, HTTPS, and the `mainland` build/verification profile.
+
+## 0E. Mainland China Static Deployment Architecture
+
+FoodMap can serve mainland China users without adding a backend because the app is a static WebApp and user data remains in IndexedDB. The target deployment architecture changes only the host profile:
+
+```text
+Mainland user browser or Mate70
+  -> ICP-filed HTTPS domain, e.g. https://foodmap.example.cn/
+  -> domestic CDN or static website endpoint
+  -> Tencent Cloud COS or Alibaba Cloud OSS bucket
+  -> dist/ from npm run build:mainland
+  -> FoodMap hash router (#/map and #/share/:snapshotId)
+  -> IndexedDB local data and .foodmap.json portability
+```
+
+| Module | Responsibility | Concrete Entities | Status |
+| --- | --- | --- | --- |
+| `MainlandStaticHostProfile` | Define domestic static hosting route, ICP/HTTPS/domain requirements, cache policy, and provider options | `docs/active/mainland-deployment-profile.md` | 新增 |
+| `MainlandBuildProfile` | Build static assets for a custom-domain root path or configured subpath | `vite.config.ts`, `npm run build:mainland`, `FOODMAP_MAINLAND_BASE_PATH` | 新增 |
+| `MainlandDeploymentVerifier` | Verify local `dist/` and deployed mainland URL without GitHub Pages `/foodMap/` assumptions | `scripts/verify_mainland_deployment.mjs`, `npm run verify:mainland:deployment`, `FOODMAP_MAINLAND_DEPLOY_URL` | 新增 |
+| `LocalDataBoundary` | Preserve local IndexedDB and `.foodmap.json` portability; hosting must not imply cloud sync | IndexedDB repositories, import/export codec, PRD non-goals | 已实现 |
+
+The mainland host may be Tencent Cloud COS/CDN, Alibaba Cloud OSS/CDN, or a domestic Nginx static server. Cloudflare Pages, Netlify, Vercel, GitHub Pages, and similar overseas hosts are acceptable only as development or overseas fallback routes, not as the mainland production baseline.
+
 P18 is accepted and becomes the regression baseline:
 
 - Candidate search and no-key fallback.

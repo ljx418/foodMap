@@ -8,6 +8,7 @@ This directory is the active documentation baseline for FoodMap. It keeps the V1
 - Current project state: runnable Vite React TypeScript frontend with IndexedDB persistence, Leaflet/AMap-tile map, share/import/export, Agent Bridge, mobile filter controls, editable tags, manual pin move with audit preview, external map links, map-poster export, current-viewport poster mode, personal data health center, pending-place workbench, P17 detail IA, P18 candidate search and evidence, P19 acceptance evidence, P20 core personal data governance workbench, duplicate merge preview, import conflict preview, maintenance history, Agent governance boundary, responsive governance evidence, and 50 verified AMap Wuhan scanlist pins as a toggleable reference layer.
 - Current-stage focus: P26 implements mobile release experience hardening, release-gate automation, Mate70 interaction polish support, local data maintenance enhancement, and evidence governance over the accepted P25 fixed-URL WebApp baseline.
 - Current-stage acceptance status: P26 is accepted. P26 code, automated browser regression, fixed-URL deployment, remote verification, and Mate70 fixed-URL evidence passed; P26 is the latest accepted implementation baseline.
+- Mainland China service note: GitHub Pages remains the accepted overseas/developer static baseline, but it is not a reliable production entry for mainland China users. Mainland production deployment must use a domestic static host profile such as Tencent Cloud COS/CDN or Alibaba Cloud OSS/CDN with a custom domain, ICP filing, HTTPS, and the `build:mainland` / `verify:mainland:deployment` gates.
 - Primary constraint: pure frontend first, static-deployable, no backend dependency for user records or share snapshots.
 - Product direction: map-first personal food journal with a verified recommendation overlay, not a generic admin panel or public social product.
 
@@ -102,6 +103,7 @@ Forbidden claims:
 - [P25 Preimplementation Audit](./p25-preimplementation-audit.md)
 - [P25 Stage Implementation Contract](./p25-stage-implementation-contract.md)
 - [P25 Static Deployment Profile](./p25-static-deployment-profile.md)
+- [Mainland China Deployment Profile](./mainland-deployment-profile.md)
 - [P25-1 Acceptance Report](./p25-1-acceptance-report.md)
 - [P25-2 Acceptance Report](./p25-2-acceptance-report.md)
 - [P25-3 Acceptance Report](./p25-3-acceptance-report.md)
@@ -183,7 +185,7 @@ The app also supports a local read-only share view and `.foodmap.json` import/ex
 - P23 evidence supersedes stale P22 screenshots where interaction screenshots were unreadable, clipped, or obscured.
 - P24 WebApp work must remain browser-delivered and static-deployable; native HarmonyOS packaging is a future separate stage if ever pursued.
 - P24 final acceptance requires Mate70 real-device screenshot or recording evidence.
-- P25 durable static deployment must use the GitHub Pages target `https://ljx418.github.io/foodMap/` or a documented fallback stable static URL, not HDC-only routing, local-only preview, or a temporary tunnel, before it can be accepted.
+- P25 durable static deployment used the GitHub Pages target `https://ljx418.github.io/foodMap/` as the accepted fixed URL. For mainland China users, GitHub Pages is not sufficient as a production service entry; use `mainland-deployment-profile.md` and a domestic static host with ICP/HTTPS instead of HDC-only routing, local preview, or a temporary tunnel.
 - P25 direct `#/map` and generated `#/share/:snapshotId` routes must open and refresh correctly on the static host.
 - P25 must keep IndexedDB and `.foodmap.json` as the only user-data persistence and portability paths.
 - P25 final acceptance requires fixed-URL Mate70 evidence, P18-P24 regression evidence, and a final report.

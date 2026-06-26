@@ -28,6 +28,19 @@ Detailed implementation and acceptance are defined in [P26 Detailed Development 
 
 Current P26 status: accepted. Implementation, automated regression, fixed-URL deployment, remote verification, and Mate70 fixed-URL evidence passed. P26 is the latest accepted implementation baseline.
 
+## Mainland China Deployment Addendum
+
+GitHub Pages is accepted as the P25/P26 fixed URL evidence baseline, but it is not a reliable production service entry for users in mainland China. The next deployment hardening target for mainland users is a domestic static host profile:
+
+| Phase | Goal | Main Output | Acceptance Gate |
+| --- | --- | --- | --- |
+| CN-1 | 大陆部署路线冻结 | `mainland-deployment-profile.md` records Tencent COS/CDN and Alibaba OSS/CDN routes, ICP/HTTPS/domain requirements, cache policy, and non-goals | No claim that GitHub Pages is mainland production-ready |
+| CN-2 | 构建 profile | `npm run build:mainland`, configurable `FOODMAP_MAINLAND_BASE_PATH` | Built `dist/` uses mainland custom-domain base, not `/foodMap/` GitHub Pages base |
+| CN-3 | 验证门禁 | `npm run verify:mainland:deployment`, optional `FOODMAP_MAINLAND_DEPLOY_URL` remote check | Local and remote static host checks pass |
+| CN-4 | 云端发布 | Upload `dist/` to COS/OSS/static server after domain, ICP, HTTPS, and credentials are available | Mainland URL opens `#/map`, refreshes, serves manifest/sw/icons/assets, and passes Mate70 smoke |
+
+This addendum is implementation support for a future mainland production release. It cannot complete actual mainland public deployment without external account credentials, domain ownership, ICP filing status, HTTPS certificate configuration, and provider console access.
+
 ## P25 Summary
 
 P25 is the current durable static deployment and release-governance stage after accepted P24. It turns the P24 mobile-friendly WebApp proof into a durable static deployment target, while preserving FoodMap's pure frontend, local-first, no-account, no-cloud product boundary.
