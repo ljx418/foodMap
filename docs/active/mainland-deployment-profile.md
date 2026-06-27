@@ -117,7 +117,8 @@ EDGEONE_API_TOKEN=<token> EDGEONE_PROJECT_NAME=foodmap npm run deploy:edgeone
 FOODMAP_MAINLAND_DEPLOY_URL=<EdgeOne URL> npm run verify:mainland:deployment
 ```
 
-7. If a custom domain is used for mainland production, complete ICP filing and HTTPS configuration before calling it an accepted mainland release.
+7. If EdgeOne returns a URL with `eo_token` and `eo_time`, treat it as a protected preview URL. It can prove the browser deployment package works, but it is not a stable public URL for arbitrary users.
+8. If a custom domain is used for mainland production, complete ICP filing and HTTPS configuration before calling it an accepted mainland release.
 
 EdgeOne deployment is a hosting change only. It must not be described as cloud sync, account login, remote backup, or permanent public share storage.
 
@@ -165,7 +166,7 @@ FOODMAP_MAINLAND_DEPLOY_URL=https://foodmap.example.cn/ npm run verify:mainland:
 
 The mainland deployment cannot be called accepted until:
 
-1. The URL is not GitHub Pages and is reachable from mainland China networks.
+1. The URL is not GitHub Pages and is reachable from mainland China networks without a private login session or expiring preview token.
 2. The custom domain has ICP filing if hosted or accelerated inside mainland China.
 3. HTTPS is enabled.
 4. `npm run build:mainland` passes.

@@ -45,8 +45,7 @@ function commandParts() {
     "./dist",
     "-n",
     projectName,
-    "-t",
-    token ? "<EDGEONE_API_TOKEN>" : "<missing>"
+    token ? "with EDGEONE_PAGES_API_TOKEN from environment" : "without token"
   ];
 }
 
@@ -69,14 +68,16 @@ const args = [
   "deploy",
   "./dist",
   "-n",
-  projectName,
-  "-t",
-  token
+  projectName
 ];
 
 info(`Deploying dist/ to EdgeOne Pages project "${projectName}".`);
 const result = spawnSync("npx", args, {
   cwd: root,
+  env: {
+    ...process.env,
+    EDGEONE_PAGES_API_TOKEN: token
+  },
   stdio: "inherit",
   shell: process.platform === "win32"
 });
