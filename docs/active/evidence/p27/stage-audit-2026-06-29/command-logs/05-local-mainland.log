@@ -1,0 +1,5 @@
+
+> foodmap@1.0.0 verify:mainland:deployment
+> node scripts/verify_mainland_deployment.mjs
+
+[Mainland Deployment Verify] Local dist checks passed for base /.

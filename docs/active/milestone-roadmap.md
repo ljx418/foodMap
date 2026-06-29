@@ -1,4 +1,31 @@
-# FoodMap P19/P20-C/P21/P22/P23/P24/P25/P26 Milestone Roadmap
+# FoodMap P19/P20-C/P21/P22/P23/P24/P25/P26/P27 Milestone Roadmap
+
+## P27 里程碑
+
+P27 is the current mainland China public access stage after accepted P26. It turns the existing mainland static deployment profile, EdgeOne deployment adapter, and deployment verifier into a governed release path for a stable public HTTPS mainland URL. It does not implement or claim native HarmonyOS delivery, AppGallery release, account/cloud sync, backend API, offline map tiles, realtime POI completion, automatic data repair, or permanent public social sharing.
+
+| Milestone | Outcome | Evidence |
+| --- | --- | --- |
+| M27-1 文档与审计基线 | PRD、目标架构、计划、gate、roadmap、gap/drawio、mainland profile、P27 plan、P27 audit all define P27 scope consistently | `p27-detailed-development-and-acceptance-plan.md`, `p27-preimplementation-audit.md`, updated drawio |
+| M27-2 当前部署状态归类 | GitHub Pages, EdgeOne protected preview, LAN/HDC/tunnel, and stable mainland public URL states are clearly separated | Accepted substage: `p27-2-acceptance-report.md`, `verify:p27:release` manifest |
+| M27-3 大陆公网路线准备 | EdgeOne free-first route and COS/OSS/CDN fallback route have provider, ICP, HTTPS, domain, cache, and paid-operation rules | Accepted substage: `p27-3-acceptance-report.md`, `mainland-deployment-profile.md` |
+| M27-4 构建/部署/验证门禁 | Mainland build, EdgeOne build, dry-run deploy, local verifier, P26 baseline verifier, and P27 release-gate verifier have repeatable evidence paths | Accepted substage after command pass: `p27-4-acceptance-report.md`, `release-gate-manifest.json` |
+| M27-5 稳定公网 URL 和 Mate70 验收 | Stable mainland HTTPS URL opens on Mate70 and completes P26 accepted smoke paths | Blocked and bypassed for current run: `p27-5-blocker-report.md`; domain/ICP/DNS/HTTPS are external prerequisites |
+| M27-6 回归与总验收 | P18-P26 boundaries remain green and final report records provider, URL, ICP/HTTPS, blockers, residual limits, and non-goals | P27 final acceptance report after implementation |
+
+## P27 出门条件
+
+- P26 accepted baseline remains the latest accepted implementation baseline until P27 final acceptance exists.
+- The accepted P27 URL is not GitHub Pages, LAN, HDC reverse forwarding, local preview, temporary tunnel, or protected preview.
+- The accepted P27 URL is HTTPS and can be opened without platform login or expiring preview token.
+- Custom mainland domain, ICP, HTTPS, and provider status are recorded. Paid or console-side operations require explicit user confirmation before execution.
+- `npm run build:mainland`, `npm run build:edgeone`, `npm run verify:mainland:deployment`, and remote URL verification pass or have documented non-product blockers.
+- Browser smoke and Mate70 evidence prove the same stable public URL.
+- IndexedDB and `.foodmap.json` remain the only personal data persistence and portability paths.
+- No docs, drawio, screenshots, reports, or command examples include API tokens, cookies, SecretKey values, or full protected-preview query tokens.
+- P27 final acceptance report exists before the stage is called accepted.
+
+P27 acceptance status: not accepted. Local automation, route classification, and EdgeOne protected-preview deployment are implemented; stable mainland public URL evidence is still required. Public domain registration and ICP are bypassed for the current run.
 
 ## P26 里程碑
 

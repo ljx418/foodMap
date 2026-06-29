@@ -1,4 +1,61 @@
-# FoodMap P19/P20-C/P21/P22/P23/P24/P25/P26 Current vs Target Gap
+# FoodMap P19/P20-C/P21/P22/P23/P24/P25/P26/P27 Current vs Target Gap
+
+## P27 差异总览
+
+P26 accepted the mobile release hardening baseline on the fixed static WebApp. P27 targets the next gap for mainland China users: replace GitHub Pages, LAN/HDC access, temporary tunnels, and protected provider previews with a stable public HTTPS domestic static-host entry. P27 must keep FoodMap pure frontend and local-first; it only changes the mainland hosting and acceptance chain.
+
+| 维度 | 当前已具备 | P27 目标 | 缺口处理 |
+| --- | --- | --- | --- |
+| 海外/开发固定 URL | P25/P26 accepted `https://ljx418.github.io/foodMap/` as fixed URL baseline | 大陆用户使用国内稳定 HTTPS URL，而不是 GitHub Pages | `MainlandStaticHostProfile` |
+| 构建 profile | `npm run build:mainland` and `npm run build:edgeone` exist | Build artifact verified for root/subpath domestic static hosts | `MainlandBuildProfile` |
+| 部署适配 | EdgeOne deploy adapter exists and token handling is environment-based | Real provider deployment either yields stable public URL or records protected-preview blocker | `EdgeOneDeployAdapter` |
+| 验证门禁 | `npm run verify:mainland:deployment` exists for local/remote checks | Remote public URL verification is required before acceptance | `MainlandDeploymentVerifier` |
+| 当前 EdgeOne 状态 | Protected preview may prove package/browser smoke | No protected preview, login-only URL, or expiring token URL can close P27 | `PublicUrlEvidenceHarness` |
+| Mate70 公网体验 | P26 fixed-URL Mate70 evidence exists | Mate70 opens the stable mainland public URL and completes P26 accepted smoke paths | `Mate70MainlandSmokeHarness` |
+| Secret 安全 | API token should be env-only and not tracked | Docs/reports/drawio/screenshots/logs redact tokens, cookies, SecretKey, preview query tokens | `SecretRedactionGuard` |
+
+## P27 架构评估实体关系
+
+P27 架构评估必须落到具体代码实体、部署实体、运行实体、数据实体和证据实体。不能只用“国内部署”“公网访问”“跨端能力”这类抽象词判断完成度。
+
+| 分层 | 当前实体 | P27 目标实体 | 关联关系与评估重点 |
+| --- | --- | --- | --- |
+| 构建产物层 | `vite.config.ts`, `package.json`, `dist/`, `index.html`, `assets/*`, `manifest.webmanifest`, `sw.js` | `MainlandBuildProfile` | `mainland` mode must not use GitHub Pages `/foodMap/` base unless explicitly configured as subpath |
+| 部署命令层 | `scripts/deploy_edgeone_pages.mjs`, `npm run deploy:edgeone`, `EDGEONE_PROJECT_NAME`, env-only API token | `EdgeOneDeployAdapter` | Dry-run must work; real deploy must not commit or print secrets |
+| 静态托管层 | GitHub Pages baseline, possible EdgeOne protected preview, possible COS/OSS/static host | `MainlandStaticHostProfile` | Accepted host must be stable HTTPS public URL without login or expiring token |
+| 路由运行层 | `src/main.tsx`, `src/app/App.tsx`, hash router, `#/map`, `#/share/:snapshotId` | `MainlandDeploymentVerifier` | Direct open and refresh must work on deployed URL; missing-share fallback must be honest |
+| 用户体验层 | `MapWorkspace`, `ShareView`, `ImportExportDialog`, `WebAppStatus`, P26 mobile polish | `Mate70MainlandSmokeHarness` | Mate70 screenshots must prove P26 accepted main paths on the same public URL |
+| 本地数据层 | IndexedDB repositories, snapshot codec, import/export codec, `.foodmap.json` | `LocalDataBoundary` | Mainland deployment must not imply account/cloud/remote backup/permanent share storage |
+| Agent 与信任边界 | `window.FoodMapAgentBridge`, P18/P20-C/P26 negative gates | P27 regression boundary | P27 hosting work must not add Agent write powers or bypass confirmations |
+| 验收证据层 | `scripts/verify_mainland_deployment.mjs`, browser smoke, `docs/active/evidence/p27/`, final report | `PublicUrlEvidenceHarness` | Evidence must classify URL state and reject GitHub Pages/LAN/HDC/tunnel/protected preview as final acceptance |
+
+## P27 Target State
+
+1. A mainland user can open a stable HTTPS domestic URL such as `https://foodmap.example.cn/#/map` without GitHub Pages, private login, expiring preview token, LAN, HDC, or tunnel.
+2. Mate70 can open that same URL and complete P26 accepted smoke paths: workspace, detail/filter, data package, share fallback or valid share, refresh recovery, and release status visibility.
+3. Maintainers can run repeatable local and remote verification commands for build artifacts, hash routes, manifest, service worker, and static assets.
+4. The final report records provider, URL, ICP/HTTPS status, commands, screenshots, blockers, residual limits, and non-goals.
+5. If the only available route is protected preview or external setup is blocked by domain/ICP/paid provider requirements, P27 stays open and records the blocker.
+
+## P27 Development Path
+
+1. P27-1: 文档审计与阶段边界冻结。
+2. P27-2: 当前部署状态归类。
+3. P27-3: 大陆公网路线实现准备。
+4. P27-4: 自动化验证闭环。
+5. P27-5: Mate70 真实访问验收。
+6. P27-6: 回归、PRD 检视和 final report。
+
+## P27 Risks And Controls
+
+- False acceptance risk: protected preview, GitHub Pages, LAN, HDC, or tunnel evidence cannot close P27.
+- External dependency risk: domain, ICP, HTTPS, provider console, and billing may require user action and must stop implementation.
+- Secret leakage risk: API token, cookie, SecretKey, and full preview query token must not enter tracked files or reports.
+- Base-path risk: mainland root deployment must not accidentally keep `/foodMap/` unless subpath deployment is explicitly configured.
+- Regression risk: P27 hosting work must not change P18-P26 local data, Agent, share/import/export, governance, or coordinate trust boundaries.
+- Documentation drift risk: PRD, architecture, plan, gates, roadmap, gap, drawio, and mainland profile must describe the same P27 state.
+
+P27 acceptance status: not accepted. The documentation set can support implementation after drawio review, but final acceptance still requires stable public mainland URL evidence.
 
 ## P26 差异总览
 

@@ -1,4 +1,31 @@
-# FoodMap P19/P20-C/P21/P22/P23/P24/P25/P26 Acceptance Gate
+# FoodMap P19/P20-C/P21/P22/P23/P24/P25/P26/P27 Acceptance Gate
+
+## P27 Gate Status
+
+Current status: `Implementation in progress / not accepted`.
+
+P27 is the mainland China public access stage after accepted P26. It can be accepted only when FoodMap is served from a stable public HTTPS mainland-facing static host URL that requires no private console login, no expiring preview token, no LAN/HDC routing, no temporary tunnel, and no GitHub Pages dependency for mainland production use.
+
+P27 must preserve FoodMap's pure frontend, local-first, static WebApp architecture. It must not be described as a HarmonyOS native app, AppGallery release, account system, cloud sync, backend service, offline map product, public permanent social share platform, automatic data repair product, or external realtime POI search completion.
+
+## P27 必过门槛
+
+| Gate | Pass Criteria | Fail Criteria |
+| --- | --- | --- |
+| 文档与审计 | PRD、目标架构、计划、gate、roadmap、gap/drawio、mainland profile、P27 plan、P27 audit define the same P27 scope and non-goals | Docs conflict, over-promise native/cloud/backend/offline/realtime/public-share capability, or declare the P27 stage complete before final evidence |
+| Drawio 架构 | Drawio <= 8 pages, Chinese, with concrete code/deploy/runtime/data/evidence entities, interaction relationships, status colors, plan, milestone, gate, and exit conditions | Diagram stays abstract, omits code entities, duplicates/conflicts content, or cannot support architecture assessment |
+| 稳定大陆公网 URL | URL is not GitHub Pages, opens over HTTPS, and is reachable without private login, expiring preview token, LAN IP, HDC reverse forwarding, local preview, or temporary tunnel | Only GitHub Pages, LAN/HDC/local preview/tunnel, or EdgeOne protected preview evidence exists |
+| 合规与外部条件 | ICP/custom-domain/HTTPS/provider status is recorded; paid or console-side operations have explicit user approval | Provider requires payment/domain/ICP/console changes and implementation proceeds without user approval |
+| 构建与本地验证 | `npm run build:mainland`, `npm run build:edgeone`, and `npm run verify:mainland:deployment` pass or have documented non-product blocker | Static artifact cannot be verified or uses the wrong GitHub Pages base path |
+| 部署门禁 | `EDGEONE_DRY_RUN=1 EDGEONE_PROJECT_NAME=foodmap npm run deploy:edgeone` is safe; real deploy does not print or persist secrets | Deploy command requires tracked credentials, prints tokens, or cannot be dry-run safely |
+| 远端验证 | `FOODMAP_MAINLAND_DEPLOY_URL=<stable-url> npm run verify:mainland:deployment` passes against the public URL | Remote verifier fails, URL requires login/token, or route refresh/assets/manifest/service worker fail |
+| 浏览器 smoke | Browser evidence covers `#/map`, refresh, missing-share fallback, manifest/service worker/static assets, and source-down/data-boundary clarity | Evidence is stale, desktop-only without deployed origin, or does not prove public URL behavior |
+| Mate70 公网体验 | Mate70 opens the stable public URL and completes P26 accepted smoke paths: workspace, detail/filter, data package, share fallback or valid share, refresh recovery, status visibility | Only desktop emulation, local LAN, HDC-only, GitHub Pages, or protected preview is shown |
+| P18-P26 回归边界 | Existing accepted scanlist, Agent, local data, share/import/export, governance, and release diagnostics boundaries remain green or have documented non-product blockers | P27 breaks accepted baseline or changes user-data semantics |
+| Secret 安全 | Docs, drawio, reports, command logs, screenshots, and examples do not contain API tokens, cookies, SecretKey values, or full protected-preview query tokens | Any secret or full preview token is committed or quoted |
+| 最终报告 | P27 final report records provider, URL, ICP/HTTPS status, command results, screenshots, PRD review, blockers, residual limits, and non-goals | P27 is claimed accepted without final report or with false/stale/protected-preview evidence |
+
+Current P27 gate result: not accepted. P27-1 through P27-4 can be locally verified through documentation, route classification, deployment dry-run, EdgeOne protected-preview deployment, real scanlist, P26 release gate, and P27 release verifier. Stable public mainland URL evidence, remote browser smoke, Mate70 public-URL evidence, and final report are still missing. Public domain registration, ICP filing, DNS binding, and HTTPS certificate setup are bypassed and blocked as external prerequisites in the current development run.
 
 ## P26 Gate Status
 

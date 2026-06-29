@@ -1,0 +1,250 @@
+{
+  "generatedAt": "2026-06-29T11:36:23.413Z",
+  "language": "zh-CN",
+  "tool": "Node.js + Playwright headless Chromium",
+  "browserMode": "Windows Chrome CDP",
+  "report": "docs/active/evidence/p27/stage-audit-2026-06-29/index.html",
+  "screenshotCount": 11,
+  "screenshots": [
+    {
+      "name": "01-workspace-home",
+      "title": "工作台首屏",
+      "description": "地图优先工作台、搜索、筛选、参考层和本地状态。",
+      "path": "docs/active/evidence/p27/stage-audit-2026-06-29/screenshots/01-workspace-home.png"
+    },
+    {
+      "name": "02-data-package",
+      "title": "数据包导入导出",
+      "description": "本地 .foodmap.json、个人收藏导入和只读快照入口。",
+      "path": "docs/active/evidence/p27/stage-audit-2026-06-29/screenshots/02-data-package.png"
+    },
+    {
+      "name": "03-personal-favorites-map",
+      "title": "个人收藏地图",
+      "description": "导入武汉个人收藏后，地图展示本地个人图钉和健康入口。",
+      "path": "docs/active/evidence/p27/stage-audit-2026-06-29/screenshots/03-personal-favorites-map.png"
+    },
+    {
+      "name": "05-data-health",
+      "title": "个人数据健康中心",
+      "description": "已核验、待确认、高风险、手动校准、已跳过分组。",
+      "path": "docs/active/evidence/p27/stage-audit-2026-06-29/screenshots/05-data-health.png"
+    },
+    {
+      "name": "06-governance-workbench",
+      "title": "治理工作台",
+      "description": "重复地点、导入冲突、维护历史和安全写入说明。",
+      "path": "docs/active/evidence/p27/stage-audit-2026-06-29/screenshots/06-governance-workbench.png"
+    },
+    {
+      "name": "04-place-detail",
+      "title": "地点详情",
+      "description": "地点状态、标签、外部地图、评分、地址和本地记录详情。",
+      "path": "docs/active/evidence/p27/stage-audit-2026-06-29/screenshots/04-place-detail.png"
+    },
+    {
+      "name": "07-current-viewport-poster",
+      "title": "当前视野分享图",
+      "description": "分享图 composer 显示当前筛选和当前视野模式，不把参考层算作个人记录。",
+      "path": "docs/active/evidence/p27/stage-audit-2026-06-29/screenshots/07-current-viewport-poster.png"
+    },
+    {
+      "name": "08-missing-share-fallback",
+      "title": "缺失分享快照恢复",
+      "description": "缺失 snapshot route 提供导入数据包和返回工作台路径。",
+      "path": "docs/active/evidence/p27/stage-audit-2026-06-29/screenshots/08-missing-share-fallback.png"
+    },
+    {
+      "name": "09-webapp-status",
+      "title": "WebApp 与发布状态",
+      "description": "WebApp、本地 IndexedDB、service worker 和发布目标说明。",
+      "path": "docs/active/evidence/p27/stage-audit-2026-06-29/screenshots/09-webapp-status.png"
+    },
+    {
+      "name": "10-mobile-workspace",
+      "title": "移动端工作台",
+      "description": "390px 移动工作台展示地图、搜索、快捷筛选和底部操作。",
+      "path": "docs/active/evidence/p27/stage-audit-2026-06-29/screenshots/10-mobile-workspace.png"
+    },
+    {
+      "name": "11-mobile-missing-share",
+      "title": "移动端缺失分享恢复",
+      "description": "移动端缺失只读快照仍可理解本地数据包恢复路径。",
+      "path": "docs/active/evidence/p27/stage-audit-2026-06-29/screenshots/11-mobile-missing-share.png"
+    }
+  ],
+  "commandResults": [
+    {
+      "id": "01-npm-ci",
+      "label": "npm ci",
+      "command": "npm ci",
+      "startedAt": "2026-06-29T11:25:04.450Z",
+      "exitCode": 0,
+      "passed": true,
+      "expectedFailure": false,
+      "log": "docs/active/evidence/p27/stage-audit-2026-06-29/command-logs/01-npm-ci.log",
+      "summary": [
+        "added 110 packages, and audited 111 packages in 16s",
+        "19 packages are looking for funding",
+        "  run `npm fund` for details",
+        "1 low severity vulnerability",
+        "To address all issues, run:",
+        "  npm audit fix",
+        "Run `npm audit` for details."
+      ]
+    },
+    {
+      "id": "02-build-edgeone",
+      "label": "大陆/EdgeOne 构建",
+      "command": "npm run build:edgeone",
+      "startedAt": "2026-06-29T11:25:20.775Z",
+      "exitCode": 0,
+      "passed": true,
+      "expectedFailure": false,
+      "log": "docs/active/evidence/p27/stage-audit-2026-06-29/command-logs/02-build-edgeone.log",
+      "summary": [
+        "dist/index.html                   1.48 kB │ gzip:  0.66 kB",
+        "dist/assets/map-CIGW-MKW.css     15.61 kB │ gzip:  6.46 kB",
+        "dist/assets/index-vI0vtfU7.css   69.43 kB │ gzip: 12.37 kB",
+        "dist/assets/icons-NlZrM61o.js    10.57 kB │ gzip:  3.91 kB",
+        "dist/assets/map-B-Xn5z6W.js     149.50 kB │ gzip: 43.29 kB",
+        "dist/assets/react-BuGNL1hR.js   192.46 kB │ gzip: 60.33 kB",
+        "dist/assets/index-CJAw3Sqq.js   390.19 kB │ gzip: 96.48 kB",
+        "✓ built in 16.18s"
+      ]
+    },
+    {
+      "id": "03-unit-tests",
+      "label": "Vitest 单元测试",
+      "command": "npm test -- --run",
+      "startedAt": "2026-06-29T11:25:42.286Z",
+      "exitCode": 0,
+      "passed": true,
+      "expectedFailure": false,
+      "log": "docs/active/evidence/p27/stage-audit-2026-06-29/command-logs/03-unit-tests.log",
+      "summary": [
+        " ✓ src/tests/domain.test.ts (46 tests) 38ms",
+        " Test Files  1 passed (1)",
+        "      Tests  46 passed (46)",
+        "   Duration  2.52s (transform 670ms, setup 0ms, collect 881ms, tests 38ms, environment 0ms, prepare 852ms)"
+      ]
+    },
+    {
+      "id": "04-scanlist",
+      "label": "真实 scanlist 验证",
+      "command": "npm run verify:scanlist",
+      "startedAt": "2026-06-29T11:25:47.042Z",
+      "exitCode": 0,
+      "passed": true,
+      "expectedFailure": false,
+      "log": "docs/active/evidence/p27/stage-audit-2026-06-29/command-logs/04-scanlist.log",
+      "summary": [
+        "FoodMap scanlist baseline verification passed."
+      ]
+    },
+    {
+      "id": "05-local-mainland",
+      "label": "本地大陆静态验证",
+      "command": "npm run verify:mainland:deployment",
+      "startedAt": "2026-06-29T11:25:47.650Z",
+      "exitCode": 0,
+      "passed": true,
+      "expectedFailure": false,
+      "log": "docs/active/evidence/p27/stage-audit-2026-06-29/command-logs/05-local-mainland.log",
+      "summary": [
+        "> foodmap@1.0.0 verify:mainland:deployment",
+        "> node scripts/verify_mainland_deployment.mjs",
+        "[Mainland Deployment Verify] Local dist checks passed for base /."
+      ]
+    },
+    {
+      "id": "06-p26-release",
+      "label": "P26 release gate",
+      "command": "npm run verify:p26:release",
+      "startedAt": "2026-06-29T11:25:47.759Z",
+      "exitCode": 0,
+      "passed": true,
+      "expectedFailure": false,
+      "log": "docs/active/evidence/p27/stage-audit-2026-06-29/command-logs/06-p26-release.log",
+      "summary": [
+        "[P26 Release Verify] Checks passed. Manifest: docs/active/evidence/p26/release-gate-manifest.json"
+      ]
+    },
+    {
+      "id": "07-p27-release-tokenless",
+      "label": "P27 release gate - tokenless EdgeOne",
+      "command": "npm run verify:p27:release",
+      "startedAt": "2026-06-29T11:25:47.899Z",
+      "exitCode": 0,
+      "passed": true,
+      "expectedFailure": false,
+      "log": "docs/active/evidence/p27/stage-audit-2026-06-29/command-logs/07-p27-release-tokenless.log",
+      "summary": [
+        "[P27 Release Verify] blocked_before_final_acceptance. Manifest: docs/active/evidence/p27/release-gate-manifest.json",
+        "[P27 Release Verify] Remote stable URL static checks: https://foodmap.edgeone.cool/ returned HTTP 401"
+      ]
+    },
+    {
+      "id": "08-mainland-remote-401",
+      "label": "远端 tokenless 静态验证",
+      "command": "npm run verify:mainland:deployment",
+      "startedAt": "2026-06-29T11:25:48.916Z",
+      "exitCode": 1,
+      "passed": true,
+      "expectedFailure": true,
+      "log": "docs/active/evidence/p27/stage-audit-2026-06-29/command-logs/08-mainland-remote-401.log",
+      "summary": [
+        "[Mainland Deployment Verify] manifest display must be standalone",
+        "[Mainland Deployment Verify] manifest start_url must target #/map",
+        "[Mainland Deployment Verify] manifest scope must remain relative to the static host path",
+        "[Mainland Deployment Verify] manifest icon is missing FoodMap SVG",
+        "[Mainland Deployment Verify] service worker cache name missing",
+        "[Mainland Deployment Verify] service worker fallback copy missing",
+        "[Mainland Deployment Verify] service worker local-first copy missing",
+        "[Mainland Deployment Verify] remote icon is not SVG"
+      ]
+    },
+    {
+      "id": "09-e2e",
+      "label": "全量 Playwright E2E",
+      "command": "npm run e2e",
+      "startedAt": "2026-06-29T11:25:49.450Z",
+      "exitCode": 1,
+      "passed": false,
+      "expectedFailure": false,
+      "log": "docs/active/evidence/p27/stage-audit-2026-06-29/command-logs/09-e2e.log",
+      "summary": [
+        "    \u001b[2m  - [pid=174713][err] /home/administrator/.cache/ms-playwright/chromium_headless_shell-1223/chrome-headless-shell-linux64/chrome-headless-shell: error while loading shared libraries: libnspr4.so: cannot open shared object file: No such file or directory\u001b[22m",
+        "    \u001b[2m  - [pid=174713] exception while trying to kill process: Error: kill ESRCH\u001b[22m",
+        "    Error Context: test-results/workspace-P21-responsive-d-6d5b3-0-import-share-and-fallback-mobile/error-context.md",
+        "  140 failed",
+        "    [desktop] › e2e/workspace.spec.ts:1718:1 › agent bridge returns structured errors, emits events and does not write invalid data ",
+        "    [desktop] › e2e/workspace.spec.ts:2611:1 › P25 deployed GitHub Pages stable URL supports map, real data and readonly share ",
+        "    [mobile] › e2e/workspace.spec.ts:1718:1 › agent bridge returns structured errors, emits events and does not write invalid data ",
+        "    [mobile] › e2e/workspace.spec.ts:2611:1 › P25 deployed GitHub Pages stable URL supports map, real data and readonly share "
+      ]
+    },
+    {
+      "id": "10-p27-browser-smoke",
+      "label": "P27 browser smoke - tokenless EdgeOne",
+      "command": "npm run smoke:p27:browser",
+      "startedAt": "2026-06-29T11:27:27.988Z",
+      "exitCode": 1,
+      "passed": true,
+      "expectedFailure": true,
+      "log": "docs/active/evidence/p27/stage-audit-2026-06-29/command-logs/10-p27-browser-smoke.log",
+      "summary": [
+        "[pid=174739][err] /home/administrator/.cache/ms-playwright/chromium_headless_shell-1223/chrome-headless-shell-linux64/chrome-headless-shell: error while loading shared libraries: libnspr4.so: cannot open shared object file: No such file or directory",
+        "\u001b[2m  - [pid=174739][err] /home/administrator/.cache/ms-playwright/chromium_headless_shell-1223/chrome-headless-shell-linux64/chrome-headless-shell: error while loading shared libraries: libnspr4.so: cannot open shared object file: No such file or directory\u001b[22m",
+        "\u001b[2m  - [pid=174739] exception while trying to kill process: Error: kill ESRCH\u001b[22m"
+      ]
+    }
+  ],
+  "p27Status": "blocked_before_final_acceptance",
+  "publicUrlBlocker": "https://foodmap.edgeone.cool/ returned HTTP 401",
+  "browserSmokeStatus": "blocked_before_browser_smoke",
+  "p26ReleaseStatus": "unknown",
+  "visualFailures": [
+    "Linux Playwright Chromium 启动失败，改用 Windows Chrome CDP：browserType.launch: Target page, context or browser has been closed"
+  ]
+}

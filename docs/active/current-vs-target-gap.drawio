@@ -1,147 +1,303 @@
 <mxfile host="Electron" agent="Codex" pages="7">
-  <diagram id="p26-01-overview" name="01 P26目标体验与边界">
+  <diagram id="p27-01-overview" name="01 P27目标体验与边界">
     <mxGraphModel dx="1400" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="820" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="p1_title" value="P26 目标体验：固定 URL 上的 Mate70 移动发布体验更稳、更可验收" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=22;fontStyle=1;align=center" vertex="1" parent="1"><mxGeometry x="60" y="30" width="1280" height="70" as="geometry" /></mxCell>
-        <mxCell id="p1_legend1" value="已实现/P25基线" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=12;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1"><mxGeometry x="80" y="115" width="150" height="34" as="geometry" /></mxCell>
-        <mxCell id="p1_legend2" value="需修改" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=12;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1"><mxGeometry x="250" y="115" width="110" height="34" as="geometry" /></mxCell>
-        <mxCell id="p1_legend3" value="待新增" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1"><mxGeometry x="380" y="115" width="110" height="34" as="geometry" /></mxCell>
-        <mxCell id="p1_legend4" value="禁止/非目标" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=12;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1"><mxGeometry x="510" y="115" width="130" height="34" as="geometry" /></mxCell>
-        <mxCell id="p1_base" value="P25 已验收基线&#xa;GitHub Pages 固定 URL&#xa;hash route 刷新恢复&#xa;Mate70 固定 URL 证据&#xa;P18-P24 回归与 scanlist&#xa;IndexedDB + .foodmap.json 本地优先" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1"><mxGeometry x="80" y="185" width="300" height="260" as="geometry" /></mxCell>
-        <mxCell id="p1_target" value="P26 用户可见目标&#xa;固定 URL 状态更清楚&#xa;源站/瓦片/缺失分享失败态更诚实&#xa;Mate70 创建、详情、筛选、导入导出、分享更少误触&#xa;本地数据维护更可读可确认&#xa;发布门禁可复跑" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1"><mxGeometry x="540" y="185" width="330" height="260" as="geometry" /></mxCell>
-        <mxCell id="p1_new" value="P26 待新增治理实体&#xa;MobileReleaseEvidenceHarness&#xa;ReleaseGateAutomation&#xa;EvidenceGovernancePack&#xa;docs/active/evidence/p26/&#xa;p26-final-acceptance-report.md" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1"><mxGeometry x="1010" y="185" width="300" height="260" as="geometry" /></mxCell>
-        <mxCell id="p1_forbidden" value="P26 明确不做&#xa;HarmonyOS HAP / AppGallery&#xa;账号、云同步、后端 API&#xa;永久公网分享链接&#xa;离线地图瓦片&#xa;外部实时 POI 完成声明&#xa;静默删除/合并/修复" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1"><mxGeometry x="290" y="545" width="820" height="120" as="geometry" /></mxCell>
-        <mxCell id="p1_e1" edge="1" parent="1" source="p1_base" target="p1_target" style="endArrow=block;html=1;strokeColor=#6f7f47"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p1_e2" edge="1" parent="1" source="p1_target" target="p1_new" style="endArrow=block;html=1;strokeColor=#6c8ebf"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p1_e3" edge="1" parent="1" source="p1_target" target="p1_forbidden" style="endArrow=block;html=1;strokeColor=#b85450"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p1_title" value="P27 目标体验：大陆用户通过稳定 HTTPS 公网 URL 使用 FoodMap" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=22;fontStyle=1;align=center" vertex="1" parent="1">
+          <mxGeometry x="60" y="30" width="1280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_legend1" value="绿色：已实现 / P26 基线" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=12;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1">
+          <mxGeometry x="80" y="120" width="170" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_legend2" value="蓝色：P27 待新增" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="270" y="120" width="150" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_legend3" value="黄色：需修改 / 需收口" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=12;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1">
+          <mxGeometry x="440" y="120" width="170" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_legend4" value="橙色：外部依赖 / 需用户确认" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=12;fillColor=#fce5cd;strokeColor=#d79b00" vertex="1" parent="1">
+          <mxGeometry x="630" y="120" width="210" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_legend5" value="红色：不可作为出门验收" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=12;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1">
+          <mxGeometry x="860" y="120" width="180" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_base" value="已验收基线&#xa;P26 accepted&#xa;Mate70 固定 URL 证据&#xa;P18-P26 回归边界&#xa;IndexedDB 本地数据&#xa;.foodmap.json 携带&#xa;MapWorkspace / ShareView / ImportExportDialog" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1">
+          <mxGeometry x="80" y="195" width="310" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_target" value="P27 用户可见目标&#xa;大陆稳定 HTTPS URL&#xa;无需平台登录&#xa;无需临时 token&#xa;无需 LAN / HDC / tunnel&#xa;Mate70 可打开同一 URL&#xa;仍是纯前端本地优先 WebApp" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="545" y="195" width="310" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_external" value="外部条件&#xa;EdgeOne / COS / OSS / 国内静态 host&#xa;域名与 DNS&#xa;ICP 备案（大陆自定义域名）&#xa;HTTPS 证书&#xa;可能的付费与控制台操作&#xa;这些必须由用户确认" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#fce5cd;strokeColor=#d79b00" vertex="1" parent="1">
+          <mxGeometry x="1010" y="195" width="310" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_no" value="不能当作 P27 出门：GitHub Pages、localhost、局域网 IP、HDC reverse、临时 tunnel、EdgeOne 受保护预览、带完整 preview token 的 URL。&#xa;不能新增：账号、云同步、后端、永久公网分享、原生 HAP/AppGallery、离线地图、实时 POI 完成声明。" style="rounded=1;whiteSpace=wrap;html=1;fontSize=15;align=center;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1">
+          <mxGeometry x="170" y="555" width="1060" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_e1" edge="1" parent="1" source="p1_base" target="p1_target" style="endArrow=block;html=1;strokeColor=#6c8ebf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_e2" edge="1" parent="1" source="p1_target" target="p1_external" style="endArrow=block;html=1;strokeColor=#d79b00">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram id="p26-02-gap" name="02 当前P25与P26目标差异">
+  <diagram id="p27-02-gap" name="02 当前架构与目标架构差异">
     <mxGraphModel dx="1400" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="820" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="p2_title" value="当前架构与目标架构差异：P25 固定 URL 基线到 P26 移动发布硬化" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=22;fontStyle=1;align=center" vertex="1" parent="1"><mxGeometry x="60" y="30" width="1280" height="70" as="geometry" /></mxCell>
-        <mxCell id="p2_current" value="当前 P25 架构实体&#xa;vite.config.ts / gh-pages / dist&#xa;index.html / manifest.webmanifest / sw.js&#xa;App hash router&#xa;MapWorkspace / ShareView&#xa;ImportExportDialog / .foodmap.json&#xa;IndexedDB repositories&#xa;scripts/verify_p25_deployment.mjs&#xa;docs/active/evidence/p25" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1"><mxGeometry x="70" y="150" width="340" height="420" as="geometry" /></mxCell>
-        <mxCell id="p2_modify" value="P26 需修改实体&#xa;MapWorkspace：移动主路径与状态说明&#xa;HomeMapControlDock：底部操作与筛选触达&#xa;ShareView：只读分享/缺失快照移动体验&#xa;ImportExportDialog：数据包本地语义和触控&#xa;PersonalDataHealthCenter：问题分组可读性&#xa;GovernanceWorkbench：预览/确认路径&#xa;app.css：Mate70 安全区、键盘、面板" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1"><mxGeometry x="535" y="150" width="360" height="420" as="geometry" /></mxCell>
-        <mxCell id="p2_new" value="P26 待新增/强化实体&#xa;MobileReleaseEvidenceHarness&#xa;ReleaseGateAutomation&#xa;P26 release verifier / evidence manifest&#xa;docs/active/evidence/p26/&#xa;p26-final-acceptance-report.md&#xa;P26 targeted Playwright specs&#xa;P26 PRD spec review report" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1"><mxGeometry x="1020" y="150" width="320" height="420" as="geometry" /></mxCell>
-        <mxCell id="p2_e1" edge="1" parent="1" source="p2_current" target="p2_modify" style="endArrow=block;html=1;strokeColor=#d6b656"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p2_e2" edge="1" parent="1" source="p2_modify" target="p2_new" style="endArrow=block;html=1;strokeColor=#6c8ebf"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p2_note" value="评估方法：每个 P26 目标必须能回到具体代码实体、发布实体、数据实体或证据实体；不能用抽象“跨端部署”“App 能力”单独判定完成。" style="rounded=1;whiteSpace=wrap;html=1;fontSize=15;align=center;fillColor=#f5f5f5;strokeColor=#666666" vertex="1" parent="1"><mxGeometry x="150" y="650" width="1100" height="70" as="geometry" /></mxCell>
+        <mxCell id="p2_title" value="当前架构与目标架构差异：从 P26 固定 URL WebApp 到 P27 大陆公网访问" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=22;fontStyle=1;align=center" vertex="1" parent="1">
+          <mxGeometry x="60" y="30" width="1280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_current" value="当前已实现实体（绿色）&#xa;vite.config.ts&#xa;package.json: build:mainland / build:edgeone&#xa;scripts/verify_mainland_deployment.mjs&#xa;scripts/deploy_edgeone_pages.mjs&#xa;dist/ 静态产物&#xa;index.html / assets / manifest / sw.js&#xa;MapWorkspace / ShareView / WebAppStatus&#xa;IndexedDB repositories / .foodmap.json" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1">
+          <mxGeometry x="70" y="150" width="340" height="430" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_gap" value="当前缺口（红色 / 黄色）&#xa;EdgeOne 可能只有受保护预览&#xa;缺少稳定公网 HTTPS URL 证据&#xa;缺少 Mate70 访问大陆 URL 证据&#xa;缺少 P27 final report&#xa;域名 / ICP / HTTPS / 付费可能依赖用户&#xa;不能把 GitHub Pages 当大陆生产入口" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1">
+          <mxGeometry x="535" y="150" width="330" height="430" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_target" value="P27 目标实体（蓝色）&#xa;MainlandStaticHostProfile&#xa;MainlandBuildProfile 复验&#xa;EdgeOneDeployAdapter 公网验收&#xa;MainlandDeploymentVerifier 远端验证&#xa;PublicUrlEvidenceHarness&#xa;Mate70MainlandSmokeHarness&#xa;SecretRedactionGuard&#xa;docs/active/evidence/p27/&#xa;P27 final acceptance report" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="990" y="150" width="340" height="430" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_note" value="评估语言：每个目标都必须能追踪到代码实体、部署实体、运行实体、数据实体或证据实体。不能用“跨端”“部署完成”“App 能力”这类抽象表述替代架构评估。" style="rounded=1;whiteSpace=wrap;html=1;fontSize=15;align=center;fillColor=#f5f5f5;strokeColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="160" y="650" width="1080" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_e1" edge="1" parent="1" source="p2_current" target="p2_gap" style="endArrow=block;html=1;strokeColor=#b85450">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2_e2" edge="1" parent="1" source="p2_gap" target="p2_target" style="endArrow=block;html=1;strokeColor=#6c8ebf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram id="p26-03-architecture" name="03 代码实体与分层交互">
-    <mxGraphModel dx="1400" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="820" math="0" shadow="0">
+  <diagram id="p27-03-architecture" name="03 代码实体与部署分层交互">
+    <mxGraphModel dx="1653" dy="842" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="820" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="p3_title" value="P26 目标架构：静态 WebApp 模块化单体，发布证据与本地维护围绕既有实体强化" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=22;fontStyle=1;align=center" vertex="1" parent="1"><mxGeometry x="60" y="30" width="1280" height="70" as="geometry" /></mxCell>
-        <mxCell id="p3_browser" value="Mate70 浏览器 / 桌面验证 runner" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=14;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1"><mxGeometry x="90" y="140" width="260" height="55" as="geometry" /></mxCell>
-        <mxCell id="p3_host" value="GitHub Pages 固定 URL&#xa;dist/index.html + manifest + sw.js" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=14;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1"><mxGeometry x="420" y="140" width="270" height="55" as="geometry" /></mxCell>
-        <mxCell id="p3_app" value="App.tsx hash router&#xa;#/map / #/share/:snapshotId" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=14;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1"><mxGeometry x="760" y="140" width="250" height="55" as="geometry" /></mxCell>
-        <mxCell id="p3_release" value="ReleaseGateAutomation&#xa;发布命令、route 检查、证据 manifest" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=14;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1"><mxGeometry x="1080" y="140" width="250" height="55" as="geometry" /></mxCell>
-        <mxCell id="p3_workspace" value="MapWorkspace&#xa;搜索、筛选、创建、详情、状态" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=14;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1"><mxGeometry x="120" y="285" width="250" height="70" as="geometry" /></mxCell>
-        <mxCell id="p3_dock" value="HomeMapControlDock&#xa;底部操作、移动筛选、触控入口" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=14;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1"><mxGeometry x="430" y="285" width="250" height="70" as="geometry" /></mxCell>
-        <mxCell id="p3_share" value="ShareView&#xa;只读分享、缺失快照、刷新恢复" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=14;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1"><mxGeometry x="740" y="285" width="250" height="70" as="geometry" /></mxCell>
-        <mxCell id="p3_import" value="ImportExportDialog&#xa;.foodmap.json 本地携带" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=14;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1"><mxGeometry x="1050" y="285" width="250" height="70" as="geometry" /></mxCell>
-        <mxCell id="p3_health" value="PersonalDataHealthCenter&#xa;待确认、高风险、跳过、手动校准" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=14;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1"><mxGeometry x="190" y="455" width="270" height="75" as="geometry" /></mxCell>
-        <mxCell id="p3_gov" value="GovernanceWorkbench&#xa;重复、冲突、批量预览、维护历史" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=14;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1"><mxGeometry x="560" y="455" width="270" height="75" as="geometry" /></mxCell>
-        <mxCell id="p3_repo" value="IndexedDB repositories&#xa;places / layers / photos / snapshots / governance history" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=14;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1"><mxGeometry x="930" y="455" width="320" height="75" as="geometry" /></mxCell>
-        <mxCell id="p3_evidence" value="MobileReleaseEvidenceHarness&#xa;Mate70 截图、Playwright 截图、JSON、final report" style="rounded=1;whiteSpace=wrap;html=1;align=center;fontSize=14;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1"><mxGeometry x="390" y="635" width="620" height="75" as="geometry" /></mxCell>
-        <mxCell id="p3_e1" edge="1" parent="1" source="p3_browser" target="p3_host" style="endArrow=block;html=1;strokeColor=#666666"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p3_e2" edge="1" parent="1" source="p3_host" target="p3_app" style="endArrow=block;html=1;strokeColor=#666666"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p3_e3" edge="1" parent="1" source="p3_app" target="p3_workspace" style="endArrow=block;html=1;strokeColor=#666666"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p3_e4" edge="1" parent="1" source="p3_app" target="p3_share" style="endArrow=block;html=1;strokeColor=#666666"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p3_e5" edge="1" parent="1" source="p3_workspace" target="p3_dock" style="endArrow=block;html=1;strokeColor=#d6b656"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p3_e6" edge="1" parent="1" source="p3_workspace" target="p3_import" style="endArrow=block;html=1;strokeColor=#d6b656"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p3_e7" edge="1" parent="1" source="p3_import" target="p3_repo" style="endArrow=block;html=1;strokeColor=#82b366"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p3_e8" edge="1" parent="1" source="p3_health" target="p3_repo" style="endArrow=block;html=1;strokeColor=#82b366"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p3_e9" edge="1" parent="1" source="p3_gov" target="p3_repo" style="endArrow=block;html=1;strokeColor=#82b366"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p3_e10" edge="1" parent="1" source="p3_release" target="p3_evidence" style="endArrow=block;html=1;strokeColor=#6c8ebf"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p3_e11" edge="1" parent="1" source="p3_workspace" target="p3_evidence" style="endArrow=block;html=1;strokeColor=#6c8ebf"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p3_title" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=22;fontStyle=1;align=center" value="P27 目标架构：具体代码实体、部署实体、运行实体、数据实体的交互关系" vertex="1">
+          <mxGeometry height="70" width="1280" x="60" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_build" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=left;spacingLeft=10;fillColor=#d5e8d4;strokeColor=#82b366" value="构建层&#xa;vite.config.ts&#xa;package.json scripts&#xa;build:mainland&#xa;build:edgeone&#xa;FOODMAP_MAINLAND_BASE_PATH&#xa;输出 dist/" vertex="1">
+          <mxGeometry height="170" width="190" x="70" y="155" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_deploy" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=left;spacingLeft=10;fillColor=#fff2cc;strokeColor=#d6b656" value="部署层&#xa;scripts/deploy_edgeone_pages.mjs&#xa;deploy:edgeone&#xa;EDGEONE_PROJECT_NAME&#xa;API token 只走环境变量&#xa;EdgeOne / COS / OSS / Nginx" vertex="1">
+          <mxGeometry height="170" width="230" x="310" y="155" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_host" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=left;spacingLeft=10;fillColor=#fce5cd;strokeColor=#d79b00" value="静态托管层&#xa;稳定 HTTPS URL&#xa;无登录 / 无临时 token&#xa;可选自定义域名&#xa;大陆域名需 ICP&#xa;manifest / sw / assets 可访问" vertex="1">
+          <mxGeometry height="170" width="220" x="590" y="155" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_runtime" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=left;spacingLeft=10;fillColor=#dae8fc;strokeColor=#6c8ebf" value="浏览器运行层&#xa;index.html&#xa;src/main.tsx&#xa;src/app/App.tsx&#xa;Hash Router&#xa;#/map&#xa;#/share/:snapshotId" vertex="1">
+          <mxGeometry height="170" width="190" x="860" y="155" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_ui" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=left;spacingLeft=10;fillColor=#dae8fc;strokeColor=#6c8ebf" value="体验层&#xa;MapWorkspace&#xa;ShareView&#xa;ImportExportDialog&#xa;WebAppStatus&#xa;HomeMapControlDock&#xa;P26 mobile polish" vertex="1">
+          <mxGeometry height="170" width="220" x="1100" y="155" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_data" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=left;spacingLeft=10;fillColor=#d5e8d4;strokeColor=#82b366" value="本地数据层（保持不变）&#xa;IndexedDB repositories&#xa;places / layers / photos / snapshots / governance history&#xa;importExportCodec&#xa;snapshot codec&#xa;.foodmap.json" vertex="1">
+          <mxGeometry height="170" width="300" x="1020" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_evidence" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=left;spacingLeft=10;fillColor=#dae8fc;strokeColor=#6c8ebf" value="验收证据层&#xa;scripts/verify_mainland_deployment.mjs&#xa;verify:mainland:deployment&#xa;FOODMAP_MAINLAND_DEPLOY_URL&#xa;浏览器 smoke&#xa;Mate70 截图或录屏&#xa;docs/active/evidence/p27/&#xa;P27 final report" vertex="1">
+          <mxGeometry height="210" width="310" x="510" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_e1" edge="1" parent="1" source="p3_build" style="endArrow=block;html=1;strokeColor=#666666" target="p3_deploy">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_e2" edge="1" parent="1" source="p3_deploy" style="endArrow=block;html=1;strokeColor=#666666" target="p3_host">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_e3" edge="1" parent="1" source="p3_host" style="endArrow=block;html=1;strokeColor=#666666" target="p3_runtime">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_e4" edge="1" parent="1" source="p3_runtime" style="endArrow=block;html=1;strokeColor=#666666" target="p3_ui">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_e5" edge="1" parent="1" source="p3_ui" style="endArrow=block;html=1;strokeColor=#82b366" target="p3_data">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_e6" edge="1" parent="1" source="p3_host" style="endArrow=block;html=1;strokeColor=#6c8ebf" target="p3_evidence">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_e7" edge="1" parent="1" source="p3_ui" style="endArrow=block;html=1;strokeColor=#6c8ebf" target="p3_evidence">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram id="p26-04-release" name="04 发布与真机证据链路">
+  <diagram id="p27-04-evidence" name="04 公网访问与证据链路">
     <mxGraphModel dx="1400" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="820" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="p4_title" value="P26 发布与真机证据链路：不把桌面模拟、HDC 或旧截图冒充最终验收" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=22;fontStyle=1;align=center" vertex="1" parent="1"><mxGeometry x="60" y="30" width="1280" height="70" as="geometry" /></mxCell>
-        <mxCell id="p4_cmd" value="发布门禁命令&#xa;npm run build&#xa;npm test -- --run&#xa;npm run verify:scanlist&#xa;verify:p25:deployment / P26 successor&#xa;P18-P25 regression&#xa;P26 targeted E2E" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1"><mxGeometry x="90" y="155" width="300" height="285" as="geometry" /></mxCell>
-        <mxCell id="p4_host" value="部署站点证据&#xa;GitHub Pages 固定 URL&#xa;#/map 直达与刷新&#xa;#/share/:snapshotId 直达与刷新&#xa;source-down fallback&#xa;tile failure fallback" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1"><mxGeometry x="540" y="155" width="300" height="285" as="geometry" /></mxCell>
-        <mxCell id="p4_phone" value="Mate70 真机证据&#xa;固定 URL 入口&#xa;工作台/创建/详情/筛选&#xa;导入导出/数据包&#xa;有效只读分享&#xa;缺失分享恢复&#xa;刷新持久化&#xa;键盘与安全区" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1"><mxGeometry x="990" y="155" width="300" height="285" as="geometry" /></mxCell>
-        <mxCell id="p4_report" value="证据治理输出&#xa;docs/active/evidence/p26/manifest.json&#xa;截图/录屏/JSON 命令日志&#xa;PRD 规格检视&#xa;p26-final-acceptance-report.md&#xa;残余限制与 blocker" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=center;fillColor=#f5f5f5;strokeColor=#666666" vertex="1" parent="1"><mxGeometry x="360" y="555" width="680" height="120" as="geometry" /></mxCell>
-        <mxCell id="p4_bad" value="失败判定&#xa;仅 desktop mobile 视口、仅 HDC、仅本地 preview、临时 URL、旧截图、无 scanlist、无 final report 均不能宣布 P26 accepted" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=center;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1"><mxGeometry x="260" y="705" width="880" height="65" as="geometry" /></mxCell>
-        <mxCell id="p4_e1" edge="1" parent="1" source="p4_cmd" target="p4_host" style="endArrow=block;html=1;strokeColor=#6c8ebf"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p4_e2" edge="1" parent="1" source="p4_host" target="p4_phone" style="endArrow=block;html=1;strokeColor=#d6b656"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p4_e3" edge="1" parent="1" source="p4_phone" target="p4_report" style="endArrow=block;html=1;strokeColor=#666666"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4_title" value="P27 证据链路：什么能证明公网访问，什么只能证明开发或预览" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=22;fontStyle=1;align=center" vertex="1" parent="1">
+          <mxGeometry x="60" y="30" width="1280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_build" value="1 构建证据&#xa;npm run build:mainland&#xa;npm run build:edgeone&#xa;npm run verify:mainland:deployment" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=center;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1">
+          <mxGeometry x="90" y="160" width="240" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_deploy" value="2 部署证据&#xa;EDGEONE_DRY_RUN=1 deploy:edgeone&#xa;真实部署不打印 token&#xa;provider 返回 URL 状态" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=center;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1">
+          <mxGeometry x="410" y="160" width="250" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_url" value="3 URL 分类&#xa;稳定公网 HTTPS：可进入下一步&#xa;受保护预览：只能 smoke&#xa;GitHub/LAN/HDC/tunnel：不可出门" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=center;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1">
+          <mxGeometry x="745" y="160" width="250" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_remote" value="4 远端验证&#xa;FOODMAP_MAINLAND_DEPLOY_URL&#xa;verify:mainland:deployment&#xa;#/map / refresh / share fallback&#xa;manifest / sw / assets" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=center;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="1080" y="160" width="250" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_browser" value="5 浏览器 smoke&#xa;打开稳定 URL&#xa;截图或 trace&#xa;缺失分享 fallback&#xa;本地优先说明可见" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=center;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="260" y="450" width="250" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_mate" value="6 Mate70 证据&#xa;同一稳定 URL&#xa;工作台 / 详情筛选 / 数据包&#xa;分享 fallback 或有效 share&#xa;刷新恢复 / release status" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=center;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="585" y="450" width="280" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_report" value="7 Final report&#xa;provider / URL / ICP / HTTPS&#xa;命令 / 截图 / PRD review&#xa;blockers / residual limits&#xa;非目标 / secret redaction" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=center;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="940" y="450" width="260" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_e1" edge="1" parent="1" source="p4_build" target="p4_deploy" style="endArrow=block;html=1;strokeColor=#666666">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_e2" edge="1" parent="1" source="p4_deploy" target="p4_url" style="endArrow=block;html=1;strokeColor=#666666">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_e3" edge="1" parent="1" source="p4_url" target="p4_remote" style="endArrow=block;html=1;strokeColor=#666666">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_e4" edge="1" parent="1" source="p4_remote" target="p4_browser" style="endArrow=block;html=1;strokeColor=#6c8ebf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_e5" edge="1" parent="1" source="p4_browser" target="p4_mate" style="endArrow=block;html=1;strokeColor=#6c8ebf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_e6" edge="1" parent="1" source="p4_mate" target="p4_report" style="endArrow=block;html=1;strokeColor=#6c8ebf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram id="p26-05-plan" name="05 开发及验收计划">
+  <diagram id="p27-05-plan" name="05 开发及验收计划">
     <mxGraphModel dx="1400" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="820" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="p5_title" value="P26 开发及验收计划：每个子阶段先计划/审计，再实现，再端到端验收与 PRD 检视" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=22;fontStyle=1;align=center" vertex="1" parent="1"><mxGeometry x="60" y="30" width="1280" height="70" as="geometry" /></mxCell>
-        <mxCell id="p5_1" value="P26-1 文档审计与边界冻结&#xa;效果：开发者知道做什么、不做什么、怎么验收" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=center;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1"><mxGeometry x="70" y="150" width="180" height="115" as="geometry" /></mxCell>
-        <mxCell id="p5_2" value="P26-2 移动端发布体验硬化&#xa;效果：Mate70 用户看懂固定 URL 与失败状态" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=center;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1"><mxGeometry x="265" y="150" width="180" height="115" as="geometry" /></mxCell>
-        <mxCell id="p5_3" value="P26-3 发布门禁自动化&#xa;效果：发布前能复跑命令和证据 manifest" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=center;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1"><mxGeometry x="460" y="150" width="180" height="115" as="geometry" /></mxCell>
-        <mxCell id="p5_4" value="P26-4 Mate70 交互精修&#xa;效果：创建、详情、筛选、分享更少误触遮挡" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=center;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1"><mxGeometry x="655" y="150" width="180" height="115" as="geometry" /></mxCell>
-        <mxCell id="p5_5" value="P26-5 本地数据维护增强&#xa;效果：重复、冲突、待确认、导入问题可看清可确认" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=center;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1"><mxGeometry x="850" y="150" width="180" height="115" as="geometry" /></mxCell>
-        <mxCell id="p5_6" value="P26-6 回归与证据包&#xa;效果：P18-P25 不被破坏，截图/JSON 可审计" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=center;fillColor=#f5f5f5;strokeColor=#666666" vertex="1" parent="1"><mxGeometry x="1045" y="150" width="180" height="115" as="geometry" /></mxCell>
-        <mxCell id="p5_7" value="P26-7 总验收&#xa;效果：只有证据齐全才写 final report 并宣布 accepted" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=center;fillColor=#f5f5f5;strokeColor=#666666" vertex="1" parent="1"><mxGeometry x="615" y="360" width="210" height="115" as="geometry" /></mxCell>
-        <mxCell id="p5_audit" value="每阶段固定循环&#xa;1. 根据 PRD 写开发/验收计划&#xa;2. 审计规格偏差和虚假验收风险&#xa;3. 闭环致命/重大风险&#xa;4. 实现&#xa;5. 真实数据或 Mate70 端到端验收&#xa;6. PRD 规格检视&#xa;7. 失败则回到计划阶段" style="rounded=1;whiteSpace=wrap;html=1;fontSize=15;align=left;spacingLeft=14;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1"><mxGeometry x="190" y="555" width="1020" height="130" as="geometry" /></mxCell>
-        <mxCell id="p5_edge1" edge="1" parent="1" source="p5_1" target="p5_2" style="endArrow=block;html=1;strokeColor=#666666"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p5_edge2" edge="1" parent="1" source="p5_2" target="p5_3" style="endArrow=block;html=1;strokeColor=#666666"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p5_edge3" edge="1" parent="1" source="p5_3" target="p5_4" style="endArrow=block;html=1;strokeColor=#666666"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p5_edge4" edge="1" parent="1" source="p5_4" target="p5_5" style="endArrow=block;html=1;strokeColor=#666666"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p5_edge5" edge="1" parent="1" source="p5_5" target="p5_6" style="endArrow=block;html=1;strokeColor=#666666"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p5_edge6" edge="1" parent="1" source="p5_6" target="p5_7" style="endArrow=block;html=1;strokeColor=#666666"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p5_title" value="P27 开发及验收计划：每阶段产物、验收动作和用户体验结果" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=22;fontStyle=1;align=center" vertex="1" parent="1">
+          <mxGeometry x="60" y="30" width="1280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_1" value="P27-1 文档审计&#xa;产物：PRD / 架构 / gate / roadmap / gap / drawio / profile 同步&#xa;体验结果：开发方向不偏移、不承诺云或原生" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=left;spacingLeft=10;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="70" y="145" width="360" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_2" value="P27-2 状态归类&#xa;产物：URL 状态矩阵&#xa;验收：GitHub / LAN / HDC / tunnel / protected preview 均不可出门&#xa;体验结果：不做虚假公网验收" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=left;spacingLeft=10;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1">
+          <mxGeometry x="520" y="145" width="360" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_3" value="P27-3 路线准备&#xa;产物：EdgeOne 免费优先 + COS/OSS 备选&#xa;验收：域名 / ICP / HTTPS / 付费风险明确&#xa;体验结果：用户知道要提供哪些外部条件" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=left;spacingLeft=10;fillColor=#fce5cd;strokeColor=#d79b00" vertex="1" parent="1">
+          <mxGeometry x="970" y="145" width="360" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_4" value="P27-4 自动化验证&#xa;产物：build:mainland / build:edgeone / deploy:edgeone / verify:mainland:deployment 证据&#xa;体验结果：发布者可复跑发布门禁" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=left;spacingLeft=10;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="70" y="410" width="360" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_5" value="P27-5 Mate70 公网验收&#xa;产物：稳定 URL 真机截图或录屏&#xa;验收：工作台、详情筛选、数据包、分享 fallback、刷新恢复可用&#xa;体验结果：Mate70 用户可真实访问" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=left;spacingLeft=10;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="520" y="410" width="360" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_6" value="P27-6 总验收&#xa;产物：P27 final report&#xa;验收：回归、PRD review、截图、远端 verify、secret redaction 全部记录&#xa;体验结果：可诚实宣布接受或不接受" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=left;spacingLeft=10;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="970" y="410" width="360" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_note" value="失败回退规则：若任一验收失败，必须回到相应计划阶段修订路线或记录 blocker。若出现付费、域名、ICP、HTTPS、控制台操作或秘密泄漏风险，停止并找用户确认。" style="rounded=1;whiteSpace=wrap;html=1;fontSize=15;align=center;fillColor=#f5f5f5;strokeColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="155" y="650" width="1090" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_e1" edge="1" parent="1" source="p5_1" target="p5_2" style="endArrow=block;html=1;strokeColor=#666666">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_e2" edge="1" parent="1" source="p5_2" target="p5_3" style="endArrow=block;html=1;strokeColor=#666666">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_e3" edge="1" parent="1" source="p5_3" target="p5_4" style="endArrow=block;html=1;strokeColor=#666666">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_e4" edge="1" parent="1" source="p5_4" target="p5_5" style="endArrow=block;html=1;strokeColor=#666666">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_e5" edge="1" parent="1" source="p5_5" target="p5_6" style="endArrow=block;html=1;strokeColor=#666666">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram id="p26-06-milestone" name="06 项目里程碑">
+  <diagram id="p27-06-milestones" name="06 项目里程碑">
     <mxGraphModel dx="1400" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="820" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="p6_title" value="P26 项目里程碑：从文档冻结到移动发布硬化最终验收" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=22;fontStyle=1;align=center" vertex="1" parent="1"><mxGeometry x="60" y="30" width="1280" height="70" as="geometry" /></mxCell>
-        <mxCell id="p6_m1" value="M26-1 文档与审计基线&#xa;证据：P26 docs + drawio validation" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=center;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1"><mxGeometry x="100" y="145" width="280" height="90" as="geometry" /></mxCell>
-        <mxCell id="p6_m2" value="M26-2 移动端发布体验硬化&#xa;证据：Mate70 固定 URL 状态截图" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=center;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1"><mxGeometry x="560" y="145" width="280" height="90" as="geometry" /></mxCell>
-        <mxCell id="p6_m3" value="M26-3 发布门禁自动化&#xa;证据：命令日志 + evidence manifest" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=center;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1"><mxGeometry x="1020" y="145" width="280" height="90" as="geometry" /></mxCell>
-        <mxCell id="p6_m4" value="M26-4 Mate70 交互精修&#xa;证据：工作台/创建/详情/分享真机截图" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=center;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1"><mxGeometry x="100" y="330" width="280" height="90" as="geometry" /></mxCell>
-        <mxCell id="p6_m5" value="M26-5 本地数据维护增强&#xa;证据：真实数据/fixture 预览确认与 no-op" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=center;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1"><mxGeometry x="560" y="330" width="280" height="90" as="geometry" /></mxCell>
-        <mxCell id="p6_m6" value="M26-6 回归和证据包&#xa;证据：P18-P25 regression + P26 targeted" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=center;fillColor=#f5f5f5;strokeColor=#666666" vertex="1" parent="1"><mxGeometry x="1020" y="330" width="280" height="90" as="geometry" /></mxCell>
-        <mxCell id="p6_m7" value="M26-7 总验收&#xa;证据：p26-final-acceptance-report.md" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=center;fillColor=#f5f5f5;strokeColor=#666666" vertex="1" parent="1"><mxGeometry x="560" y="535" width="280" height="90" as="geometry" /></mxCell>
-        <mxCell id="p6_note" value="当前状态：仅文档开发；P26 未实现、未验收。P25 final report 仍是最新 accepted baseline。" style="rounded=1;whiteSpace=wrap;html=1;fontSize=15;align=center;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1"><mxGeometry x="260" y="700" width="880" height="55" as="geometry" /></mxCell>
-        <mxCell id="p6_e1" edge="1" parent="1" source="p6_m1" target="p6_m2" style="endArrow=block;html=1;strokeColor=#666666"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p6_e2" edge="1" parent="1" source="p6_m2" target="p6_m3" style="endArrow=block;html=1;strokeColor=#666666"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p6_e3" edge="1" parent="1" source="p6_m3" target="p6_m4" style="endArrow=block;html=1;strokeColor=#666666"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p6_e4" edge="1" parent="1" source="p6_m4" target="p6_m5" style="endArrow=block;html=1;strokeColor=#666666"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p6_e5" edge="1" parent="1" source="p6_m5" target="p6_m6" style="endArrow=block;html=1;strokeColor=#666666"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p6_e6" edge="1" parent="1" source="p6_m6" target="p6_m7" style="endArrow=block;html=1;strokeColor=#666666"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p6_title" value="P27 项目里程碑：从 P26 accepted 到大陆公网访问 accepted" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=22;fontStyle=1;align=center" vertex="1" parent="1">
+          <mxGeometry x="60" y="30" width="1280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_m26" value="P26 accepted&#xa;固定 URL WebApp&#xa;Mate70 证据&#xa;release gate&#xa;本地维护增强" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=center;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1">
+          <mxGeometry x="80" y="170" width="190" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_m1" value="M27-1 文档与审计基线&#xa;P27 plan / audit / PRD / 架构 / drawio 对齐" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=center;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="315" y="170" width="190" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_m2" value="M27-2 状态归类&#xa;稳定公网 URL 与 protected preview 明确区分" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=center;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="550" y="170" width="190" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_m3" value="M27-3 路线准备&#xa;EdgeOne 免费优先&#xa;COS/OSS/CDN fallback&#xa;外部依赖清楚" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=center;fillColor=#fce5cd;strokeColor=#d79b00" vertex="1" parent="1">
+          <mxGeometry x="785" y="170" width="190" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_m4" value="M27-4 门禁证据&#xa;本地构建&#xa;部署 dry-run&#xa;远端 verifier" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=center;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="1020" y="170" width="190" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_m5" value="M27-5 真机公网验收&#xa;Mate70 打开稳定 URL&#xa;P26 主路径 smoke" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=center;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="355" y="450" width="240" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_m6" value="M27-6 Final report&#xa;provider / URL / ICP / HTTPS&#xa;回归 / 截图 / blockers&#xa;P27 接受或不接受" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=center;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="805" y="450" width="240" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_no" value="不可跨越：没有稳定公网 URL、没有 Mate70 证据、只有 protected preview、只有 GitHub/LAN/HDC/tunnel、或出现未确认付费/ICP/域名/HTTPS 操作时，M27-6 不能关闭。" style="rounded=1;whiteSpace=wrap;html=1;fontSize=15;align=center;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1">
+          <mxGeometry x="175" y="660" width="1050" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_e1" edge="1" parent="1" source="p6_m26" target="p6_m1" style="endArrow=block;html=1;strokeColor=#666666">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_e2" edge="1" parent="1" source="p6_m1" target="p6_m2" style="endArrow=block;html=1;strokeColor=#666666">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_e3" edge="1" parent="1" source="p6_m2" target="p6_m3" style="endArrow=block;html=1;strokeColor=#666666">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_e4" edge="1" parent="1" source="p6_m3" target="p6_m4" style="endArrow=block;html=1;strokeColor=#666666">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_e5" edge="1" parent="1" source="p6_m4" target="p6_m5" style="endArrow=block;html=1;strokeColor=#666666">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_e6" edge="1" parent="1" source="p6_m5" target="p6_m6" style="endArrow=block;html=1;strokeColor=#666666">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram id="p26-07-gate" name="07 验收门槛与出门条件">
+  <diagram id="p27-07-gates" name="07 验收门槛与出门条件">
     <mxGraphModel dx="1400" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="820" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="p7_title" value="P26 验收门槛与出门条件：体验达成、证据可复跑、边界不越线" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=22;fontStyle=1;align=center" vertex="1" parent="1"><mxGeometry x="60" y="30" width="1280" height="70" as="geometry" /></mxCell>
-        <mxCell id="p7_user" value="用户体验门槛&#xa;Mate70 固定 URL 可进入&#xa;浏览器/WebApp/失败状态清楚&#xa;创建、详情、筛选、导入导出、分享可触达&#xa;本地数据维护可预览可取消可确认" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1"><mxGeometry x="80" y="150" width="300" height="250" as="geometry" /></mxCell>
-        <mxCell id="p7_tech" value="技术门槛&#xa;build / unit / scanlist 通过&#xa;静态部署 verifier 通过&#xa;hash route 直达与刷新通过&#xa;P18-P25 回归通过&#xa;P26 targeted E2E 通过" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1"><mxGeometry x="540" y="150" width="300" height="250" as="geometry" /></mxCell>
-        <mxCell id="p7_boundary" value="边界门槛&#xa;不做原生 HAP / AppGallery&#xa;不做账号、云同步、后端&#xa;不做永久公网分享&#xa;不承诺离线地图或实时 POI 完成&#xa;不静默删除/合并/修复/固化坐标" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1"><mxGeometry x="1000" y="150" width="300" height="250" as="geometry" /></mxCell>
-        <mxCell id="p7_exit" value="出门条件&#xa;1. P26 final report 存在且列出命令、截图/JSON、Mate70 证据、PRD 检视、残余限制&#xa;2. 真实数据和 Mate70 验收通过，桌面模拟不替代真机&#xa;3. 文档、drawio、E2E matrix、visual checklist 与实现一致&#xa;4. 没有未闭环的致命或重大规格偏差/虚假验收风险" style="rounded=1;whiteSpace=wrap;html=1;fontSize=15;align=left;spacingLeft=14;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1"><mxGeometry x="240" y="535" width="920" height="150" as="geometry" /></mxCell>
-        <mxCell id="p7_e1" edge="1" parent="1" source="p7_user" target="p7_exit" style="endArrow=block;html=1;strokeColor=#d6b656"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p7_e2" edge="1" parent="1" source="p7_tech" target="p7_exit" style="endArrow=block;html=1;strokeColor=#6c8ebf"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="p7_e3" edge="1" parent="1" source="p7_boundary" target="p7_exit" style="endArrow=block;html=1;strokeColor=#b85450"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p7_title" value="P27 验收门槛与出门条件：用户体验、工程证据和不可验收状态" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=22;fontStyle=1;align=center" vertex="1" parent="1">
+          <mxGeometry x="60" y="30" width="1280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p7_user" value="用户体验门槛&#xa;大陆稳定 HTTPS URL 可打开&#xa;无需登录 / token / LAN / HDC / tunnel&#xa;Mate70 完成工作台、详情筛选、数据包、分享 fallback 或有效 share、刷新恢复&#xa;用户理解本地数据仍在浏览器" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+          <mxGeometry x="80" y="150" width="360" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="p7_engineering" value="工程证据门槛&#xa;build:mainland 通过&#xa;build:edgeone 通过&#xa;verify:mainland:deployment 本地通过&#xa;remote verifier 通过&#xa;浏览器 smoke 截图&#xa;P18-P26 回归边界未破坏" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1">
+          <mxGeometry x="520" y="150" width="360" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="p7_report" value="报告与安全门槛&#xa;P27 final report 存在&#xa;provider / URL / ICP / HTTPS 已记录&#xa;PRD review 已完成&#xa;blockers / residual limits 明确&#xa;无 API token、cookie、SecretKey、完整 preview token 泄漏" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;align=left;spacingLeft=12;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1">
+          <mxGeometry x="960" y="150" width="360" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="p7_fail" value="一票否决：GitHub Pages 被当大陆生产入口；只有 localhost、LAN、HDC、临时 tunnel；EdgeOne 受保护预览被当公网验收；远端 URL 需要登录或临时 token；未确认付费、域名、ICP、HTTPS、控制台操作；任何秘密写入仓库。" style="rounded=1;whiteSpace=wrap;html=1;fontSize=15;align=center;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1">
+          <mxGeometry x="170" y="500" width="1060" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="p7_exit" value="出门结论只能二选一：&#xa;Accepted：稳定公网 URL + 远端验证 + Mate70 证据 + final report 全部成立。&#xa;Not accepted / blocked：外部平台、域名、ICP、HTTPS、付费、protected preview 或验收失败仍未闭环。" style="rounded=1;whiteSpace=wrap;html=1;fontSize=16;fontStyle=1;align=center;fillColor=#f5f5f5;strokeColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="240" y="675" width="920" height="80" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>

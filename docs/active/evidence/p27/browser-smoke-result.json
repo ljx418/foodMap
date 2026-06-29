@@ -1,0 +1,12 @@
+{
+  "generatedAt": "2026-06-29T09:48:41.781Z",
+  "status": "blocked_before_browser_smoke",
+  "accepted": false,
+  "urlClassification": {
+    "stableCandidate": false,
+    "state": "missing",
+    "reason": "FOODMAP_MAINLAND_DEPLOY_URL is not set"
+  },
+  "screenshots": [],
+  "note": "Browser smoke requires a stable public HTTPS URL."
+}

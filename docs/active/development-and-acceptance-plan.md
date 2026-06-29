@@ -1,4 +1,25 @@
-# FoodMap P19/P20-C/P21/P22/P23/P24/P25/P26 Development And Acceptance Plan
+# FoodMap P19/P20-C/P21/P22/P23/P24/P25/P26/P27 Development And Acceptance Plan
+
+## P27 Summary
+
+P27 is the current implementation stage after accepted P26. It targets mainland China public access for the existing static WebApp: a stable HTTPS domestic static host URL that opens FoodMap for mainland users without GitHub Pages dependency, private platform login, expiring preview token, LAN IP, HDC reverse forwarding, or temporary tunnel.
+
+P27 does not implement or claim HarmonyOS native HAP/AppGallery delivery, account login, cloud sync, backend API, remote backup, offline map tiles, permanent public social sharing, automatic data repair, or external realtime POI completion. It preserves P26 as the latest accepted implementation baseline.
+
+Detailed implementation and acceptance are defined in [P27 Detailed Development And Acceptance Plan](./p27-detailed-development-and-acceptance-plan.md). Entry audit is defined in [P27 Preimplementation Audit](./p27-preimplementation-audit.md).
+
+## P27 Phase Plan
+
+| Phase | Goal | Main Output | Acceptance Gate |
+| --- | --- | --- | --- |
+| P27-1 | 文档审计与阶段边界冻结 | PRD、目标架构、计划、gate、roadmap、gap/drawio、profile、audit 同步 | No fatal or major unresolved spec risk; no secret/token leakage |
+| P27-2 | 当前部署状态归类 | GitHub Pages, EdgeOne protected preview, LAN/HDC/tunnel, and stable mainland URL states classified | Protected preview cannot be accepted as public mainland access |
+| P27-3 | 大陆公网路线准备 | EdgeOne free-first route and COS/OSS/CDN fallback route are decision-complete | External provider, domain, ICP, HTTPS, and paid-operation risks are explicit |
+| P27-4 | 构建/部署/验证门禁 | `build:mainland`, `build:edgeone`, `deploy:edgeone`, `verify:mainland:deployment` evidence path | Local artifact and remote URL verification are repeatable |
+| P27-5 | Mate70 公网 URL 验收 | Mate70 opens stable mainland URL and completes P26 accepted smoke paths | Evidence is real-device and public-URL based |
+| P27-6 | 回归、PRD 检视和 final report | P18-P26 regression review, browser smoke, Mate70 evidence, PRD review, final report | P27 may be accepted only after stable public URL evidence exists |
+
+Current P27 status: P27-1 through P27-4 are locally automatable and EdgeOne protected-preview deployment succeeds, but P27-5 remains blocked before final acceptance because no stable tokenless mainland public HTTPS URL is available. Public domain registration, ICP filing, DNS binding, and HTTPS certificate setup are bypassed for the current development run. A protected EdgeOne preview URL can only support deployment package smoke; it cannot close the public mainland access gate.
 
 ## P26 Summary
 
@@ -30,7 +51,7 @@ Current P26 status: accepted. Implementation, automated regression, fixed-URL de
 
 ## Mainland China Deployment Addendum
 
-GitHub Pages is accepted as the P25/P26 fixed URL evidence baseline, but it is not a reliable production service entry for users in mainland China. The next deployment hardening target for mainland users is a domestic static host profile:
+GitHub Pages is accepted as the P25/P26 fixed URL evidence baseline, but it is not a reliable production service entry for users in mainland China. This addendum is superseded by the P27 phase plan above, and remains as the provider/profile summary:
 
 | Phase | Goal | Main Output | Acceptance Gate |
 | --- | --- | --- | --- |
@@ -40,7 +61,7 @@ GitHub Pages is accepted as the P25/P26 fixed URL evidence baseline, but it is n
 | CN-4 | 免费优先发布适配 | `npm run deploy:edgeone` wraps EdgeOne CLI deployment with token/project guards | Dry run works without token; real deployment requires EdgeOne API token |
 | CN-5 | 云端发布 | Upload `dist/` to EdgeOne/COS/OSS/static server after required credentials are available; custom mainland domain requires ICP/HTTPS | Mainland URL opens `#/map`, refreshes, serves manifest/sw/icons/assets, and passes Mate70 smoke |
 
-This addendum is implementation support for a future mainland production release. It cannot complete actual mainland public deployment without external account credentials, domain ownership, ICP filing status, HTTPS certificate configuration, and provider console access.
+This addendum is implementation support for P27. It cannot complete actual mainland public deployment without external account credentials, domain ownership, ICP filing status, HTTPS certificate configuration, and provider console access. If any step requires payment, domain purchase, ICP/real-name filing, or console-side changes, implementation must stop for user confirmation.
 
 ## P25 Summary
 

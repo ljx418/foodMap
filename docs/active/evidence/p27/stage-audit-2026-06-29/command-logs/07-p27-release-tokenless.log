@@ -1,0 +1,6 @@
+
+> foodmap@1.0.0 verify:p27:release
+> node scripts/verify_p27_release.mjs
+
+[P27 Release Verify] blocked_before_final_acceptance. Manifest: docs/active/evidence/p27/release-gate-manifest.json
+[P27 Release Verify] Remote stable URL static checks: https://foodmap.edgeone.cool/ returned HTTP 401

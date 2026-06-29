@@ -1,0 +1,103 @@
+{
+  "generatedAt": "2026-06-29T11:25:48.902Z",
+  "scope": "P27 release gate automation",
+  "status": "blocked_before_final_acceptance",
+  "accepted": false,
+  "urlClassification": {
+    "state": "stable_candidate",
+    "stableCandidate": true,
+    "reason": "URL is HTTPS and has no obvious private preview markers"
+  },
+  "remoteVerification": {
+    "attempted": true,
+    "passed": false,
+    "note": "https://foodmap.edgeone.cool/ returned HTTP 401"
+  },
+  "checks": [
+    {
+      "name": "PRD contains P27 stage",
+      "passed": true,
+      "note": "PRD 4N mainland public access target"
+    },
+    {
+      "name": "Target architecture contains P27 architecture",
+      "passed": true,
+      "note": "Target architecture 0F"
+    },
+    {
+      "name": "Acceptance gate keeps P27 not accepted",
+      "passed": true,
+      "note": "P27 must remain open until stable URL evidence exists"
+    },
+    {
+      "name": "P27 detailed plan exists",
+      "passed": true,
+      "note": "Detailed plan"
+    },
+    {
+      "name": "P27 preimplementation audit exists",
+      "passed": true,
+      "note": "Preimplementation audit"
+    },
+    {
+      "name": "P27 progress report exists",
+      "passed": true,
+      "note": "Implementation progress report"
+    },
+    {
+      "name": "Package has P27 release verifier script",
+      "passed": true,
+      "note": "package.json script"
+    },
+    {
+      "name": "P27 browser smoke script exists",
+      "passed": true,
+      "note": "browser smoke script"
+    },
+    {
+      "name": "Drawio has at most 8 pages",
+      "passed": true,
+      "note": "7 pages"
+    },
+    {
+      "name": "Drawio contains P27",
+      "passed": true,
+      "note": "P27 labels present"
+    },
+    {
+      "name": "Local dist exists",
+      "passed": true,
+      "note": "dist/index.html"
+    },
+    {
+      "name": "Local dist is not GitHub Pages base",
+      "passed": true,
+      "note": "root-oriented mainland build"
+    },
+    {
+      "name": "Secret scan has no known leaked token values",
+      "passed": true,
+      "note": "known token patterns absent"
+    },
+    {
+      "name": "Stable public URL candidate",
+      "passed": true,
+      "note": "stable_candidate: URL is HTTPS and has no obvious private preview markers"
+    },
+    {
+      "name": "Remote stable URL static checks",
+      "passed": false,
+      "note": "https://foodmap.edgeone.cool/ returned HTTP 401"
+    }
+  ],
+  "blockers": [
+    "https://foodmap.edgeone.cool/ returned HTTP 401"
+  ],
+  "nextRequiredEvidence": [
+    "Stable public HTTPS URL without login or expiring preview token",
+    "FOODMAP_MAINLAND_DEPLOY_URL=<stable-url> npm run verify:mainland:deployment",
+    "P27 browser smoke against the stable URL",
+    "Mate70 screenshot or recording for the stable URL",
+    "P27 final acceptance report"
+  ]
+}

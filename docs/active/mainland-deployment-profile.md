@@ -4,6 +4,8 @@
 
 FoodMap should not use GitHub Pages as the primary production entry for mainland China users. GitHub Pages can remain an overseas/developer fallback, but the mainland user-facing route should be a domestic static host with a custom domain, ICP filing, HTTPS, and optional CDN acceleration.
 
+P27 uses this profile as its deployment contract. Current status: mainland build, EdgeOne build, deployment adapter, and verifier support exist, but P27 is not accepted until a stable public HTTPS URL is verified remotely and on Mate70. A provider preview URL that depends on private login state or expiring preview query parameters is classified as protected preview evidence only.
+
 Recommended free-first route:
 
 ```text
@@ -117,10 +119,22 @@ EDGEONE_API_TOKEN=<token> EDGEONE_PROJECT_NAME=foodmap npm run deploy:edgeone
 FOODMAP_MAINLAND_DEPLOY_URL=<EdgeOne URL> npm run verify:mainland:deployment
 ```
 
-7. If EdgeOne returns a URL with `eo_token` and `eo_time`, treat it as a protected preview URL. It can prove the browser deployment package works, but it is not a stable public URL for arbitrary users.
+7. If EdgeOne returns a URL with preview-token query parameters or requires an authenticated provider session, treat it as a protected preview URL. It can prove the browser deployment package works, but it is not a stable public URL for arbitrary users.
 8. If a custom domain is used for mainland production, complete ICP filing and HTTPS configuration before calling it an accepted mainland release.
 
 EdgeOne deployment is a hosting change only. It must not be described as cloud sync, account login, remote backup, or permanent public share storage.
+
+## Protected Preview Classification
+
+| URL / Access State | Allowed Claim | Not Allowed Claim |
+| --- | --- | --- |
+| GitHub Pages fixed URL | Accepted overseas/developer baseline and P26 regression reference | Mainland production access |
+| Localhost, LAN IP, HDC reverse forwarding, or temporary tunnel | Development, debugging, or diagnostic smoke | Stable public access |
+| EdgeOne protected preview with provider login or expiring query token | Deployment artifact and browser smoke evidence | P27 公网出门验收 |
+| EdgeOne default domain without login or expiring token | Candidate public URL after remote verifier and Mate70 evidence pass | Accepted final state before final report |
+| ICP-filed custom domain with HTTPS | Preferred mainland production URL after all gates pass | Account/cloud/backend/permanent-share capability |
+
+Do not record API tokens, cookies, SecretKey values, or full protected-preview query token values in tracked files. Reports may describe the state as "protected preview" without quoting the sensitive value.
 
 ## Tencent Cloud COS + CDN Steps
 
@@ -174,6 +188,18 @@ The mainland deployment cannot be called accepted until:
 6. `FOODMAP_MAINLAND_DEPLOY_URL=<mainland-url> npm run verify:mainland:deployment` passes remotely.
 7. Browser smoke covers `#/map`, refresh, `#/share/:snapshotId` missing-share fallback, static assets, manifest, and service worker.
 8. A Mate70 real-device screenshot or recording proves the mainland URL opens the app.
+9. The final report records provider, URL class, ICP/HTTPS status, command results, screenshots, blockers, residual limits, non-goals, and secret-redaction result.
+10. The URL and evidence are not GitHub Pages, LAN-only, HDC-only, local-preview-only, temporary-tunnel-only, or protected-preview-only.
+
+## User Confirmation Stop Conditions
+
+Stop for user confirmation before any of these actions:
+
+- paid provider plan, storage, CDN, certificate, or traffic charge;
+- domain purchase, domain transfer, DNS change, or custom domain binding;
+- ICP filing, real-name verification, organization verification, or provider identity review;
+- provider console operation that cannot be reproduced safely by command line;
+- any action that would expose or persist API tokens, cookies, SecretKey values, or protected-preview query tokens.
 
 ## Product Boundaries
 

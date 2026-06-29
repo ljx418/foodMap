@@ -15,7 +15,11 @@
     "verify:p24:webapp": "node scripts/verify_p24_webapp.mjs",
     "verify:p25:deployment": "node scripts/verify_p25_deployment.mjs",
     "verify:p26:release": "node scripts/verify_p26_release.mjs",
+    "verify:p27:release": "node scripts/verify_p27_release.mjs",
     "verify:mainland:deployment": "node scripts/verify_mainland_deployment.mjs",
+    "smoke:p27:browser": "node scripts/p27_browser_smoke.mjs",
+    "audit:p27:stage": "node scripts/generate_p27_stage_audit_report.mjs",
+    "audit:p27:open": "node -e \"const path=require('path'); const cp=require('child_process'); const file=path.resolve('docs/active/evidence/p27/stage-audit-2026-06-29/index.html'); const win=cp.spawnSync('wslpath',['-w',file],{encoding:'utf8'}); const target=win.status===0?win.stdout.trim():file; const child=cp.spawn('cmd.exe',['/c','start','',target],{stdio:'ignore',detached:true}); child.on('error',()=>{}); child.unref();\"",
     "deploy:edgeone": "node scripts/deploy_edgeone_pages.mjs",
     "refresh:amap": "node scripts/refresh_amap_scanlist.mjs",
     "verify:scanlist": "node scripts/verify_scanlist_baseline.mjs"

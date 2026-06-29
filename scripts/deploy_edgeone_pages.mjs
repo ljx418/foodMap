@@ -1,8 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { loadLocalEnv } from "./load_local_env.mjs";
 
 const root = process.cwd();
+loadLocalEnv(root);
+
 const dist = path.join(root, "dist");
 const projectName = process.env.EDGEONE_PROJECT_NAME?.trim() || "foodmap";
 const token = process.env.EDGEONE_API_TOKEN?.trim();

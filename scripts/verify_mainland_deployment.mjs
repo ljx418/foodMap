@@ -1,7 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
+import { loadLocalEnv } from "./load_local_env.mjs";
 
 const root = process.cwd();
+loadLocalEnv(root);
+
 const dist = path.join(root, "dist");
 const targetUrl = process.env.FOODMAP_MAINLAND_DEPLOY_URL?.trim();
 const expectedBase = process.env.FOODMAP_MAINLAND_BASE_PATH?.trim() || "/";

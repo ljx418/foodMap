@@ -1,0 +1,20 @@
+
+> foodmap@1.0.0 verify:mainland:deployment
+> node scripts/verify_mainland_deployment.mjs
+
+[Mainland Deployment Verify] https://foodmap.edgeone.cool/ returned HTTP 401
+[Mainland Deployment Verify] https://foodmap.edgeone.cool/manifest.webmanifest returned HTTP 401
+[Mainland Deployment Verify] https://foodmap.edgeone.cool/sw.js returned HTTP 401
+[Mainland Deployment Verify] https://foodmap.edgeone.cool/icons/foodmap-icon.svg returned HTTP 401
+[Mainland Deployment Verify] remote index missing manifest link
+[Mainland Deployment Verify] remote index missing viewport-fit
+[Mainland Deployment Verify] remote index missing theme color
+[Mainland Deployment Verify] manifest name mismatch
+[Mainland Deployment Verify] manifest display must be standalone
+[Mainland Deployment Verify] manifest start_url must target #/map
+[Mainland Deployment Verify] manifest scope must remain relative to the static host path
+[Mainland Deployment Verify] manifest icon is missing FoodMap SVG
+[Mainland Deployment Verify] service worker cache name missing
+[Mainland Deployment Verify] service worker fallback copy missing
+[Mainland Deployment Verify] service worker local-first copy missing
+[Mainland Deployment Verify] remote icon is not SVG

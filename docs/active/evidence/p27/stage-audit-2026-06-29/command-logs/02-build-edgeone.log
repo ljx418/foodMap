@@ -1,0 +1,21 @@
+
+> foodmap@1.0.0 build:edgeone
+> npm run build:mainland
+
+
+> foodmap@1.0.0 build:mainland
+> tsc -b && vite build --mode mainland
+
+vite v7.3.5 building client environment for mainland...
+transforming...
+✓ 1653 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   1.48 kB │ gzip:  0.66 kB
+dist/assets/map-CIGW-MKW.css     15.61 kB │ gzip:  6.46 kB
+dist/assets/index-vI0vtfU7.css   69.43 kB │ gzip: 12.37 kB
+dist/assets/icons-NlZrM61o.js    10.57 kB │ gzip:  3.91 kB
+dist/assets/map-B-Xn5z6W.js     149.50 kB │ gzip: 43.29 kB
+dist/assets/react-BuGNL1hR.js   192.46 kB │ gzip: 60.33 kB
+dist/assets/index-CJAw3Sqq.js   390.19 kB │ gzip: 96.48 kB
+✓ built in 16.18s

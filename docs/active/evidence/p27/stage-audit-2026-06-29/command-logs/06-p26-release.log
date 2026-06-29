@@ -1,0 +1,5 @@
+
+> foodmap@1.0.0 verify:p26:release
+> node scripts/verify_p26_release.mjs
+
+[P26 Release Verify] Checks passed. Manifest: docs/active/evidence/p26/release-gate-manifest.json

@@ -1,0 +1,9 @@
+
+> foodmap@1.0.0 verify:scanlist
+> node scripts/verify_scanlist_baseline.mjs
+
+FoodMap scanlist baseline verification passed.
+- Entries: 50
+- Manual verification overlays: 50
+- Approximate but admitted pins: 38
+- Guardrails: 刘聋子牛肉粉馆、万松小院·荷花垄、小骆川菜馆

@@ -1,0 +1,60 @@
+{
+  "scope": "P27 mainland public access local gate",
+  "timestamp": "2026-06-29T16:10:18+08:00",
+  "status": "blocked_before_final_acceptance",
+  "accepted": false,
+  "commands": [
+    {
+      "name": "EDGEONE_API_TOKEN presence check",
+      "result": "passed",
+      "note": "Token missing in current shell; no value printed."
+    },
+    {
+      "name": "npm run build:edgeone",
+      "result": "passed",
+      "note": "Built mainland static artifact through build:mainland."
+    },
+    {
+      "name": "npm test -- --run",
+      "result": "passed",
+      "note": "46 Vitest tests passed."
+    },
+    {
+      "name": "npm run verify:scanlist",
+      "result": "passed",
+      "note": "50 scanlist entries and manual verification overlays passed."
+    },
+    {
+      "name": "npm run verify:mainland:deployment",
+      "result": "passed",
+      "note": "Local dist checks passed for base /."
+    },
+    {
+      "name": "EDGEONE_DRY_RUN=1 EDGEONE_PROJECT_NAME=foodmap npm run deploy:edgeone",
+      "result": "passed",
+      "note": "Dry-run command is safe without token."
+    },
+    {
+      "name": "npm run verify:p26:release",
+      "result": "passed",
+      "note": "P26 accepted baseline release verifier passed."
+    },
+    {
+      "name": "Drawio XML/page check",
+      "result": "passed",
+      "note": "current-vs-target-gap.drawio parses and has 7 pages."
+    }
+  ],
+  "blockers": [
+    "EDGEONE_API_TOKEN is not present in the current shell, so real deployment was not attempted.",
+    "No stable mainland public HTTPS URL is available for remote verification.",
+    "No Mate70 evidence exists for a stable mainland public URL."
+  ],
+  "next_required_evidence": [
+    "Stable public HTTPS URL without login or expiring preview token.",
+    "FOODMAP_MAINLAND_DEPLOY_URL=<stable-url> npm run verify:mainland:deployment",
+    "Browser smoke for the stable URL.",
+    "Mate70 screenshot or recording for the stable URL.",
+    "P27 final acceptance report."
+  ]
+}

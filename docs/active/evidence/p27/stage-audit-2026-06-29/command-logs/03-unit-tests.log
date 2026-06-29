@@ -1,0 +1,13 @@
+
+> foodmap@1.0.0 test
+> vitest run --run
+
+
+ RUN  v3.2.6 /mnt/c/workspace/foodmap
+
+ ✓ src/tests/domain.test.ts (46 tests) 38ms
+
+ Test Files  1 passed (1)
+      Tests  46 passed (46)
+   Start at  19:25:44
+   Duration  2.52s (transform 670ms, setup 0ms, collect 881ms, tests 38ms, environment 0ms, prepare 852ms)
